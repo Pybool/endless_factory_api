@@ -1,0 +1,28 @@
+{% extends 'dashboard/main.html' %}
+{% block main_content %}
+{% load translate %}
+
+<div class="main-content">
+  <div class="row">
+    <div class = "col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class='h5'>{{'Editing Variant'|translate:lang}}</h5>
+          </div>
+          <div class="m-t-10">
+            <form action = "{% url 'edit_product_attachment' product.slug attachment.id %}" method='post' enctype="multipart/form-data">
+              <div class="row">
+                <div class="col-10">
+                  {% include 'dashboard/products/attachments/form.html' with form=form %}
+                </div>
+                {% include 'dashboard/products/sidebar.html' with product=product active_tab='attachments' %}
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

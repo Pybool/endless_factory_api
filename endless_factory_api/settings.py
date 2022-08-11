@@ -25,8 +25,9 @@ SECRET_KEY = 'django-insecure-j9o&7^t+845^rrl0t*(!l2mi!5u2(qns3(c3sl+(!7x+o-dvk1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['165.232.185.232','https://endlessfactory.com','127.0.0.1']
+ALLOWED_HOSTS = ['165.232.185.232','https://endlessfactory.com','127.0.0.1','localhost']
 
+COUNTRY_CHOICES = ["Albania", "Algeria", "Angola", "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belivia", "Belize", "Benin", "Bosnia", "Botswana", "Brazil", "Brunei", "Bulgaria", "Camaroon", "Cambodia", "Canada", "Chile", "Colombia", "Costa Rica", "Cote D'ivoire", "Croatia", "Cyprus", "Czech Repub", "Denmark", "Dominican Repub", "Ecuador", "Egypt", "El Salvador", "Estonia", "Ethiopia", "Fiji", "Finland", "France", "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guyana", "Haiti", "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Ireland", "Israel", "Italy", "Jamaica Mon", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Lithuania", "Luxembourg", "Madagascar", "Malawi", "Malaysia", "Maldives", "Malta", "Mauritania", "Mauritius", "Mexico", "Moldova", "Mongolia", "Montenegro", "Morocco", "Myanmar", "N Macedonia", "Namibia", "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", "Norway", "Oman", "Pakistan", "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Romania", "Rwanda", "Samoa", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leon", "Singapore", "Slovakia", "Slovenia", "Somalia", "South Africa", "South Korea", "Spain", "Sri Lanka", "St Kitts/Nevis", "St Vince & The Gs", "Suriname", "Sweden", "Switzerland", "Tajikistan", "Tanzania", "Thailand", "Togo", "Trinidad & Tobago", "Tunisia", "Turkmenistan", "Uae", "Uganda", "Ukraine", "United Kingdom", "United States", "Uruguay", "Uzbekistan", "Vietnam", "Zambia", "Zimbabwe"]
 
 # Application definition
 
@@ -37,14 +38,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'widget_tweaks',
+    'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    'frontend',
     'accounts',
     'dashboard',
     'products',
     'orders',
     'marketing',
     'chat',
+    'admin_accounts',
+    'admin_dashboard',
 ]
 
 REST_FRAMEWORK = {
@@ -72,10 +78,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'endless_factory_api.urls'
 
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')]
+        ,
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -91,22 +99,25 @@ TEMPLATES = [
 # WSGI_APPLICATION = 'endless_factory_api.wsgi.application'
 ASGI_APPLICATION =  'endless_factory_api.asgi.application'
 
+DATA_UPLOAD_MAX_MEMORY_SIZE = 262144000
+FILE_UPLOAD_MAX_MEMORY_SIZE = 262144000
+
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': str(os.path.join(BASE_DIR, "db.sqlite3")),
-    # }
     'default': {
-        'ENGINE'  : 'django.db.backends.mysql',  
-        'NAME'    : 'ENDLESS_FACTORY',                  
-        'USER'    : 'endless_factory_rootuser',                     
-        'PASSWORD': 'pass@endlessrootuser',              
-        'HOST'    : 'localhost',                
-        'PORT'    : '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': str(os.path.join(BASE_DIR, "db.sqlite3")),
     }
+    # 'default': {
+    #     'ENGINE'  : 'django.db.backends.mysql',  
+    #     'NAME'    : 'ENDLESS_FACTORY',                  
+    #     'USER'    : 'endless_factory_rootuser',                     
+    #     'PASSWORD': 'pass@endlessrootuser',              
+    #     'HOST'    : 'localhost',                
+    #     'PORT'    : '3306',
+    # }
 }
 
 AUTH_USER_MODEL = 'accounts.User'
@@ -129,6 +140,24 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# LOGGING SETTINGS
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'DEBUG',  # change debug level as appropiate
+            'propagate': False,
+        },
+    },
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -147,6 +176,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -184,7 +216,9 @@ CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
                         'http://165.232.185.232',
                         'https://endlessfactory.com',
+                        'http://endlessfactory.com',
                         'http://localhost:3000',
                         'http://127.0.0.1:3000',
                         'http://127.0.0.1'
+                        
                         )

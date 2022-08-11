@@ -1,0 +1,15 @@
+{% load translate %}
+{% if form.errors %}
+    <div class="alert alert-danger alert-dismissible col-12" role="alert" style="padding: 15px;">
+        <h3>{{'Following errors prevented your submission from getting saved'|translate:lang}}:</h3>
+        <p>
+            <ul>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li style="margin-left: 20px;"><b>{{field.label}}</b>: {{ error|escape }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </p>
+    </div>
+{% endif %}

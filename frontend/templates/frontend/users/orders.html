@@ -1,0 +1,68 @@
+{% extends 'frontend/main.html' %}
+{% block main_content %}
+  {% load translate %}
+  {%  load static %}
+
+  {%include 'frontend/_header.html'%}
+
+
+<main>
+  <section class="order-history">
+    <div class="container">
+      <div class="oh">
+        {% if order_items.count > 0 %}
+          {% for order_item in order_items %}
+            <div class="oh-detail">
+              <div class="ohd-head">
+                <div class="row">
+                  <div class="col-md-6 oid"><h6><a href="{% url 'order_status' order_item.id %}">{{'Order ID'|translate:lang}} - {{ order_item.order.number }}</a></h6></div>
+                  <div class="col-md-6 track"><h6><a href="{% url 'order_status' order_item.id %}">{{'Track Order'|translate:lang}}</a></h6></div>
+                </div>
+              </div>
+              <div class="ohd-body">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="row ohd-desc">
+                      <div class="col-4">
+                        <a href="{% url 'product' order_item.variant.product.slug %}">
+                          {% if order_item.variant.product.attachment_set.first.file != None %}
+                            <img src="/media/{{ order_item.variant.product.attachment_set.first.file }}" style='height: 100px; width: 100%;' alt="">
+                          {% else %}
+                            <img src="{% static 'images/no_picture.jpeg' %}" style='height: 100px; width: 100%;' alt="">
+                          {% endif%}
+                        </a>
+                      </div>
+                      <div class="col-8"><a href="{% url 'product' order_item.variant.product.slug %}"><h6>{{order_item.variant.product.name}} - {{order_item.display_variant}}<br> <small>{{order_item.variant.product.description|truncatewords:10}}</small></h6></a></div>
+                      <div class="col-12 rtp"><a href="#" class="btn">{{'Rate This Product'|translate:lang}}</a></div>
+                    </div>
+                  </div>
+                  <div class="col-md-2 ohd-price"><h6>{{'Amount paid'|translate:lang}}: ${{ order_item.item_total }}</h6></div>
+                  <div class="col-md-4 del-stat">
+                    {% if order_item.dispatched %}
+                      <h6>{{'Dispatched on'|translate:lang}} {{ order_item.dispatched_at }} <br> <small>{{'Your item has been dispatched'|translate:lang}}</small></h6>
+                    {%else%}
+                      <h6>{{'Order placed on'|translate:lang}} {{ order_item.created_at }} <br> <small>{{'Your Order is under processing'|translate:lang}}</small></h6>
+                    {% endif %}
+                  </div>
+
+                </div>
+              </div>
+              <div class="ohd-end">
+                <div class="row">
+                  <div class="col-md-6"><h6>{{'Ordered on'|translate:lang}} <strong>{{ order_item.created_at }}</strong></h6></div>
+                  <div class="col-md-6 grand"><h6>{{'Order Total'|translate:lang}}: <span>$ {{order_item.item_total}}</span></h6></div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+          {% else %}
+            <div class='container' style='height: 100%;'>
+              <center><h3>{{'No orders found!'|translate:lang}}</h3></center>
+            </div>
+          {% endif %}  
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

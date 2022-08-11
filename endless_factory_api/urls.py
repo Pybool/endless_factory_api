@@ -24,4 +24,8 @@ urlpatterns = [
     path('api/v1/', include('dashboard.urls')),
     path('api/v1/', include('orders.urls')),
     path('api/v1/', include('chat.urls')),
+    path('', include('admin_dashboard.urls')),
+    path('user/', include('admin_accounts.urls')),
+    path('dashboards/', include('admin_dashboard.urls')),
+    path('', include('frontend.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 

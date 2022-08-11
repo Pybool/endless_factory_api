@@ -1,0 +1,44 @@
+{% extends 'dashboard/main.html' %}
+{% block main_content %}
+{% load translate %}
+    <div class="main-content">
+        <div class="row">
+            <div class = "col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5>{{'Tags'|translate:lang}}</h5>
+                            
+                        </div>
+                        <div class="m-t-10">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>{{'Name'|translate:lang}}</th>
+                                            <th>{{'Slug'|translate:lang}}</th>
+                                            <th>{{'Actions'|translate:lang}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for tag in tags %}
+                                            <tr>
+                                                <td>{{tag.id}}</td>
+                                                <td>{{tag.name}}</td>
+                                                <td>{{tag.slug}}</td>
+                                                <td><a href="{% url 'edit_tag' tag.slug %}">{{'Edit'|translate:lang}}</a></td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+
+                                <a href="{% url 'new_tag' %}" class='btn btn-primary btn-sm'>{{'New Tag'|translate:lang}}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% load widget_tweaks %}
+{% load translate %}
+{% csrf_token %}
+{% include 'dashboard/shared/error_messages.html' with form=form %}
+<div class="form-group">
+  <div class="row">
+    <div class="col-12">
+      <label class="font-weight-semibold" for="{{ form.color.label}}">{{'Card Number'|translate:lang}}:</label>
+      {{ form.card_number|add_class:"form-control"|attr:"placeholder: Card Number" }}
+    </div>
+  </div>
+</div>
+<div class="form-group">
+  <div class="row">
+    <div class="col-4">
+      <label class="font-weight-semibold" for="{{ form.last_name.label}}">{{'Exp Month'|translate:lang}}:</label>
+      {{ form.exp_month|add_class:"form-control"|attr:"placeholder: Exp Month"|attr:"min:1"|attr:"max:12" }}
+    </div>
+    <div class="col-4">
+      <label class="font-weight-semibold" for="{{ form.line_1.label}}">{{'Exp Year'|translate:lang}}:</label>
+      {{ form.exp_year|add_class:"form-control"|attr:"placeholder: Exp Year"|attr:"min:2020"|attr:"max:2100" }}
+    </div>
+
+    <div class="col-4">
+        <label class="font-weight-semibold" for="{{ form.line_2.label}}">{{'CVV'|translate:lang}}:</label>
+        {{ form.cvv|add_class:"form-control"|attr:"placeholder: CVV"|attr:"min:100"|attr:"max:9999" }}
+      </div>
+  </div>
+</div>
+
+<div class = 'form-group'>
+  <input type='submit' class = 'btn btn-success btn-sm' value ='Submit' />
+</div>

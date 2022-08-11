@@ -1,0 +1,166 @@
+{% extends 'frontend/main.html' %}
+{% block main_content %}
+  {% load translate %}
+  {%  load static %}
+
+  {% load widget_tweaks %}
+
+  {%include 'frontend/_header.html'%}
+  <br/>
+  <main>
+    <section class="profile">
+
+      <div class="container">
+        <div class="profile-header">
+
+          <div class="profile-img">
+            {% ifequal request.user.avatar None %}
+              <img src="{% static 'images/avatar.jpeg' %}" alt="Profile Image">
+              {% comment %} <img src="/media/{{ request.user.avatar }}" alt="Profile Image"> {% endcomment %}
+            {% else %}
+              <img src="{% static 'images/avatar.jpeg' %}" alt="Profile Image">
+
+              <img src="/media/{{ request.user.avatar }}" alt="Profile Image">
+            {% endifequal %}
+          </div>
+          <div class="profile-nav-info">
+            <h3 class="user-name">{{request.user.name}}</h3>
+            <div class="address">
+              <p id="state" class="state"></p>
+              <span id="country" class="country">{{request.user.user_type}}</span>
+            </div>
+            
+          </div>
+          <div class="profile-option">
+            <div class="notification">
+              <i class="fa fa-bell"></i>
+              <span class="alert-message">3</span>
+            </div>
+          </div>
+
+        </div>
+        
+        <div class="main-bd">
+          <div class="left-side">
+            <div class="profile-side">
+              <p class="mobile-no"><i class="fa fa-phone"></i> {% if request.user.phone_number != '' %} {{request.user.phone_number}} {% else %} N/A {% endif %}</p>
+              <p class="user-mail"><a  href='mailto: {{request.user.email}}'><i class="fa fa-envelope"></i>{{request.user.email}}</a></p>
+              <div class="user-bio">
+                <h3>About</h3>
+                <p class="userBio">
+                  {{request.user.bio|truncatewords:15}}
+                </p>
+                <h6 class="mobile-no"><a style='color: #ec1b21' href='/users/orders'>My Orders</a></h6>
+                <h6 class="mobile-no"><a style='color: #ec1b21' href='/users/wishlisted_products'>My Favourite Products</a></h6>
+                {% if request.user.is_admin or request.user.is_seller %}
+                  <h6 class="mobile-no"><a style='color: #ec1b21' href='/dashboards/home'>{% if request.user.is_admin %} Admin {% else %} Seller {%endif%} Dashboard</a></h6>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          <div class="pp-right">
+            
+            <div class="nav">
+              <ul>
+                <li onclick="window.location.href = '/users/profile';" class="user-post active">{{'Profile'|translate:lang}}</li>
+                <li onclick="window.location.href = '/users/change_password';" class="user-setting">{{'Settings'|translate:lang}}</li>
+              </ul>
+            </div>
+            <div class="profile-body">
+              <div class="profile-posts tab">
+                <div class='col-lg-12'>
+                  <h1>{{'User Profile'|translate:lang}}</h1>
+                  <form action="{% url 'frontend_user_profile' %}" method='post' enctype="multipart/form-data">
+                    {% csrf_token %}
+                      <div class="form-group">
+                        <div class="row">
+                          <div class="col-md-6">
+                            <label class="font-weight-semibold" for="{{ form.name.label}}">{{'Name'|translate:lang}}:</label>
+                            {{ form.name|add_class:"form-control"|attr:"placeholder: Name" }}
+                            <br>
+                          </div>
+                        
+                          <div class="col-md-6">
+                            <label class="font-weight-semibold" for="{{ form.name.label}}">{{'Email'|translate:lang}}:</label>
+                            {{ form.email|add_class:"form-control"|attr:"placeholder: Email" }}
+                            <br>
+                          </div>
+
+                          <div class="col-md-12">
+                            <label class="font-weight-semibold" for="{{ form.name.label}}">{{'Phone Number'|translate:lang}}:</label>
+                            {{ form.phone_number|add_class:"form-control"|attr:"placeholder: Phone Number"|attr:"type:number"|attr:"min:6000000000"|attr:"max:9999999999" }}
+                            <br>
+                          </div>
+                          
+                          <div class="col-md-12">
+                            <label class="font-weight-semibold" for="{{ form.avatar.label}}">{{'Avatar'|translate:lang}}:</label><br>
+                            {{ form.avatar }}
+                            <br />
+                          </div>
+                          
+                          <input type="hidden" name="user_type" value="{{ user.user_type }}">
+                          <div class="col-md-12">
+                            <br />
+                            <input type='submit' class = 'btn btn-success btn-sm' value ="{{'Update Profile'|translate:lang}}" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+
+  <script>
+    $(".nav ul li").click(function() {
+      $(this)
+      .addClass("active")
+      .siblings()
+      .removeClass("active");
+    });
+
+    const tabBtn = document.querySelectorAll(".nav ul li");
+    const tab = document.querySelectorAll(".tab");
+
+    function tabs(panelIndex) {
+      tab.forEach(function(node) {
+        node.style.display = "none";
+      });
+      tab[panelIndex].style.display = "block";
+    }
+    tabs(0);
+
+    let bio = document.querySelector(".bio");
+    const bioMore = document.querySelector("#see-more-bio");
+    const bioLength = bio.innerText.length;
+
+    function bioText() {
+      bio.oldText = bio.innerText;
+
+      bio.innerText = bio.innerText.substring(0, 100) + "...";
+      bio.innerHTML += `<span onclick='addLength()' id='see-more-bio'>See More</span>`;
+    }
+
+    bioText();
+
+    function addLength() {
+      bio.innerText = bio.oldText;
+      bio.innerHTML +=
+      "&nbsp;" + `<span onclick='bioText()' id='see-less-bio'>See Less</span>`;
+      document.getElementById("see-less-bio").addEventListener("click", () => {
+        document.getElementById("see-less-bio").style.display = "none";
+      });
+    }
+    if (document.querySelector(".alert-message").innerText > 9) {
+      document.querySelector(".alert-message").style.fontSize = ".7rem";
+    }
+
+  </script>
+{% endblock %}

@@ -1,0 +1,234 @@
+
+{% extends 'frontend/main.html' %}
+{% block main_content %}
+{% load translate %}
+  {%  load static %}
+  {%static 'images' as BaseURL%}
+  <style>
+    .swiper-slide img:hover{
+      cursor: pointer;
+    }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.css" />
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
+  <script src="https://unpkg.com/swiper/swiper-bundle.js"></script>
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+  {%include 'frontend/_header.html'%}
+
+  <main>
+    <section>
+      <div class="container">
+        <div class="bg-codeblocks" style='background: #ffffff;'>
+          <div class="main-box-codeblocks">
+            <div class="container">
+              <div class="row">
+                <div class="col-md-12">
+                  <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item"><a href="/">{{'Home'|translate:lang}}</a></li>
+                      <li class="breadcrumb-item"><a href="/products">{{'Products'|translate:lang}}</a></li>
+                      <li class="breadcrumb-item active" aria-current="page">{{product.name}}</li>
+                    </ol>
+                  </nav>
+                </div>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="box-image-codeblocks">
+                    <div class="swiper-container gallery-thumbs">
+                      <div class="swiper-wrapper">
+                          <div class="swiper-slide" >
+                            <img src="{{product.images.0}}" alt="" class="img-fluid">
+                          </div>
+                        
+                      </div>
+                    </div>
+                    <br>
+                    <div class="swiper-container gallery-top">
+                      <div class="swiper-wrapper">
+
+                          {% comment %} <div class="swiper-slide" > {% endcomment %}
+                            <center><img src="{{product.images.0}}" alt="" class="img-fluid"></center>
+                          {% comment %} </div> {% endcomment %}
+                        
+                      </div>
+                      <!-- Add Arrows -->
+                      <div class="swiper-button-next swiper-button-white"></div>
+                      <div class="swiper-button-prev swiper-button-white"></div>
+                    </div>
+                    
+                  </div>
+                </div>
+                <div class="col-md-6 pd-right">
+                  <h2 class="text-bold text-strong">{{product.name}}</h2>
+                  <span>
+                    <h3>${{product.variant_set.first.price}}
+                      <span class="currency-codeblocks">
+                        <small>{{'USD'|translate:lang}}</small>
+                        
+                      </span></h3>
+                    </span>
+                    <span class="description-codeblocks">
+                      
+                      <p>
+                        <strong>{{'Description'|translate:lang}}:</strong> <br>
+                        <span class="text-muted">
+                          {{product.description|truncatewords:10}}
+                        </span>
+                      </p>
+                    </span>
+                    
+                    <span class="buy-form-codeblocks">
+                      <form action="{% url 'add_item_to_cart' %}" class="form-inline" method="post">
+                        {% csrf_token %}
+
+                        <div class="row">
+                          <div class="col-md-3">
+                            <label for="Variant">{{product.option_type.name}}</label>
+                            <select name="variant" id="color" class="form-control" onchange="showVariantQuanity($(this).children('option:selected').data('max-stock'));">
+                              {% for variant in variants %}
+                                <option value="{{ variant.id }}" data-is-favourite='{{ variant.is_wishlisted }}' data-max-stock='{{ variant.stock }}'>{{variant.option_value}}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                          <div class="col-md-3">
+                            <div class="quantityField" style="display: {% if variants.0.stock > 0 %} {{'block'}} {% else %} {{'none'}} {% endif %}">
+                              <label for="Quantity">{{'Quantity'|translate:lang}}</label>
+                              <input type="number" id="quantity" name="quantity" step="1" min="1" value="1" required max="{{variants.0.stock}}" class="form-control">
+                            </div>
+                            <div class="variantOutOfStock" style="color: red !important; display: {% if variants.0.stock == 0 %} block; {% else %} none; {% endif %} margin-top:15px;"><p>{{'Out of Stock'|translate:lang}}</p></div>
+                          </div>
+                          <div class="col-md-3"><button class="btn">{{'Add To Cart'|translate:lang}}</button></div>
+                          <div class="col-md-3">
+                            {% if product in request.user.wishlisted_products %}
+                              <a href="/variants/{{product.id}}/remove-from-wishlist" class="btn btn-danger btn-sm">{{'Unwishlist'|translate:lang}}</a>   
+                            {% else %}
+                              <a href="/variants/{{product.id}}/add-to-wishlist" class="btn btn-danger btn-sm">{{'Wishlist'|translate:lang}}</a>   
+                            {% endif %}
+                          </div>
+                        </div>  
+                      </form>
+                    </span>
+                    <span class="extras-codeblocks ">
+                      <ul class="nav nav-tabs my-2" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                          <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">{{'Full Description'|translate:lang}}</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">{{'Comments'|translate:lang}}</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">{{'Share'|translate:lang}}</a>
+                        </li>
+                      </ul>
+                      <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                          <h5>{{'Full Description'|translate:lang}}:</h5>
+                          <p>{{product.description}}</p>
+                        </div>
+                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                          {% for review in product.review_set.all %}
+                            <div class="media">
+                              {% if review.user.avatar != None or review.user.avatar != '' %}
+                                <img src="/media/{{ review.user.avatar }}" style='height: 150px; width:150px;' class='mr-3' alt="user-image">
+                              {% else %}
+                                <img src="{% static 'images/no_picture.jpeg' %}" style='height: 150px; width:150px;' class='mr-3' alt="user-image">
+                              {% endif %}
+                              <div class="media-body">
+                                <h5 class="mt-0">{{review.user.name}} <br> 
+                                <small class="review-coment">
+                                  <div class="user-rating">
+                                    {% comment %} <h3 class="rating">4</h3> {% endcomment %}
+                                    <div class="rate">
+                                      <div class="star-outer">
+                                        <div class="star-inner">
+                                          {% comment %} {%  %} {% endcomment %}
+                                          <i class="fa fa-star"></i>
+                                          <i class="fa fa-star"></i>
+                                          <i class="fa fa-star"></i>
+                                          <i class="fa fa-star"></i>
+                                          <i class="fa fa-star" style='color: grey;'></i>
+
+                                        </div>
+                                      </div>
+                                      <span class="no-of-user-rate"><span>{{product.review_set.all.count}}</span>&nbsp;&nbsp;reviews</span>
+                                    </div>
+                                  </h5>
+                                </small>
+                                {{review.review}}
+                              </div>
+                            </div>
+                          {% endfor %}
+                        </div>
+                        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                          
+                          <div id="share"></div>
+                        </div>
+                      </div>
+                    </span>
+                    
+                  </div>
+                </div>
+                <div class="row">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+  <script>
+    showVariantQuanity = function(variantStock){
+      if (variantStock > 0){
+        $('.variantOutOfStock').hide();
+        $('.quantityField').show();
+        $('#quantity').attr('max', variantStock);
+        $('#quantity').val('1');
+      } else{
+        $('.quantityField').hide();
+        $('.variantOutOfStock').show();
+      }
+    }
+    $(document).ready(function(){
+      showVariantQuanity({{product.variant_set.first.stock}});
+      $('#color').on('change', function(){
+        var isWishlisted = $(this).children('option:selected').data('is-favourite');
+        if(isWishlisted == 'True'){
+          $('.variantFavourite').html('<a href="/variants/'+ $(this).children('option:selected').val() +'/remove-from-wishlist" class="btn btn-danger btn-sm"><i class="fas fa-heart"></i></a>');
+        } else{
+          $('.variantFavourite').html('<a href="/variants/'+ $(this).children('option:selected').val() +'/add-to-wishlist" class="btn btn-success btn-sm"><i class="far fa-heart"></i></a>');
+        }
+      });
+      $('.product-image').zoom({url: 'https://placehold.it/1080'});
+    });
+    // Optional parameters
+    var galleryThumbs = new Swiper('.gallery-thumbs', {
+      spaceBetween: 10,
+      slidesPerView: 4,
+      loop: false,
+      freeMode: false,
+      loopedSlides: 5, //looped slides should be the same
+      watchSlidesVisibility: true,
+      watchSlidesProgress: true,
+    });
+    var galleryTop = new Swiper('.gallery-top', {
+      spaceBetween: 10,
+      loop: true,
+      loopedSlides: 5, //looped slides should be the same
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      thumbs: {
+        swiper: galleryThumbs,
+      },
+    });
+
+
+    
+
+  </script>
+{% endblock %}

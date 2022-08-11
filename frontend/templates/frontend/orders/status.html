@@ -1,0 +1,82 @@
+{% extends 'frontend/main.html' %}
+{% block main_content %}
+{% load translate %}
+  {%  load static %}
+  <header>
+    <section class="login-logo"><a href='/'><img src="{% static 'frontend/images/logo.png' %}" alt=""></a></section>
+  </header>
+
+  <main>
+   <section class="status">
+    <div class="container">
+      <div class="status-head">
+        <div class="row">
+          <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">{{'Home'|translate:lang}}</a></li>
+                <li class="breadcrumb-item"><a href="/users/orders">{{'My Orders'|translate:lang}}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{'Order Status'|translate:lang}}</li>
+              </ol>
+            </nav>
+          </div>
+          <div class="col-md-6 sh-left">
+            <h3>{{'Order Details'|translate:lang}}</h3>
+            <h5><a style='color: Black;' href="{% url 'product' order_item.variant.product.slug %}">{{order_item.variant.product.name}} - {{order_item.display_variant}}</a></h5>
+            <p>{{order_item.variant.product.description|truncatewords:20}}</p>
+            <h6>{{'Order ID'|translate:lang}} - <span>{{ order_item.order.number }}</span></h6>
+            <h7>{{'Quantity'|translate:lang}} - <span>{{ order_item.quantity }}</span></h7><br>
+            <h7>{{'Total'|translate:lang}} - <span>${{ order_item.item_total }}</span></h7><br>
+            <h7>{{'Payment Method'|translate:lang}} - <span>{{'Stripe'|translate:lang}}</span></h7>
+            {% if order_item.dispatched%}
+              <br>
+              <h7>{{'Courier Agency'|translate:lang}} - <span>{{ order_item.courier_agency|title }}</span></h7><br>
+              <h7>{{'Traking AWB'|translate:lang}} - <span>{{ order_item.tracking_number }}</span></h7><br>
+            {% endif %}
+
+
+          </div>
+          <div class="col-md-6 sh-right">
+            {% if order_item.dispatched %}
+              <h6>{{'Dispatched on'|translate:lang}} <strong><span>{{ order_item.dispatched_at }}</span></strong> </h6>
+            {%else%}
+              <h6>{{'Order placed on'|translate:lang}} <strong><span>{{ order_item.created_at|date:"d b, Y"|title }}</span></strong> </h6>
+            {% endif %}
+            <ul>
+              <li><a href="#" class="btn">{{'Need Help'|translate:lang}}</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="status-body">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 track-stat">
+            <div class="row justify-content-between">
+              <div class="order-tracking completed">
+                <span class="is-complete"></span>
+                <p>{{'Order Placed'|translate:lang}}<br><span>{{order_item.created_at|date:"d b, Y"|title}}</span></p>
+              </div>
+              <div class="order-tracking completed">
+                <span class="is-complete"></span>
+                <p>{{'Order Confirmed'|translate:lang}}<br><span>{{order_item.created_at|date:"d b, Y"|title}}</span></p>
+              </div>
+              <div class="order-tracking {% if order_item.dispatched %} completed {% endif %}">
+                <span class="is-complete"></span>
+                <p>{{'Picked by the courier'|translate:lang}}<br><span>{{order_item.dispatched_at|date:"d b, Y"|title}}</span></p>
+              </div>
+              <div class="order-tracking {% if order_item.dispatched %} completed {% endif %}">
+                <span class="is-complete"></span>
+                <p>{{'Shipped'|translate:lang}}<br><span>{{order_item.dispatched_at|date:"d b, Y"|title}}</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</section>
+</main>
+{% endblock %}

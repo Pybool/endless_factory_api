@@ -1,0 +1,222 @@
+{% extends 'dashboard/main.html' %}
+{% block main_content %}
+{% load translate %}
+    <div class="main-content">
+        <div class="row">
+            <div class = "col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">
+                            {{'Showing Order'|translate:lang}} #{{item.order.number}}
+                            {% if item.dispatched == False and request.user.is_seller %}
+                                <div class="modal" tabindex="-1" role="dialog" id="markItemShippedModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">{{'Mark'|translate:lang}} {{item.variant.product.name}} {{'Shipped'|translate:lang}}</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <form action ="{% url 'mark_item_shipped' item.id %}" method='post'>
+                                                {% csrf_token %}
+
+                                                <div class="modal-body">
+                                                    <div class="form-group">
+                                                        <label>{{'Dispatched At'|translate:lang}}</label>
+                                                        <input type='date' name='dispatched_at' class='form-control' required />
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>{{'Courier Agency'|translate:lang}}</label>
+                                                        <input type='text' placeholder='Courier Agency' name='courier_agency' class='form-control' required />
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>{{'Tracking Number'|translate:lang}}</label>
+                                                        <input type='text' placeholder='Tracking Number' name='tracking_number' class='form-control' required />
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-primary">{{'Save changes'|translate:lang}}</button>
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{'Close'|translate:lang}}</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a href='#' class='btn btn-sm btn-success' data-toggle="modal" data-target="#markItemShippedModal">{{'Mark as Shipped'|translate:lang}}</a>
+                            {% endif %}
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="m-t-10">
+                            
+                            <table class="table table-bordered">
+                                <tbody>
+
+                                    <tr>
+                                        <th width='20%'>{{'Date'|translate:lang}}</th>
+                                        <td>{{ item.created_at }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th width='20%'>{{'Status'|translate:lang}}</th>
+                                        <td>{{'Placed'|translate:lang}}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th width='20%'>{{'Total'|translate:lang}}</th>
+                                        <td>$ {{ item.item_total }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th width='20%'>{{'User'|translate:lang}}</th>
+                                        <td>{% if item.order.user.name is not None %} {{ item.order.user.name }} {% else %} {{'N/A'}} {% endif %}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th width='20%'>{{'Special Instructions'|translate:lang}}</th>
+                                        <td>{% if item.order.special_instructions != '' %} {{ item.order.special_instructions }} {% else %} {{'N/A'}} {% endif %}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">{{'Customer Details'|translate:lang}}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="m-t-10">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th width='20%'>{{'Name'|translate:lang}}</th>
+                                        <td>{{ item.order.user.name }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th width='20%'>{{'Email'|translate:lang}}</th>
+                                        <td>{{ item.order.user.email }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">{{'Shipping Address'|translate:lang}}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="m-t-10">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th width='20%'>{{'First Name'|translate:lang}}</th>
+                                        <td>{{ item.order.shipping_address.first_name }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th width='20%'>{{'Last Name'|translate:lang}}</th>
+                                        <td>{{ item.order.shipping_address.last_name }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th width='20%'>{{'Line 1'|translate:lang}}</th>
+                                        <td>{{ item.order.shipping_address.line_1 }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th width='20%'>{{'Line 2'|translate:lang}}</th>
+                                        <td>{{ item.order.shipping_address.line_2 }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th width='20%'>{{'City'|translate:lang}}</th>
+                                        <td>{{ item.order.shipping_address.city }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th width='20%'>{{'State'|translate:lang}}</th>
+                                        <td>{{ item.order.shipping_address.state }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th width='20%'>{{'Country'|translate:lang}}</th>
+                                        <td>{{ item.order.shipping_address.country }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">{{'Transaction Details'|translate:lang}}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="m-t-10">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th width='20%'>{{'Stripe Transaction ID'|translate:lang}}</th>
+                                        <td>{{ item.order.transaction.transaction_id }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th width='20%'>{{'Card Last 4 Digits'|translate:lang}}</th>
+                                        <td>{{ item.order.transaction.card_number_last_4 }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th width='20%'>{{'Card Brand'|translate:lang}}</th>
+                                        <td>{{ item.order.transaction.card_brand }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th width='20%'>{{'Card Expiry Month'|translate:lang}}</th>
+                                        <td>{{ item.order.transaction.card_expiry_month }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th width='20%'>{{'Card Expiry Year'|translate:lang}}</th>
+                                        <td>{{ item.order.transaction.card_expiry_year }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">{{'Line Items'|translate:lang}}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="m-t-10">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>{{'Product'|translate:lang}}</th>
+                                        <th>{{'Quantity'|translate:lang}}</th>
+                                        <th>{{'Price'|translate:lang}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td width='50%'><a href="{% url 'edit_product' item.variant.product.slug %}" target="_blank">{{ item.variant.product.name }}</a> ({{item.display_variant}})</td>
+                                        <td>{{item.quantity}}</td>
+                                        <td>$ {{item.price}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

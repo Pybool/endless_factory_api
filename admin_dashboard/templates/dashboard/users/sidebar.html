@@ -1,0 +1,14 @@
+{% load translate %}
+<div class="col-lg-2">
+  <div class="list-group">
+    <a href="{% url 'edit_user' user.id %}" class="list-group-item list-group-item-action {% if active_tab == 'details' %} {{'active'}} {% endif %}">
+      <i class="fa fa-pencil-alt"></i> {{'Details'|translate:lang}}
+    </a>
+    <a href="{% url 'user_addresses' user.id %}" class="list-group-item list-group-item-action {% if active_tab == 'addresses' %} {{'active'}} {% endif %}">
+      <i class="fa fa-home"></i> {{'Addresses'|translate:lang}}
+    </a>
+    <a href="{% url 'credit_cards' user.id %}" class="list-group-item list-group-item-action {% if active_tab == 'credit_cards' %} {{'active'}} {% endif %}">
+      <i class="fa fa-credit-card"></i> {{'Payment Cards'|translate:lang}}
+    </a>
+  </div>
+</div>

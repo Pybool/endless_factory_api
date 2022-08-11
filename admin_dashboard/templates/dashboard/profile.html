@@ -1,0 +1,55 @@
+{% extends 'dashboard/main.html' %}
+{% block main_content %}
+{% load static %}
+{% load widget_tweaks %}
+{% load translate %}
+
+<div class="main-content">
+    <div class="row">
+        <div class = "col-lg-12">
+            {% include 'dashboard/_messages.html' %}
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">{{'Update Profile'|translate:lang}}</h4>
+                </div>
+                <div class="card-body">
+                    <div class="m-t-10">
+                        <form action = "{% url 'user_profile' %}" method='post' enctype="multipart/form-data"> 
+                            {% csrf_token %}
+                            {% include 'dashboard/shared/error_messages.html' with form=form %}
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <label class="font-weight-semibold" for="{{ form.name.label}}">{{'Name'|translate:lang}}:</label>
+                                        {{ form.name|add_class:"form-control"|attr:"placeholder: Name" }}
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <label class="font-weight-semibold" for="{{ form.email.label}}">{{'Email'|translate:lang}}:</label>
+                                        {{ form.email|add_class:"form-control"|attr:"placeholder: Email" }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <label class="font-weight-semibold" for="{{ form.country.label}}">{{'Country'|translate:lang}}:</label>
+                                        {{ form.country|add_class:"form-control"|attr:"placeholder: Country" }}
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <label class="font-weight-semibold" for="{{ form.password.label}}">{{'Password'|translate:lang}}:</label>
+                                        {{ form.password|add_class:"form-control"|attr:"placeholder: Password"|attr:"type:password"|attr:"value: nil" }}
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" name="user_type" value="{{ user.user_type }}">
+                            <div class = 'form-group'>
+                                <input type='submit' class = 'btn btn-success btn-sm' value ='Update Profile' />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

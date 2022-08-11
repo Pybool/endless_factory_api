@@ -1,0 +1,49 @@
+{% extends 'dashboard/main.html' %}
+{% load translate %}
+{% block main_content %}
+<div class="main-content">
+  <div class="row">
+    <div class = "col-lg-10">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title">{{'Addresses'|translate:lang}}</h4>
+        </div>
+        <div class="card-body">
+          <div class="m-t-10">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>{{'First Name'|translate:lang}}</th>
+                    <th>{{'City'|translate:lang}}</th>
+                    <th>{{'State'|translate:lang}}</th>
+                    <th>{{'Country'|translate:lang}}</th>
+                    <th>{{'Actions'|translate:lang}}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for address in addresses %}
+                  <tr>
+                    <td>{{address.id}}</td>
+                    <td>{{address.first_name}}</td>
+                    <td>{{address.city}}</td>
+                    <td>{{address.state}}</td>
+                    <td>{{address.country}}</td>
+                    <td><a href="{% url 'edit_user_address' user.id address.id %}">{{'Edit'|translate:lang}}</a></td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
+              <a href="{% url 'new_user_address' user.id %}" class='btn btn-primary btn-sm'>{{'New Address'|translate:lang}}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% include 'dashboard/users/sidebar.html' with user=user active_tab='addresses' %}
+
+  </div>
+</div>
+{% endblock %}

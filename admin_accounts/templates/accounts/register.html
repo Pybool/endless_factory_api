@@ -1,0 +1,46 @@
+{% extends 'frontend/main.html' %}
+{% load translate %}
+
+{% block main_content %}
+    {%  load static %}
+    {% load widget_tweaks %}
+    {%include 'frontend/_header.html'%}
+    <main>
+        <section class="login">
+            <div class="container">
+                <div class="form-wrap">
+                    <div class="tabs">
+                        <h3 class="signup-tab"><a class='active' href="/user/register">{{'Sign Up'|translate:lang}}</a></h3>
+                        <h3 class="login-tab"><a href="/user/login">{{'Login'|translate:lang}}</a></h3>
+                    </div>
+            
+                    <div class="tabs-content">
+                        <div id="signup-tab-content" class="active">
+                            <form class="signup-form" action="" method="post">
+                                {% csrf_token %}
+                                {% include 'frontend/shared/error_messages.html' with form=form %}
+                                {{ form.name|add_class:"input"|attr:"id: user_name"|attr:"placeholder:Name"|attr:"value:" }}
+                                {{ form.email|add_class:"input"|attr:"id: user_email"|attr:"placeholder:Email" }}
+                                
+                                <select name="user_type" id='user_name' class="form-control" style='margin-bottom: 0.8em; padding: .8em 0 10px .8em; height: 48px;'>
+                                    <option value="Buyer">Buyer</option>
+                                    <option value="Seller">Seller</option>
+                                </select>
+                                {{ form.country|add_class:"input"|attr:"id: user_country"|attr:"placeholder:'Country'|translate:lang" }}
+
+                                {{ form.password1|add_class:"input"|attr:"id: user_pass"|attr:"placeholder:Password" }}
+                                {{ form.password2|add_class:"input"|attr:"id: user_email"|attr:"placeholder:Confirm Password" }}
+
+                                <input type="submit" class="button" value="{{'Sign Up'|translate:lang}}">
+                            </form>
+                            <div class="help-text">
+                                <p>{{'By signing up, you agree to our '|translate:lang}} <br><a href="#">{{'Terms of service'|translate:lang}}</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+{% endblock %}

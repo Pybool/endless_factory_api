@@ -1,0 +1,13 @@
+{% for message in messages %}
+    <!-- <div class="container"> -->
+        {% if message.level_tag == 'success' %}
+            <p id="message" class="alert alert-success">{{ message }}</p>
+        {% elif message.level_tag == 'info' %}
+            <p id="message" class="alert alert-info">{{ message }}</p>
+        {% elif message.level_tag == 'error' %}
+            <p id="message" class="alert alert-danger">{{ message }}</p>
+        {% elif message.level_tag == 'warning' %}
+            <p id="message" class="alert alert-warning">{{ message }}</p>
+        {% endif %}
+    <!-- </div> -->
+{% endfor %}

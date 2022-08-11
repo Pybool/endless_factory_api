@@ -1,0 +1,111 @@
+{% extends 'frontend/main.html' %} {% block main_content %} {% load static %}
+{%load translate %} {%include 'frontend/_header.html'%}
+
+<style>
+  a.checkout:hover,
+  a.remove-product:hover {
+    color: #fff;
+    background-color: #ff0008;
+  }
+</style>
+<main>
+  <section class="cart-page">
+    <div class="container">
+      {% comment %}
+      <h1>{{'Shopping Cart'|translate:lang}}</h1>
+      {% endcomment %} {% if cart.is_empty %}
+      <div class="col-lg-12" style="height: 300px">
+        <br /><br /><br /><br />
+        <h5>
+          {{'Cart is Empty. Please add items to the Cart'|translate:lang}}
+        </h5>
+        <a href="/products" class="btn btn-primary">Products</a>
+      </div>
+      {% else %}
+      <div class="shopping-cart">
+        <div class="column-labels">
+          <label class="product-image">{{'Image'|translate:lang}}</label>
+          <label class="product-details">{{'Product'|translate:lang}}</label>
+          <label class="product-price">{{'Price'|translate:lang}}</label>
+          <label class="product-quantity">{{'Quantity'|translate:lang}}</label>
+          <label class="product-removal">{{'Remove'|translate:lang}}</label>
+          <label class="product-line-price">{{'Total'|translate:lang}}</label>
+        </div>
+        {% for item in cart.cartitem_set.all %}
+        <form action="{% url 'update_cart_item' item.id %}" method="POST">
+          {% csrf_token %}
+          <div class="cart-product">
+            <div class="product-image">
+              <img src="/media/{{ item.product.attachment_set.first.file }}" />
+            </div>
+            <div class="product-details">
+              <div class="product-title">
+                <h5>
+                  <a
+                    href="{% url 'product' item.variant.product.slug %}"
+                    target="_blank"
+                    >{{item.variant.product.name}}</a
+                  >
+                  ({{item.display_variant}})
+                </h5>
+              </div>
+              <p class="product-description">
+                {{item.product.description|truncatewords:10}}
+              </p>
+            </div>
+            <div class="product-price">{{ item.variant.price }}</div>
+            <div class="product-quantity">
+              <input
+                type="number"
+                value="{{item.quantity}}"
+                name="quantity"
+                min="1"
+                max="{{item.variant.stock}}"
+              />
+              <button
+                class="btn btn-success btn-sm"
+                style="height: 34px; margin-bottom: 3px"
+                type="submit"
+              >
+                <i class="fa fa-pencil" aria-hidden="true"></i>
+              </button>
+            </div>
+            <div class="product-removal">
+              <a
+                href="{% url 'remove_item_from_cart' item.id %}"
+                method="delete"
+                data-confirm="Are you sure?"
+                class="remove-product"
+              >
+                {{'Remove'|translate:lang}}
+              </a>
+            </div>
+            <div class="product-line-price">{{item.subtotal}}</div>
+          </div>
+        </form>
+        {% endfor %}
+
+        <div class="totals">
+          <div class="totals-item">
+            <label>{{'Subtotal'|translate:lang}}</label>
+            <div class="totals-value" id="cart-subtotal">{{cart.total}}</div>
+          </div>
+          <div class="totals-item totals-item-total">
+            <label>{{'Endless Factory Cut'|translate:lang}}</label>
+            <div class="totals-value" id="cart-total">
+              {{cart.endless_factory_cut}}
+            </div>
+          </div>
+          <div class="totals-item totals-item-total">
+            <label>{{'Grand Total'|translate:lang}}</label>
+            <div class="totals-value" id="cart-total">{{cart.grand_total}}</div>
+          </div>
+        </div>
+
+        <a href="/orders/checkout" class="checkout">{{'Checkout'|translate:lang}}</a>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+</main>
+{% endblock %}

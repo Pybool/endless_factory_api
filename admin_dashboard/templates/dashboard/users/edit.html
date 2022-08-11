@@ -1,0 +1,126 @@
+{% extends 'dashboard/main.html' %}
+{% block main_content %}
+{% load widget_tweaks %}
+{% load translate %}
+    
+    <div class="main-content">
+        <div class="row">
+            <div class = "col-lg-10">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">{{'Editing'|translate:lang}} {{user.name}}</h4>
+                    </div>
+                    <div class="card-body">
+                        
+                        <div class="m-t-10">
+                            <form action = "{% url 'edit_user' user.id %}" method='post' enctype="multipart/form-data"> 
+                                
+                                {% csrf_token %}
+                                {% include 'dashboard/shared/error_messages.html' with form=form %}
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <label class="font-weight-semibold" for="{{ form.name.label}}">{{'Name'|translate:lang}}:</label>
+                                            {{ form.name|add_class:"form-control"|attr:"placeholder: Name" }}
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <label class="font-weight-semibold" for="{{ form.name.label}}">{{'Email'|translate:lang}}:</label>
+                                            {{ form.email|add_class:"form-control"|attr:"placeholder: Email" }}
+                                        </div>
+
+                                        <div class="col-lg-4">
+                                            <label class="font-weight-semibold" for="{{ form.country.label}}">{{'Country'|translate:lang}}:</label>
+                                            {{ form.country|add_class:"form-control"|attr:"placeholder: Country" }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <label class="font-weight-semibold" for="{{ form.name.label}}">{{'Phone Number'|translate:lang}}:</label>
+                                            {{ form.phone_number|add_class:"form-control"|attr:"placeholder: Phone Number" }}
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <label class="font-weight-semibold" for="{{ form.name.label}}">{{'Password'|translate:lang}}:</label>
+                                            {{ form.password|add_class:"form-control"|attr:"placeholder: Password"|attr:"type:password" }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="user_type" value="{{user.user_type}}" />
+                                {% if user.user_type == 'Seller' or self.user_type == 'Both' %}
+                                    <h2>Seller Account Details</h2>
+                                    <hr>
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="{{ form.name.label}}">{{'Company Name'|translate:lang}}:</label>
+                                        {{ form.company_name|add_class:"form-control"|attr:"placeholder: Company Name" }}
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <label class="font-weight-semibold" for="{{ form.name.label}}">{{'Description'|translate:lang}}:</label>
+                                                {{ form.company_description|add_class:"form-control"|attr:"placeholder: Description" }}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="row">
+                                            
+                                            <div class="col-lg-6">
+                                                <label class="font-weight-semibold" for="{{ form.name.label}}">{{'Entity Type'|translate:lang}}:</label>
+                                                {{ form.entity_type|add_class:"form-control"|attr:"placeholder: Entity Type" }}
+                                            </div>
+
+                                            <div class="col-lg-6">
+                                                <label class="font-weight-semibold" for="{{ form.name.label}}">{{'Tax ID'|translate:lang}}:</label>
+                                                {{ form.tax_id_number|add_class:"form-control"|attr:"placeholder: Tax ID" }}
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <label class="font-weight-semibold" for="{{ form.name.label}}">{{'Bank Info'|translate:lang}}:</label>
+                                                {{ form.bank_info|add_class:"form-control"|attr:"placeholder: Bank Info" }}
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <label class="font-weight-semibold" for="{{ form.name.label}}">{{'No. of Employees'|translate:lang}}:</label>
+                                                {{ form.number_of_employees|add_class:"form-control"|attr:"placeholder: No. of Employees" }}
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <label class="font-weight-semibold" for="{{ form.name.label}}">{{'Year Founded'|translate:lang}}:</label>
+                                                {{ form.year_founded|add_class:"form-control"|attr:"placeholder: Year Founded" }}
+                                            </div>
+                                        
+                                            <div class="col-lg-4">
+                                                <label class="font-weight-semibold" for="{{ form.name.label}}">{{'Gross Annual Income'|translate:lang}}:</label>
+                                                {{ form.gross_annual_revenue|add_class:"form-control"|attr:"placeholder: Gross Annual Income" }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                {% endif %}
+                                
+                                <div class = 'form-group'>
+                                    <input type='submit' class = 'btn btn-success btn-sm' value ='Submit' />
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% include 'dashboard/users/sidebar.html' with user=user active_tab='details' %}
+
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'frontend/main.html' %}
+
+{% block main_content %}
+  {% load translate %}
+  {%  load static %}
+  {%include 'frontend/_header.html'%}
+
+  <main>
+    <section class="fav-page">
+      <div class="container">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">{{'Home'|translate:lang}}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{'My Favorite Products'|translate:lang}}</li>
+          </ol>
+        </nav>
+      </div>
+
+      <div class="container">
+        <div class="tools">
+          <div class="settings">
+            <button id="view">{{'Switch View'|translate:lang}}</button>
+          </div>
+        </div>
+        <div class="fp sp products products-table">
+          {% for wishlisted_product in wishlisted_products %}
+            <div class="product">
+              <div class="product-img">
+                <a href="{% url 'product' wishlisted_product.product.slug %}"><img src="/media/{{ wishlisted_product.product.attachment_set.first.file }}"></a>
+              </div>
+              <div class="product-content">
+                <h3>
+                  <a href="{% url 'product' wishlisted_product.product.slug %}">{{ wishlisted_product.product.name }}</a>
+                  <small>{{wishlisted_product.product.description|truncatewords:10}}</small>
+                </h3>
+                <p class="product-text price">$ {{wishlisted_product.product.variants.first.price}}</p>
+                <a href="{% url 'product' wishlisted_product.product.slug %}" class="btn">{{'Buy now'|translate:lang}}</a>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    $("#view").click(function() {
+      $(".products").toggleClass("products-table");
+    });
+  </script>
+{% endblock %}

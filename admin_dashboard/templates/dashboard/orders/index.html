@@ -1,0 +1,57 @@
+{% extends 'dashboard/main.html' %}
+{% block main_content %}
+{% load translate %}
+    <div class="main-content">
+        <div class="row">
+            <div class = "col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">{{'Orders'|translate:lang}}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="m-t-10">
+                            {% if order_items.count > 0 %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>{{'Number'|translate:lang}}</th>
+                                                <th>{{'Date'|translate:lang}}</th>
+                                                <th>{{'Product'|translate:lang}}</th>
+                                                <th>{{'Status'|translate:lang}}</th>
+                                                <th>{{'Shipping Status'|translate:lang}}</th>
+                                                <th>{{'Total'|translate:lang}}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for item in order_items %}
+                                                <tr>
+                                                    <td><a href="{% url 'orders_list' %}?oid={{item.id}}">{{ item.order.number }}</a></td>
+                                                    <td>{{ item.created_at }}</td>
+                                                    <td>
+                                                        <a href="{% url 'edit_product' item.variant.product.slug %}">{{item.variant.product.name}} - {{item.display_variant}}</a>
+                                                    </td>
+                                                    <td>{{'Placed'|translate:lang}}</td>
+
+                                                    <td>
+                                                        {% if item.dispatched %} {{'Shipped'|translate:lang}} {% else %} {{'Pending'|translate:lang}} {% endif %}
+                                                    </td>
+                                                    <td>$ {{ item.item_total }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class='container' style='height: 100%;'>
+                                    <center><h3>{{'No orders found!'|translate:lang}}</h3></center>
+                                </div>
+                            {% endif%}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+        

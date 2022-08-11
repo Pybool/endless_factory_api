@@ -1,0 +1,100 @@
+{% load widget_tweaks %}
+{% load translate %}
+{% csrf_token %}
+<div class="form-group">
+  <div class="row">
+    <div class="col-9">
+      <label class="font-weight-semibold" for="{{ form.name.label}}">{{'Name'|translate:lang}}:</label>
+      {{ form.name|add_class:"form-control"|attr:"placeholder: Name" }}
+    </div>
+    <div class="col-3">
+      <label class="font-weight-semibold" for="{{ form.category.label}}">{{'Category'|translate:lang}}:</label>
+      {{ form.category|add_class:"form-control" }}
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="font-weight-semibold" for="{{ form.description.label}}">{{'Description'|translate:lang}}:</label>
+  {{ form.description|add_class:"form-control"|attr:"placeholder: Description" }}
+</div>
+
+
+{% if form.instance.id == None %}
+  <div class="form-group">
+    <div class="row">
+      <div class="col-{% if request.user.is_admin %}{{'4'}}{%else%}{{'12'}}{% endif %}">
+        <label class="font-weight-semibold" for="{{ form.model_number.label}}">{{'Option Type'|translate:lang}}:</label>
+        {{ form.option_type|add_class:"form-control"|attr:"placeholder: Option Type" }}
+      </div>
+      {% if request.user.is_admin %}
+        <div class="col-8">
+          <label class="font-weight-semibold" for="{{ form.model_number.label}}">{{'User'|translate:lang}}:</label>
+          <select class='form-control' name='user'>
+            {% for user in users %}
+              <option value='{{user.id}}'>{{user.name}} ({{user.email}})</option>
+            {% endfor %}
+          </select>
+        </div>
+      {% else %}
+        <input type='hidden' name='user' value='{{request.user.id}}' />
+      {% endif %}
+    </div>
+  </div>
+{% else %}
+  <input type="hidden" name="option_type" value="{{form.instance.option_type_id}}">
+{% endif %}
+
+<div class="form-group">
+  <div class="row">
+    <div class="col-3">
+      <label class="font-weight-semibold" for="{{ form.model_number.label}}">{{'Model Number'|translate:lang}}:</label>
+      {{ form.model_number|add_class:"form-control"|attr:"placeholder: Model Number" }}
+    </div>
+
+    <div class="col-3">
+      <label class="font-weight-semibold" for="{{ form.min_order_quantity.label}}">{{'Min Order Quantity'|translate:lang}}:</label>
+      {{ form.min_order_quantity|add_class:"form-control"|attr:"placeholder: Min Order Quantity" }}
+    </div>
+
+    <div class="col-3">
+      <label class="font-weight-semibold" for="{{ form.max_order_quantity.label}}">{{'Max Order Quantity'|translate:lang}}:</label>
+      {{ form.max_order_quantity|add_class:"form-control"|attr:"placeholder: Max Order Quantity" }}
+    </div>
+
+    <div class="col-3">
+      <label class="font-weight-semibold" for="{{ form.delivery_option.label}}">{{'Delivery Option'|translate:lang}}:</label>
+      {{ form.delivery_option|add_class:"form-control" }}
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="font-weight-semibold" for="{{ form.color.label}}">{{'Search Tags'|translate:lang}}:</label>
+  {{ form.search_tags|add_class:"form-control"|attr:"placeholder: Color" }}
+</div>
+
+<div class="form-group">
+  <label class="font-weight-semibold" for="{{ form.is_active.label}}">{{'Active'|translate:lang}}:</label>
+  {{ form.is_active }}
+</div>
+
+<div class="form-group">
+  <label class="font-weight-semibold" for="{{ form.new_arrival.label}}">{{'New Arrival'|translate:lang}}:</label>
+  {{ form.new_arrival }}
+</div>
+
+{% if request.user.is_admin %}
+  <div class="form-group">
+    <label class="font-weight-semibold" for="{{ form.approved.label}}">{{'Approved'|translate:lang}}:</label>
+    {{ form.approved }}
+  </div>
+
+  <div class="form-group">
+    <label class="font-weight-semibold" for="{{ form.featured.label}}">{{'Featured'|translate:lang}}:</label>
+    {{ form.featured }}
+  </div>
+{% endif %}
+<div class = 'form-group'>
+  <input type='submit' class = 'btn btn-success btn-sm' value ='Submit' />
+</div>

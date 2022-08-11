@@ -1,0 +1,104 @@
+
+{% extends 'frontend/main.html' %}
+{% block main_content %}
+    {%  load static %}
+    {% load translate %}
+    {%include 'frontend/_header.html'%}
+    <main>
+        <section class="side-nav">
+            <div class="container">
+                <div class="row">
+                 
+                    <div class="col-md-3 pb-left">
+                        <nav>
+                            <ul>
+                             
+                                <li class='sub-menu'><a href='#link'>{{'Country Filter'|translate:lang}}<i class="fa fa-caret-right right"></i></a>
+                                    <ul>
+                                        <div class="items">
+                                            {% for country in countries %}
+                                                <input id='checkbox' name='country' type='checkbox' value='{{country}}' />
+                                                <label>{{country}}</label><br>
+                                            {% endfor %}
+                                        </div>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="col-md-9 pb-right">
+                      
+                        <div class="filters" style='padding-top: 0px;'>
+                            <div class="row">
+                                <div class="col-md-11">
+                                    <div class="content">
+                                        <select name="service" class="form-control">
+                                            <option value="" disabled="" selected="">{{'Sort By'|translate:lang}}</option>
+                                            <option value="">{{'Low to High'|translate:lang}}</option>
+                                            <option value="">{{'High to Low'|translate:lang}}</option>
+                                            <option value="">{{'Popular'|translate:lang}}</option>
+                                            <option value="">{{'Recent'|translate:lang}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-1"><button href="#" style='height:39px;' class="btn btn-success btn-sm">{{'Sort'|translate:lang}}</button></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            {% if products.count > 0 %}
+                                {% for product in products %}
+                                <div class="col-md-3">
+                                    <li class=" fl-l" style="margin-bottom: 10px; margin-top: 30px;">
+                                    <div class="container-prod">
+                                        <a href="{% url 'product' product.slug %}">
+                                        {% if product.attachment_set.first.file != None %}
+                                            <img src="/media/{{ product.attachment_set.first.file }}" style='height: 230px; width: 100%;' alt="">
+                                        {% else %}
+                                            <img src="{% static 'images/no_picture.jpeg' %}" style='height: 230px; width: 100%;' alt="">
+                                        {% endif%}
+                                        </a>
+                                    </div>
+                                    <div class="container-information">
+                                        <div class="title">
+                                        {{product.name}}
+                                        <a href="javascript:void(0)" class="more close"><i class="fa fa-times"></i></a>                
+                                        </div>
+                                        <div class="description">{{'Item Added to Wishlist'|translate:lang}}</div>
+                                    </div>
+                                    
+                                    <div class="buttons cf">
+                                        <a href="{% url 'product' product.slug %}" class="cart fl-l">
+                                        <span>
+                                            <span class="add">{{'Add to cart'|translate:lang}} <i class="fa fa-shopping-cart"></i></span>
+                                            <span class="check"><i class="fa fa-check"></i></span>
+                                        </span>
+                                        </a>
+                                        {% if product in request.user.wishlisted_products %}
+                                        <a href="/variants/{{product.variants.0.id}}/remove-from-wishlist"  class="btn btn-danger btn-sm"><span><i class="fa fa-heart"></i></a>   
+                                        {% else %}
+                                        <a href="/variants/{{product.variants.0.id}}/add-to-wishlist" class="btn btn-danger btn-sm"><span><i class="fa fa-heart-o"></i></a>   
+                                        {% endif %}
+                                        <a href="javascript:void(0)" class="share fl-l" onclick='$(".product-{{product.id}}-share-box").slideToggle(400);'><span><i class="fa fa-share-alt"></i></span></a>
+                                    </div>
+                                    <div class="sharing product-{{product.id}}-share-box cf" style='display:none;'>
+                                        <a href="#" class="fl-l" target="_blank"><i class="fa fa-facebook"></i></a>
+                                        <a href="#" class="fl-l" target="_blank"><i class="fa fa-twitter"></i></a>
+                                        <a href="#" class="fl-l" target="_blank"><i class="fa fa-google-plus"></i></a>
+                                        <a href="#" class="fl-l" target="_blank"><i class="fa fa-linkedin"></i></a>
+                                    </div>
+                                    </li>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="col-md-12">
+                                <li class="product fl-l" style="margin-bottom: 10px;"><center>{{'No products found!'|translate:lang}}</center></li>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+{% endblock %}
+

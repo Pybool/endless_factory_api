@@ -1,0 +1,16 @@
+{% load widget_tweaks %}
+{% load translate %}
+
+{% csrf_token %}
+<div class="form-group">
+    <label class="font-weight-semibold" for="{{ form.name.label}}">{{'OptionType'|translate:lang}}:</label>
+    {{ form.option_type|add_class:"form-control"|attr:"placeholder: OptionType" }}
+</div>
+<div class="form-group">
+    <label class="font-weight-semibold" for="{{ form.name.label}}">{{'Value'|translate:lang}}:</label>
+    {{ form.value|add_class:"form-control"|attr:"placeholder: Value" }}
+</div>
+
+<div class = 'form-group'>
+    <input type='submit' class = 'btn btn-success btn-sm' value ='Submit' />
+</div>

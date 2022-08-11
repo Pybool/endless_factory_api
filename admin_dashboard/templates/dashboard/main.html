@@ -1,0 +1,62 @@
+{% load static %}
+{% load translate %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <!-- Favicon -->
+    <link rel="shortcut icon" href="{% static 'images/logo/only-logo.png' %}">
+
+    <!-- page css -->
+
+    <!-- Core css -->
+    <link href="{% static 'css/app.min.css' %}" rel="stylesheet">
+
+    <title>{{'Endless Factory'|translate:lang}}</title>
+</head>
+<body>
+ <div class="app">
+        <div class="layout">
+            <!-- Header START -->
+            {%  include 'dashboard/_header.html'%}
+            <!-- Header END -->
+
+            <!-- Side Nav START -->
+            {%  include 'dashboard/_sidebar.html'%}
+            <!-- Side Nav END -->
+
+            <!-- Page Container START -->
+            <div class="page-container">
+                {% for message in messages %}
+                    <script>alert("{{message}}");</script>
+                {% endfor %}
+                <!-- Content Wrapper START -->
+                
+                {%  block main_content %}
+                    
+                {%  endblock %}
+                <!-- Content Wrapper END -->
+
+                <!-- Footer START -->
+                {%  include 'dashboard/_footer.html'%}
+                <!-- Footer END -->
+
+            </div>
+          
+            <!-- Quick View END -->
+        </div>
+    </div>
+
+    <!-- Core Vendors JS -->
+    <script src="{% static 'js/vendors.min.js' %}"></script>
+
+    <!-- page js -->
+    <script src="{% static 'vendors/chartjs/Chart.min.js' %}"></script>
+    <script src="{% static 'js/pages/dashboard-e-commerce.js' %}"></script>
+
+    <!-- Core JS -->
+    <script src="{% static 'js/app.min.js'%}"></script>
+
+</body>
+</html>

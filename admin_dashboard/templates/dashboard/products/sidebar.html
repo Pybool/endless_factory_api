@@ -1,0 +1,10 @@
+{% load translate %}
+<div class="col-lg-2">
+  <div class="list-group">
+    <a href="{% url 'edit_product' product.slug %}" class="list-group-item list-group-item-action {% if active_tab == 'details' %} {{'active'}} {% endif %}">
+      <i class="fa fa-pencil-alt"></i> {{'Details'|translate:lang}}
+    </a>
+    <a href="{% url 'product_variants_list' product.slug %}" class="list-group-item list-group-item-action {% if active_tab == 'variants' %} {{'active'}} {% endif %}"><i class="fas fa-boxes"></i> {{'Variants'|translate:lang}}</a></a>
+    <a href="{% url 'product_attachments_list' product.slug %}" class="list-group-item list-group-item-action {% if active_tab == 'attachments' %} {{'active'}} {% endif %}"><i class="fas fa-images"></i> {{'Media'|translate:lang}}</a></a>
+  </div>
+</div>

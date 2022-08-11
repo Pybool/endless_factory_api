@@ -1,0 +1,28 @@
+{% extends 'dashboard/main.html' %}
+{% block main_content %}
+{% load translate %}
+
+<div class="main-content">
+  <div class="row">
+    <div class = "col-lg-12">
+      <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">{{'New Address'|translate:lang}}</h4>
+        </div>
+        <div class="card-body">
+          <div class="m-t-10">
+            <form action = "{% url 'new_user_address' user.id %}" method='post' enctype="multipart/form-data">
+              <div class="row">
+                <div class="col-10">
+                  {% include 'dashboard/users/addresses/form.html' with form=form %}
+                </div>
+                {% include 'dashboard/users/sidebar.html' with user=user active_tab='addresses' %}
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

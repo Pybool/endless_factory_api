@@ -1,0 +1,49 @@
+{% extends 'dashboard/main.html' %}
+{% load translate %}
+
+{% block main_content %}
+    {%  include 'dashboard/_messages.html'%}
+    
+    <div class="main-content">
+
+        <div class="row">
+            <div class = "col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">{{'Users'|translate:lang}}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="m-t-10">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>{{'Name'|translate:lang}}</th>
+                                            <th>{{'Email'|translate:lang}}</th>
+                                            <th>{{'User Type'|translate:lang}}</th>
+                                            <th>{{'Actions'|translate:lang}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for user in users %}
+                                            <tr>
+                                                <td>{{user.id}}</td>
+                                                <td>{{user.name}}</td>
+                                                <td>{{user.email}}</td>
+                                                <td>{{user.user_type}}</td>
+                                                <td><a href="{% url 'edit_user' user.id %}">{{'Edit'|translate:lang}}</a></td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+
+                                <a href="{% url 'new_user'%}" class='btn btn-primary btn-sm'>{{'New User'|translate:lang}}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

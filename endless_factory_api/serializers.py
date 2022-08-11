@@ -29,7 +29,9 @@ class SellerCentreBasicInfoSerializer(serializers.ModelSerializer):
 class SellerCentreBusinessInfoSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
-    fields = ['referrer_email', 'has_existing_shop', 'account_manager_name', 'company_name', 
+    fields = ['store_name', 'entity_type', 'account_manager_name', 'account_manager_phone_1', 
+              'account_manager_phone_2',
+              'referrer_email', 'has_existing_shop', 'account_manager_name', 'company_name', 
               'company_address_1', 'company_address_2','company_postal_code','city_location',
               'company_ceo_name'
               ]
