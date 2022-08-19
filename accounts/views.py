@@ -31,7 +31,7 @@ from orders.models import Cart, CartItem, Order, LineItem, Transaction
 from accounts.authentication import ( JWTAuthenticationMiddleWare, create_access_token, 
                                  create_refresh_token, decode_access_token, decode_refresh_token
                                  )
-from endless_factory_api.serializers import IdCardAttachmentSerializer, ProofBusinessAttachmentSerializer, SellerCentreBasicInfoSerializer, SellerCentreBusinessInfoSerializer, TransactionsSerializer, UserSerializer, AddressSerializer, VariantSerializer, VariantUpdateSerializer, UserShowSerializer, CreditCardSerializer
+from endless_factory_api.serializers import AddressSerializer, GetAddressSerializer, IdCardAttachmentSerializer, ProofBusinessAttachmentSerializer, SellerCentreBasicInfoSerializer, SellerCentreBusinessInfoSerializer, TransactionsSerializer, UserSerializer, OrderAddressSerializer, VariantSerializer, VariantUpdateSerializer, UserShowSerializer, CreditCardSerializer
 from dotenv import load_dotenv
 from tasks.__task__email import *
 
@@ -242,7 +242,7 @@ class AddressesView(generics.CreateAPIView):
     def get(self,request):
         
         data = Address.objects.filter(user=request.user.id)
-        serializer= AddressSerializer(data, many=True)
+        serializer= GetAddressSerializer(data, many=True)
         return Response({'addresses': serializer.data})
     
     def post(self,request):
@@ -253,9 +253,9 @@ class AddressesView(generics.CreateAPIView):
             if serializer.is_valid():
                 serializer.save()
                 # request.user.addresses.add(address)
-                return Response({'address': serializer.data, "status": 'ok'})
+                return Response({'address': serializer.data, "status": True})
             else:
-                return Response({'errors': serializer.errors, "status": 'error'})
+                return Response({'message': serializer.errors, "status": False})
         
 
 class PreferredAddressView(APIView):

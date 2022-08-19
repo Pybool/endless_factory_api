@@ -18,8 +18,15 @@
                                 {% csrf_token %}
                                 {% include 'dashboard/shared/error_messages.html' with form=form %}
                                 <div class="form-group">
+                                    {% if user.biz_info_verified%}
+                                        <h3 style="color:green""">Verified seller</h3>
+                                    {% endif %}
+                                    {% if user.biz_info_verified is False%}
+                                        <h3 style="color:rgb(207, 51, 51)""">Unverified seller</h3>
+                                    {% endif %}
                                     <div class="row">
                                         <div class="col-lg-4">
+                                            
                                             <label class="font-weight-semibold" for="{{ form.name.label}}">{{'Name'|translate:lang}}:</label>
                                             {{ form.name|add_class:"form-control"|attr:"placeholder: Name" }}
                                         </div>
@@ -47,7 +54,11 @@
                                     </div>
                                 </div>
                                 <input type="hidden" name="user_type" value="{{user.user_type}}" />
-                                {% if user.user_type == 'Seller' or self.user_type == 'Both' %}
+                                <input type="hidden" id="user_id" value="{{user.id}}" />
+                                <!-- <input type="hidden" id="idcard" value="{{idcard}}" />
+                                <input type="hidden" id="pob" value="{{pob}}" /> -->
+                                {% if user.user_type == 'Seller' or user.user_type == 'Both' %}
+                                    
                                     <h2>Seller Account Details</h2>
                                     <hr>
                                     <div class="form-group">
@@ -114,13 +125,103 @@
                                 </div>
 
                             </form>
+                            
+
+
 
                         </div>
                     </div>
                 </div>
             </div>
             {% include 'dashboard/users/sidebar.html' with user=user active_tab='details' %}
+            <style>
+                #rectangle {
+                    height: 100%;
+                    width: 100%;
+                    
+                }
+                </style>
+            <h2>Seller documentation</h2>
+            <br>
+            <div class="form-group">
+                <div class="col-lg-12">
+                    <h3>Ceo Id card</h3>
+                    <br>
+                    <div class="col-lg-4">
+                        <img id="rectangle" src="http://165.232.185.232:8080/{{idcard}}"></div>
+                    </div>
+                    <br>
+                    <h3>Business ownership attachment</h3>
+                    <br>
+                    <div class="col-lg-4">
+                        <img id="rectangle" src="http://165.232.185.232:8080/{{pob}}"></div>
+                    </div>
+                </div>
+                <div class = 'form-group'>
+                    <input id="decline" type='submit' class = 'btn btn-warning btn-sm' value ='Decline' />&nbsp;
+                    {% if user.biz_info_verified%}
+                        <input disabled id="approve" type='submit' class = 'btn btn-success btn-sm' value ='Approve' />
+                    {% endif %}
+                    {% if user.biz_info_verified is False%}
+                        <input id="approve" type='submit' class = 'btn btn-success btn-sm' value ='Approve' />
+                    {% endif %}
+                </div>
+            </div>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+            <script>
+                
+                $(function(){
+                    // let pob = document.getElementById('pob').value
+                    // let idcard = document.getElementById('idcard').value
+                    // alert(pob + idcard)
+                    let user_id = document.getElementById('user_id').value
+                    let element_approve = document.getElementById('approve')
+                    let element_decline = document.getElementById('decline')
+                    element_approve.addEventListener("click", approve);
+                    element_decline.addEventListener("click", decline);
+                    function approve() {
+                     
+                        return new Promise(function(resolve, reject) {
+                            var url = `http://165.232.185.232:8000/api/v1/dashboard/verification/sellers/${user_id}`
+                            fetch(url).then((response)=> {
+                                return response.json();
+                                })
+                                .then((data)=> {
+                                    if (data.status==true){
+                                        alert("Seller was verified successfully")
+                                        resolve(data.data)
+                                    }
+                                    else{
+                                        alert("Seller verification failed")
+                                    }
+                                })
+                                .catch(function(err) {});
+                        })
+                        
+                    }
 
+                    function decline() {
+                        return new Promise(function(resolve, reject) {
+                            var url = `http://165.232.185.232:8000/api/v1/dashboard/decline-verification/sellers/${user_id}`
+                            fetch(url).then((response)=> {
+                                return response.json();
+                                })
+                                .then((data)=> {
+                                    if (data.status==true){
+                                        alert("Seller documents have been declined")
+                                        resolve(data.data)
+                                    }
+                                    else{
+                                        alert("Seller verification failed")
+                                    }
+                                })
+                                .catch(function(err) {});
+                        })
+                        
+                    }
+                });
+            </script>
         </div>
+        
     </div>
 {% endblock %}

@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from .forms import CategoryForm, TagForm, ProductForm, VariantForm, AttachmentForm, UserForm, UserProfileForm, CreditCardForm, AddressForm, OptionTypeForm, OptionValueForm
 from products.models import Category, Tag, Product, Variant, Attachment, OptionType, OptionValue
 from orders.models import Order, LineItem
-from accounts.models import User, WishlistedProduct, Address, UserProduct
+from accounts.models import IDCardsAttachment, ProofBusinessAttachment, User, WishlistedProduct, Address, UserProduct
 from endless_admin.translations import get_translations
 
 @login_required(login_url='login')
@@ -71,6 +71,12 @@ def new_user(request):
 @authorize_seller()
 def edit_user(request, pk):
   user = User.objects.get(pk=pk)
+  try:
+    idcard = IDCardsAttachment.objects.filter(company=user).values('file').first().get('file')
+    pob = ProofBusinessAttachment.objects.filter(company=user).values('file').first().get('file')
+  except:
+    idcard = "N/A"
+    pob = "N/A"
   form = UserForm(instance=user)
   if request.method == 'POST':
     form = UserForm(request.POST, instance=user)
@@ -78,7 +84,7 @@ def edit_user(request, pk):
       form.save()
       messages.success(request, get_translations('User updated successfully', get_user_locale(request)))
       return redirect('users_list')
-  return render(request, 'dashboard/users/edit.html', {'form': form, 'user': user, 'section_active': 'users', 'lang': get_user_locale(request)})
+  return render(request, 'dashboard/users/edit.html', {'form': form, 'user': user,'idcard':idcard,'pob':pob, 'section_active': 'users', 'lang': get_user_locale(request)})
 
 @login_required(login_url='login')
 @allowed_users()

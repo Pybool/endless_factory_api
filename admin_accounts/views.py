@@ -27,7 +27,7 @@ def loginPage(request):
                 messages.success(request, 'Logged in Successfully.')
                 return redirect('/')
             else:
-                messages.error(request, 'Email OR Password is incorrect.')
+                messages.error(request, 'Email or Password is incorrect.')
         context = {'categories': product_categories,'lang': get_user_locale(request)}
         return render(request, 'accounts/login.html', context)
 

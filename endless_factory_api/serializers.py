@@ -56,10 +56,16 @@ class OrderAddressSerializer(serializers.ModelSerializer):
   # addresses = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True)
   class Meta:
     model = Address
-    fields = ['line_1', 'line_2', 'city', 'zipcode', 'state', 'country', 'is_shipping_address']
+    fields = ['user','line_1', 'line_2', 'city', 'zipcode', 'state', 'country', 'is_shipping_address']
 
 class AddressSerializer(serializers.ModelSerializer):
-  # addresses = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True)
+  
+  class Meta:
+    model = Address
+    fields = ['user', 'first_name', 'last_name', 'line_1', 'line_2', 'city', 'zipcode', 'state', 'country', 'is_shipping_address']
+
+class GetAddressSerializer(serializers.ModelSerializer):
+  
   class Meta:
     model = Address
     fields = ['id','user', 'first_name', 'last_name', 'line_1', 'line_2', 'city', 'zipcode', 'state', 'country', 'is_shipping_address']
@@ -161,7 +167,7 @@ class NewOptionTypeSerializer(serializers.ModelSerializer):
 class OptionValueSerializer(serializers.ModelSerializer):
   class Meta:
     model = OptionValue
-    fields = ('id', 'value')
+    fields = ('id', 'value','option_type')
 
 class NewOptionValueSerializer(serializers.ModelSerializer):
   class Meta:
@@ -253,7 +259,7 @@ class CreateVariantSerializer(serializers.ModelSerializer):
     model = Variant
     fields=('option_value', 'stock', 'price','product')
     
-  
+
 class ProductSerializer(serializers.ModelSerializer):
   category = CategorySerializer(many=False)
   variants = VariantSerializer(many=True)
@@ -262,13 +268,13 @@ class ProductSerializer(serializers.ModelSerializer):
   option_type = OptionTypeSerializer(many=False)
   class Meta:
     model = Product
-    fields=('id', 'title','subtitle', 'description','price','cost_price','initial_stock','current_stock', 'min_order_quantity', 'max_order_quantity', 'color', 'model_number', 'category', 'option_type', 'delivery_option', 'product_type', 'search_tags', 'slug', 'variants', 'images', 'reviews')
+    fields=('id', 'title','subtitle', 'description','price','cost_price','initial_stock','current_stock', 'min_order_quantity', 'max_order_quantity', 'color', 'business_source','account_manager_phone_1','company_mailing_address','company_address_1', 'category', 'option_type', 'delivery_option', 'product_type', 'search_tags', 'slug', 'variants', 'images', 'reviews')
 
 
 class NewProductSerializer(serializers.ModelSerializer):
   class Meta:
     model = Product
-    fields = ('category','option_type','title','subtitle', 'description','condition_option','business_source', 'search_tags','eco_friendly','duration','price','cost_price','initial_stock')
+    fields = ('category','option_type','title','subtitle', 'description','condition_option','business_source','account_manager_phone_1','company_mailing_address','company_address_1', 'search_tags','eco_friendly','duration','price','cost_price','initial_stock')
 
 class ProductUpdateSerializer(serializers.ModelSerializer):
   class Meta:

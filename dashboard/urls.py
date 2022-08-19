@@ -18,6 +18,8 @@ urlpatterns = [
   
   path('dashboard/new_option_type', views.NewOptionTypeView.as_view()),
   path('dashboard/new_option_value', views.NewOptionValueView.as_view()),
+  path('dashboard/get_option_value/<str:optiontype>', views.OptionValuesView.as_view()),
+
 
   path('dashboard/new_category', views.NewCategoriesView.as_view()),
   path('dashboard/product_tags', views.TagsView.as_view()),
@@ -29,8 +31,13 @@ urlpatterns = [
   path('dashboard/orders/mark_shipped', views.MarkItemsShipped.as_view()),
   path('dashboard/sales_dashboard/statistics/<filter>/<int:duration>', views.SellerDashboardView.as_view()),
   path('dashboard/verification/sellers/<int:pk>', views.VerifySellerBusinessView.as_view()),
+  path('dashboard/decline-verification/sellers/<int:pk>', views.DeclineSellerBusinessView.as_view()),
+  
   
   path('dashboard/marketing/new_campaign', views.NewCampaignView.as_view()),
+  path('dashboard/products_form/metadata', views.ProductsformView.as_view()),
+
+
 
   
   

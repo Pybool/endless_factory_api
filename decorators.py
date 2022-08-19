@@ -18,14 +18,15 @@ def allowed_users():
         def wrapper_func(self,request, *args, **kwargs):
             if request.user.is_buyer():
                 msg = {'status':False,'message':'You are not authorized to view this page.'}
-                return Response(msg)
+                # return Response(msg)
+                return view_func(self,request, *args, **kwargs)
             
             elif request.user.is_seller():
-                # if request.user.is_info_verified() is False:
-                #     msg = {'status':False,'message':'You are not authorized to view this page, your seller account is not verified yet.'}
-                #     return Response(msg)
-                # else:
-                return view_func(self,request, *args, **kwargs)
+                if request.user.is_info_verified() is False:
+                    msg = {'status':False,'message':'You are not authorized to view this page, your seller account is not verified yet.'}
+                    return Response(msg)
+                else:
+                    return view_func(self,request, *args, **kwargs)
             else:
                 return view_func(self,request, *args, **kwargs)
         return wrapper_func

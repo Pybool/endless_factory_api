@@ -1,8 +1,10 @@
-import stripe
+import os, stripe
 
 from dashboard.models import Refunds
 from endless_factory_api.serializers import RefundSerializer
-stripe.api_key = "sk_test_4eC39HqLyjWDarjtT1zdp7dc" #Add to env  file
+from dotenv import load_dotenv
+load_dotenv()
+stripe.api_key = str(os.getenv("STRIPE_SECRET_KEY"))
 
 class InitiateTransaction(object):
     
@@ -11,6 +13,7 @@ class InitiateTransaction(object):
         self.stripe_order_token = stripe_order_token
 
     def create_charge(self):
+        print(int(100*self.cart.grand_total()))
         return stripe.Charge.create(
                     amount = int(100*self.cart.grand_total()),
                     currency='usd',
@@ -60,8 +63,6 @@ class RefundTransactions(object):
                                                          )
                         serializer = RefundSerializer(refunds,many=True)
                         print(refunds.values())
-                # if serializer.is_valid(raise_exception=True):
-                print("sd",serializer.data)
                 return serializer.data
         else:
             if source == 'stripe':

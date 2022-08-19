@@ -33,7 +33,7 @@ class Cart(models.Model):
     return ef_cut if ef_cut <= 1500.0 else 0.0
 
   def grand_total(self):
-    return (float(self.total())) + self.endless_factory_cut()
+    return (Decimal(self.total())) #+ self.endless_factory_cut()
 
   def items_count(self):
     count = 0
@@ -128,7 +128,6 @@ class Order(models.Model):
     credit_card =   CreditCard.objects.filter(user=user,card_number=card_number).first()
     print(credit_card)
     if credit_card != None:
-      print("Exists card")
       transaction.credit_card = credit_card
       transaction.save()
     else:

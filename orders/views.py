@@ -1,4 +1,5 @@
-from sre_constants import SUCCESS
+import logging
+log = logging.getLogger(__name__)
 from uuid import uuid4
 import uuid, time
 from django.shortcuts import render, redirect
@@ -18,32 +19,27 @@ from products.models import Product, Variant, Category, Tag
 from orders.models import Order, LineItem, Cart, CartItem
 from rest_framework.views import APIView
 import stripe
+from django.views.decorators.csrf import csrf_exempt
 from .utils import get_sample_response
 
-# from .forms import UserForm
+# from django.utils.decorators import method_decorator
+# from django.views.decorators.csrf import csrf_exempt
 
-# Create your views here.
+# @method_decorator(csrf_exempt, name='dispatch')
+
+class TestLogger(APIView):
+    
+    def get(self,request):
+        log.info("Hey there it works!!")
+        return Response({'message':'Logger worked', "status": True})
+
+
 class CartView(APIView):
     
     def get(self,request,cart_token):
         cart = get_cart(request,cart_token)
         cart = CartSerializer(cart).data
         return Response({ 'lang': get_user_locale(request), 'cart':cart,'message':'Cart items retrieved successfully', "status": True})
-
-    def post(self,request,cart_token=''):
-        cart = get_cart(request,None)
-        print("\n\nProduct variant ",request.data['variant'],cart)
-        variant = Variant.objects.get(pk=request.data['variant'])
-        print("variant ", variant.product)
-        item, created = CartItem.objects.get_or_create(cart=cart, variant=variant, option_type=variant.product.option_type.name, 
-                                                       option_value=variant.option_value.value,cost_price=variant.product.cost_price)
-        item.quantity = request.data['quantity']
-        if int(item.quantity) > variant.stock:
-            return Response({'message':'Insufficient stock!', "status": False})
-        else:
-            item.price = int(item.quantity) * item.variant.price
-            item.save()
-            return Response({'message':'Item added to cart successfully.', "status": True})
 
     def put(self, request, pk):
         cart = get_cart(request,None)
@@ -57,51 +53,70 @@ class CartView(APIView):
             cart_item.save()
             return Response({'message':'Cart item updated successfully.', "status": True})
 
+class AddCartView(APIView):
+    @csrf_exempt
+    def post(self,request,cart_token=''):
+        cart = get_cart(request,None)
+        print("\n\nProduct variant ",request.data['variant'],cart)
+        variant = Variant.objects.get(pk=request.data['variant'])
+        print("variant ", variant.product)
+        item, created = CartItem.objects.get_or_create(cart=cart, variant=variant, option_type=variant.product.option_type.name, 
+                                                       option_value=variant.option_value.value,cost_price=variant.product.cost_price)
+        item.quantity = request.data['quantity']
+        if int(item.quantity) > variant.stock:
+            return Response({'message':'Insufficient stock!', "status": False})
+        else:
+            item.price = int(item.quantity) * item.variant.price
+            item.save()
+            return Response({'message':'Item added to cart successfully.', "status": True})   
+
+
+class RemoveCartItemView(APIView):
+    
     def delete(self, request, pk):
-        cart = get_cart(self,request,None)
+        # cart = get_cart(request,None)
         cart_item = CartItem.objects.get(pk=pk)
         cart_item.delete()
         return Response({'message':'Cart item removed successfully.', "status": True})
-    
-
+ 
 class CheckoutView(APIView):
     authentication_classes = [JWTAuthenticationMiddleWare]
     def post(self,request):
         cart = get_cart(request,None)
-        stripe_pub_key = settings.STRIPE_PUBLISHABLE_KEY
+        # stripe_pub_key = settings.STRIPE_PUBLISHABLE_KEY
         
         if request.method == 'POST':
-            try:
-                stripe_order_token = request.data['stripe_token']
-                self.initiate_transaction = InitiateTransaction(cart,stripe_order_token)
-                # charge = self.initiate_transaction.create_charge() #UNCOMMENT IN PRODUCTION
+            # try:
+            stripe_order_token = request.data['stripe_token']
+            self.initiate_transaction = InitiateTransaction(cart,stripe_order_token)
+            time_sent = get_currrent_date_time()
+            charge = self.initiate_transaction.create_charge() #UNCOMMENT IN PRODUCTION
+            print("Charge ",charge)
+            # charge = get_sample_response() # MOCK CHARGE CREATION , COMMENT OUT IN PRODUCTION
+            
+            # time.sleep(2)  # REMOVE THIS LINE OF CODE
+            time_arrived = get_currrent_date_time()
+            time_range = [time_sent,time_arrived]
+            print(charge)
+            # log.info(str(charge))
+            # return Response({'message':'debugging','charge':charge})
+            if charge['status'] == 'succeeded':
+                order = Order(user=request.user)
+                order.item_total = cart.total()
+                order.total = cart.grand_total()
+                order.endless_factory_cut = cart.endless_factory_cut()
                 
-                time_sent = get_currrent_date_time()
-                print("Before charge")
-                charge = get_sample_response() # MOCK CHARGE CREATION , COMMENT OUT IN PRODUCTION
-                
-                time.sleep(2)  # REMOVE THIS LINE OF CODE
-                time_arrived = get_currrent_date_time()
-                time_range = [time_sent,time_arrived]
-                if charge['status'] == 'succeeded':
-                    print("SUCCESS")
-                    order = Order(user=request.user)
-                    order.item_total = cart.total()
-                    order.total = cart.grand_total()
-                    order.endless_factory_cut = cart.endless_factory_cut()
-                    print("after cut")
-                    order.shipping_address = Address.objects.filter(pk=request.data['address_id']).first()
-                    number = order.save()
-                    order.set_line_items_from_cart(cart,number,request.user)
-                    print(request.user)
-                    order.set_transaction(request.user, charge, request.data['card_number'], request.data['save_card'],time_range)
-                    cart.reset()
-                    return Response({'message': 'Your order has been placed successfully.', 'status': 'ok', 'order_id': order.number})
-                else:
-                    return Response({'message':'Your card was declined.', 'status': 'error'})
-            except Exception as e:
-                print(e)
+                order.shipping_address = Address.objects.filter(pk=request.data['address_id']).first()
+                number = order.save()
+                order.set_line_items_from_cart(cart,number,request.user)
+                order.set_transaction(request.user, charge, request.data['card_number'], request.data['save_card'],time_range)
+                cart.reset()
+                return Response({'receipt':charge['receipt_url'],'message': 'Your order has been placed successfully.', 'status': True, 'order_id': order.number})
+            else:
                 return Response({'message':'Your card was declined.', 'status': 'error'})
+            # except Exception as e:
+            #     print(e)
+            #     return Response({'error':str(e),'message':'An error occured', 'status': 'error'})
 
 
 class OrderStatusView(APIView):
@@ -141,20 +156,23 @@ class WishListView(APIView):
         Response({'redirect_url':product.slug,'message':'Product removed from wishlist successfully','status':True})
 
 
-class OrdersView():
-    
+class OrdersView(APIView):
+    authentication_classes = [JWTAuthenticationMiddleWare]
     def get(self,request):
         status = request.GET.get('status')
+        print("Status ",status)
         if status is not None:
             if status == 'delivered':
                 order_items = LineItem.objects.select_related('order', 'variant').filter(order__user_id=request.user.id, dispatched=True)
                 serializer= LineItemIndexSerializer(order_items, many=True)
                 return Response({'order_items': serializer.data})
+            
             elif status == 'processing':
                 order_items = LineItem.objects.select_related('order', 'variant').filter(order__user_id=request.user.id, dispatched=False)
                 serializer= LineItemIndexSerializer(order_items, many=True)
                 return Response({'order_items': serializer.data})
         else:
+            print('User id',request.user.id)
             order_items = LineItem.objects.select_related('order', 'variant').filter(order__user_id=request.user.id)
             serializer= LineItemIndexSerializer(order_items, many=True)
             return Response({'order_items': serializer.data})  

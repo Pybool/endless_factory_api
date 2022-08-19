@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['165.232.185.232','https://endlessfactory.com','127.0.0.1','localhost']
 
-COUNTRY_CHOICES = ["Albania", "Algeria", "Angola", "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belivia", "Belize", "Benin", "Bosnia", "Botswana", "Brazil", "Brunei", "Bulgaria", "Camaroon", "Cambodia", "Canada", "Chile", "Colombia", "Costa Rica", "Cote D'ivoire", "Croatia", "Cyprus", "Czech Repub", "Denmark", "Dominican Repub", "Ecuador", "Egypt", "El Salvador", "Estonia", "Ethiopia", "Fiji", "Finland", "France", "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guyana", "Haiti", "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Ireland", "Israel", "Italy", "Jamaica Mon", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Lithuania", "Luxembourg", "Madagascar", "Malawi", "Malaysia", "Maldives", "Malta", "Mauritania", "Mauritius", "Mexico", "Moldova", "Mongolia", "Montenegro", "Morocco", "Myanmar", "N Macedonia", "Namibia", "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", "Norway", "Oman", "Pakistan", "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Romania", "Rwanda", "Samoa", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leon", "Singapore", "Slovakia", "Slovenia", "Somalia", "South Africa", "South Korea", "Spain", "Sri Lanka", "St Kitts/Nevis", "St Vince & The Gs", "Suriname", "Sweden", "Switzerland", "Tajikistan", "Tanzania", "Thailand", "Togo", "Trinidad & Tobago", "Tunisia", "Turkmenistan", "Uae", "Uganda", "Ukraine", "United Kingdom", "United States", "Uruguay", "Uzbekistan", "Vietnam", "Zambia", "Zimbabwe"]
+COUNTRY_CHOICES = ["Albania", "Algeria", "Angola", "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belivia", "Belize", "Benin", "Bosnia", "Botswana", "Brazil", "Brunei", "Bulgaria", "Camaroon", "Cambodia", "Canada", "Chile", "Colombia", "Costa Rica", "Cote D'ivoire", "Croatia", "Cyprus", "Czech Repub", "Denmark", "Dominican Repub", "Ecuador", "Egypt", "El Salvador", "Estonia", "Ethiopia", "Fiji", "Finland", "France", "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guyana", "Haiti", "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Ireland", "Israel", "Italy", "Jamaica Mon", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Lithuania", "Luxembourg", "Madagascar", "Malawi", "Malaysia", "Maldives", "Malta", "Mauritania", "Mauritius", "Mexico", "Moldova", "Mongolia", "Montenegro", "Morocco", "Myanmar", "N Macedonia", "Namibia", "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria", "Norway", "Oman", "Pakistan", "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Romania", "Rwanda", "Samoa", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leon", "Singapore", "Slovakia", "Slovenia", "Somalia", "South Africa", "South Korea", "Spain", "Sri Lanka", "St Kitts/Nevis", "St Vince & The Gs", "Suriname", "Sweden", "Switzerland", "Tajikistan", "Tanzania", "Thailand", "Togo", "Trinidad & Tobago", "Tunisia", "Turkmenistan", "Uae", "Uganda", "Ukraine", "United Kingdom", "United States", "Uruguay", "Uzbekistan", "Vietnam", "Zambia", "Zimbabwe"]
 
 # Application definition
 
@@ -106,18 +106,18 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 262144000
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': str(os.path.join(BASE_DIR, "db.sqlite3")),
-    }
     # 'default': {
-    #     'ENGINE'  : 'django.db.backends.mysql',  
-    #     'NAME'    : 'ENDLESS_FACTORY',                  
-    #     'USER'    : 'endless_factory_rootuser',                     
-    #     'PASSWORD': 'pass@endlessrootuser',              
-    #     'HOST'    : 'localhost',                
-    #     'PORT'    : '3306',
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': str(os.path.join(BASE_DIR, "db.sqlite3")),
     # }
+    'default': {
+        'ENGINE'  : 'django.db.backends.mysql',  
+        'NAME'    : 'ENDLESS_FACTORY',                  
+        'USER'    : 'endless_factory_rootuser',                     
+        'PASSWORD': 'pass@endlessrootuser',              
+        'HOST'    : 'localhost',                
+        'PORT'    : '3306',
+    }
 }
 
 AUTH_USER_MODEL = 'accounts.User'
@@ -141,21 +141,55 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # LOGGING SETTINGS
+#  or '/var/www/endless_factory_api' + "/logfile"
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'standard': {
+            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt' : "%d/%b/%Y %H:%M:%S"
+        },
+    },
     'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
+        'null': {
+            'level':'DEBUG',
+            'class':'logging.NullHandler',
+        },
+        'logfile': {
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'endlessfactory.log'), 
+            'maxBytes': 50000,
+            'backupCount': 2,
+            'formatter': 'standard',
+        },
+        'console':{
+            'level':'INFO',
+            'class':'logging.StreamHandler',
+            'formatter': 'standard'
         },
     },
     'loggers': {
-        'django.request': {
+        'django': {
+            'handlers':['console'],
+            'propagate': True,
+            'level':'WARN',
+        },
+        'django.db.backends': {
             'handlers': ['console'],
-            'level': 'DEBUG',  # change debug level as appropiate
+            'level': 'DEBUG',
             'propagate': False,
         },
-    },
+        'orders': {
+            'handlers': ['console', 'logfile'],
+            'level': 'DEBUG',
+        },
+        'products': {
+            'handlers': ['console', 'logfile'],
+            'level': 'DEBUG',
+        },
+    }
 }
 
 # Internationalization
@@ -186,7 +220,7 @@ STATICFILES_DIRS = [
 CURRENCIES = ['AED', 'AFN', 'ALL', 'AMD', 'ANG', 'AOA', 'ARS', 'AUD', 'AWG', 'AZN', 'BAM', 'BBD', 'BDT', 'BGN', 'BHD', 'BIF', 'BMD', 'BND', 'BOB', 'BOV', 'BRL', 'BSD', 'BTN', 'BWP', 'BYN', 'BZD', 'CAD', 'CDF', 'CHE', 'CHF', 'CHW', 'CLF', 'CLP', 'CNY', 'COP', 'COU', 'CRC', 'CUC', 'CUP', 'CVE', 'CZK', 'DJF', 'DKK', 'DOP', 'DZD', 'EGP', 'ERN', 'ETB', 'EUR', 'FJD', 'FKP', 'GBP', 'GEL', 'GHC', 'GIP', 'GMD', 'GNF', 'GTQ', 'GYD', 'HKD', 'HNL', 'HRK', 'HTG', 'HUF', 'IDR', 'ILS', 'INR', 'IQD', 'IRR', 'ISK', 'JMD', 'JOD', 'JPY', 'KES', 'KGS', 'KHR', 'KMF', 'KPW', 'KRW', 'KWD', 'KYD', 'KZT', 'LAK', 'LBP', 'LKR', 'LRD', 'LSL', 'LYD', 'MAD', 'MDL', 'MGA', 'MKD', 'MMK', 'MNT', 'MOP', 'MRU', 'MUR', 'MVR', 'MWK', 'MXN', 'MXV', 'MYR', 'MZN', 'NAD', 'NGN', 'NIO', 'NOK', 'NPR', 'NZD', 'OMR', 'PAB', 'PEN', 'PGK', 'PHP', 'PKR', 'PLN', 'PYG', 'QAR', 'RON', 'RSD', 'RUB', 'RWF', 'SAR', 'SBD', 'SCR', 
 'SDG', 'SEK', 'SGD', 'SHP', 'SLL', 'SLE', 'SOS', 'SRD', 'SSP', 'STN', 'SVC', 'SYP', 'SZL', 'THB', 'TJS', 'TMT', 'TND', 'TOP', 'TRY', 'TTD', 'TWD', 'TZS', 'UAH', 'UGX', 'USD', 'USN', 'UYI', 'UYU', 'UYW', 'UZS', 'VED', 'VES', 'VND', 'VUV', 'WST', 'XAF', 'XAG', 'XAU', 'XBA', 'XBB', 'XBC', 'XBD', 'XCD', 'XDR', 'XOF', 'XPD', 'XPF', 'XPT', 'XSU', 'XTS', 'XUA', 'XXX', 'YER', 'ZAR', 'ZMW', 'ZWL']
 
-MEDIA_URL = '/media/'
+MEDIA_URL = '/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media_root")
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -207,10 +241,9 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
-STRIPE_PUBLISHABLE_KEY = "stripe-test-27adcec5-c068-4e54-9ab0-9de44bc77e67"
 
 SERVER_PORT = "8000"
-SERVER_URL = "http://127.0.0.1"
+SERVER_URL = "http://165.232.185.232"
 
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (

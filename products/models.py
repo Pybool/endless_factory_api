@@ -109,6 +109,9 @@ class Product(models.Model):
   description = models.TextField()
   model_number = models.CharField(max_length=100)
   business_source = models.CharField(max_length=100, default='None',null = True, blank=True)
+  account_manager_phone_1 = models.CharField(max_length=100, default='None',null = True, blank=True)
+  company_mailing_address = models.CharField(max_length=100, default='None',null = True, blank=True)
+  company_address_1 = models.CharField(max_length=100, default='None',null = True, blank=True)
   min_order_quantity = models.IntegerField(validators=[MinValueValidator(0)],default=1)
   max_order_quantity = models.IntegerField(validators=[MinValueValidator(0)],default=1)
   condition_option = models.CharField(max_length=100, choices=PRODUCT_CONDITION, default='New')
@@ -117,6 +120,7 @@ class Product(models.Model):
   product_type = models.CharField(max_length=200,default='')
   eco_friendly = models.BooleanField(default=False)
   duration = models.IntegerField(default=30)
+
   #Variant
   # option_value = models.ForeignKey(OptionValue, default=None, on_delete=models.CASCADE, null=True)
   initial_stock = models.IntegerField(validators=[MinValueValidator(0)],default=1)

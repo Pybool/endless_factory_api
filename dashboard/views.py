@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from accounts.authentication import JWTAuthenticationMiddleWare
 from dashboard.models import Refunds
 from endless_admin.translations import get_translations
-from endless_factory_api.serializers import AddressSerializer, CampaignSerializer, CategorySerializer, CreateVariantSerializer, CreditCardSerializer, LineItemIndexSerializer, LineItemIndexSerializerDashboard, LineItemPriceIndexSerializer, LineItemProductSerializer, NewAttachmentSerializer, NewCategorySerializer, NewOptionTypeSerializer, NewOptionValueSerializer, NewProductSerializer, NewRefundSerializer, ProductIndexSerializer, ProductSerializer, PromoSerializer, RefundSerializer, TagSerializer, UserAllSerializer, UserSerializer, UserShowSerializer, VariantSerializer, WishlistedProductSerializer
+from endless_factory_api.serializers import AddressSerializer, CampaignSerializer, CategorySerializer, CreateVariantSerializer, CreditCardSerializer, LineItemIndexSerializer, LineItemIndexSerializerDashboard, LineItemPriceIndexSerializer, LineItemProductSerializer, NewAttachmentSerializer, NewCategorySerializer, NewOptionTypeSerializer, NewOptionValueSerializer, NewProductSerializer, NewRefundSerializer, OptionTypeSerializer, OptionValueSerializer, ProductIndexSerializer, ProductSerializer, PromoSerializer, RefundSerializer, TagSerializer, UserAllSerializer, UserSerializer, UserShowSerializer, VariantSerializer, WishlistedProductSerializer
 from helpers import Datetimeutils
 from marketing.models import Campaign
 from decorators import unnauthenticate_user, allowed_users, authorize_seller
@@ -20,7 +20,7 @@ import django_filters
 # from .forms import CategoryForm, TagForm, ProductForm, VariantForm, AttachmentForm, UserForm, UserProfileForm, CreditCardForm, AddressForm, OptionTypeForm, OptionValueForm
 from products.models import Category, Tag, Product, Variant, Attachment, OptionType, OptionValue
 from orders.models import Cart, Order, LineItem, Transaction
-from accounts.models import CreditCard, User, WishlistedProduct, Address, UserProduct
+from accounts.models import CreditCard, IDCardsAttachment, ProofBusinessAttachment, User, WishlistedProduct, Address, UserProduct
 # from endless_admin.translations import get_translations
 
 
@@ -28,7 +28,7 @@ def get_user_locale(request):
     try:
         return request.COOKIES['locale']
     except:
-        return 'fr'
+        return 'en'
 
 class HomeView(APIView):
     
@@ -184,13 +184,27 @@ class SingleUsersCreditCardsView(APIView):
 
 class VerifySellerBusinessView(APIView):
     
-    authentication_classes = [JWTAuthenticationMiddleWare]
-    @allowed_users()  
-    @authorize_seller()
+    # authentication_classes = [JWTAuthenticationMiddleWare]
+    # @allowed_users()  
+    # @authorize_seller()
     def get(self,request,pk):
-        seller = User.objects.filter(pk=pk).update(biz_info_verified=True)
+        seller = User.objects.filter(pk=pk).update(biz_info_verified=True,user_type='Both')
         context = {'message':'Seller verified successfully', 'section_active': 'sellers_verification', 'lang': get_user_locale(request)}
         return Response({'context': context, "status": True})
+    
+class DeclineSellerBusinessView(APIView):
+    
+    # authentication_classes = [JWTAuthenticationMiddleWare]
+    # @allowed_users()  
+    # @authorize_seller()
+    def get(self,request,pk):
+        User.objects.filter(pk=pk).update(biz_info_verified=False,user_type='Buyer')
+        user = User.objects.get(pk=pk)
+        idcard = IDCardsAttachment.objects.get(company=user).delete()
+        pob = ProofBusinessAttachment.objects.get(company=user).delete()
+        context = {'message':'Seller details was declined', 'section_active': 'sellers_decline', 'lang': get_user_locale(request)}
+        return Response({'context': context, "status": True})
+
 # Orders
 ########################################################UNTESTED###########################
 
@@ -285,6 +299,8 @@ class MarkItemsShipped(APIView):
 class SellerHomeData(APIView):
     authentication_classes = [JWTAuthenticationMiddleWare]
     def get(self,request):
+
+        # return Response({"User type ": request.user.is_seller()})
         if request.user.is_seller():
             user_products = request.user.products()
             product_serializer = ProductIndexSerializer(user_products, many=True)
@@ -294,10 +310,10 @@ class SellerHomeData(APIView):
             return Response({'orders': order_serializer.data, 'products': product_serializer.data})
 
         elif request.user.is_admin():
-            if request.user.is_admin():
-                order_items = LineItem.objects.select_related('variant')
-                order_serializer= LineItemIndexSerializer(order_items, many=True)
-                return Response({'orders': order_serializer.data})
+            # if request.user.is_admin():
+            order_items = LineItem.objects.select_related('variant')
+            order_serializer= LineItemIndexSerializer(order_items, many=True)
+            return Response({'orders': order_serializer.data})
 
 #####################SELLER DASHBOARD#######################################
 
@@ -559,25 +575,62 @@ class TagsView(APIView):
 # Products CRUD =================================
 class ProductsView(APIView):
     
-    authentication_classes = [JWTAuthenticationMiddleWare]
-    @allowed_users()
+    # authentication_classes = [JWTAuthenticationMiddleWare]
+    # @allowed_users()
     def get(self,request):
         products = request.user.products() if request.user.is_seller() else Product.objects.all()
         serializer = ProductSerializer(products,many=True)
         context = {'products': serializer.data, 'section_active': 'products', 'lang': get_user_locale(request)}
         return Response({'context': context, "status": True})
 
+
+class ProductsformView(APIView):
+    
+    authentication_classes = [JWTAuthenticationMiddleWare]
+    @allowed_users()  
+    def get(self,request):
+
+        categories = Category.objects.all()
+        categories_serializer= CategorySerializer(categories, many=True)
+
+        option_types = OptionType.objects.all()
+        option_type_serializer = OptionTypeSerializer(option_types, many=True)
+
+        tags = Tag.objects.all()
+        tag_serializer = TagSerializer(tags, many=True)
+
+        return Response({'categories': categories_serializer.data, 'option_types': option_type_serializer.data, 'tags': tag_serializer.data, 'status': True})
+
+
+
+class OptionValuesView(APIView):
+    
+    # authentication_classes = [JWTAuthenticationMiddleWare]
+    # @allowed_users()  
+    def get(self,request,optiontype):
+        option_type = OptionType.objects.get(pk=optiontype)
+        option_values = OptionValue.objects.filter(option_type = option_type)
+        option_values_serializer= OptionValueSerializer(option_values, many=True)
+
+        return Response({'option_values':option_values_serializer.data, 'status': True})
+          
 class NewProductsView(APIView):
     
     authentication_classes = [JWTAuthenticationMiddleWare]
     @allowed_users()  
     def post(self,request):
         if request.method == 'POST':
+            print("List of images ",request.FILES.getlist('document', None))
+            if len(request.FILES.getlist('document', None)) < 1:
+                # print("Number of images ",len(request.FILES.getlist('document', None)))
+                return Response({'No image was provided for product': "message", "status": False})
             
-            business_source = request.user.company_name
             data = json.loads(request.data['data'])
-            print('Business source ',business_source, data)
-            data['business_source'] = business_source
+            print('Business source ',request.user.company_name, data)
+            data['business_source'] = request.user.company_name
+            data['account_manager_phone_1'] = request.user.account_manager_phone_1
+            data['company_address_1'] = request.user.store_name
+            data['company_mailing_address'] = request.user.company_mailing_address
             serializer = NewProductSerializer(data=data)
             
             if serializer.is_valid():
@@ -588,6 +641,8 @@ class NewProductsView(APIView):
                 user_product.save()
                 context = {'message':get_translations('Product created successfully', get_user_locale(request)),'section_active': 'products', 'lang': get_user_locale(request)}
                 return Response({'context': context, "status": True})
+            else:
+                return Response({'error': serializer.errors, "status": False})
             
     def createVariants(self,request,instance,data):
         product = Product.objects.get(slug=instance.slug)
@@ -605,7 +660,6 @@ class NewProductsView(APIView):
                 serializer.save()
                 
     def saveAttachments(self,request,instance,data,files):
-        from rest_framework import status
         
         if request.method == 'POST':
             print("Files ",files)

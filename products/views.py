@@ -1,3 +1,5 @@
+import logging
+log = logging.getLogger(__name__)
 from collections import namedtuple
 import json
 from django.shortcuts import get_object_or_404
@@ -23,17 +25,35 @@ class NewArrivalProducts(APIView):
         serializer= ProductSerializer(products, many=True)
         return Response(serializer.data)
 
-class Products(APIView):
+class SingleProduct(APIView):
     
-    authentication_classes = [JWTAuthenticationMiddleWare]
-    def product(request, slug):
-        product = get_object_or_404(Product, slug=slug, is_active=True)
+    # authentication_classes = [JWTAuthenticationMiddleWare]
+    def get(self,request, slug):
+        # product = get_object_or_404(Product, slug=slug, is_active=True)
+        product = get_object_or_404(Product, slug=slug)
+
         serializer= ProductSerializer(product, many=False)
         
         product_variant = Variant.objects.filter(product_id=product.id)
-
-        has_bought_the_product = LineItem.objects.select_related('order').filter(order__user_id=request.GET['user_id'], variant__in=product_variant).count() > 0 if request.GET['user_id'] != None else False
-        has_reviewed_the_product = Review.objects.filter(user_id=request.GET['user_id'], product_id=product.id).count() > 0 if request.GET['user_id'] != None else False
+        # VariantSerializer(product_variant)
+        has_bought_the_product = LineItem.objects.select_related('order').filter(order__user_id=request.user.id, variant__in=product_variant).count() > 0 if request.user.id != None else False
+        has_reviewed_the_product = Review.objects.filter(user_id=request.user.id, product_id=product.id).count() > 0 if request.user.id != None else False
 
         return Response({'product':serializer.data, 'has_bought_the_product': has_bought_the_product, 'has_reviewed_the_product': has_reviewed_the_product})
 
+class Products(APIView):
+    
+    # authentication_classes = [JWTAuthenticationMiddleWare]
+    def get(self,request):
+       
+        # products = Product.objects.filter(is_active=True, approved=True)
+        products = Product.objects.filter()
+        serializer= ProductSerializer(products, many=True)
+        response = {"message":"Products listings","products":serializer.data,"status":True}
+        return Response(serializer.data)
+    
+class TestLogger(APIView):
+    
+    def get(self,request):
+        log.info("Hey there it works from products!!")
+        return Response({'message':'Logger worked', "status": True})
