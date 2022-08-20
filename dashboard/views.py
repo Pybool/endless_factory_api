@@ -1,3 +1,5 @@
+import logging
+log = logging.getLogger(__name__)
 from collections import namedtuple
 import json
 from django.db.models import Sum, Count
@@ -305,8 +307,13 @@ class SellerHomeData(APIView):
             user_products = request.user.products()
             product_serializer = ProductIndexSerializer(user_products, many=True)
             seller_product_variants = Variant.objects.filter(product__in=user_products)
-            orders = LineItem.objects.select_related('variant').filter(variant__in=seller_product_variants)
-            order_serializer= LineItemIndexSerializer(orders, many=True)
+            log.info("Seller variants "+ str(len(seller_product_variants)))
+            if len(seller_product_variants) != 0:
+                orders = LineItem.objects.select_related('variant').filter(variant__in=seller_product_variants)
+                order_serializer= LineItemIndexSerializer(orders, many=True)
+            else:
+                orders = LineItem.objects.filter(user=request.user.id)
+                order_serializer= LineItemIndexSerializer(orders, many=True)
             return Response({'orders': order_serializer.data, 'products': product_serializer.data})
 
         elif request.user.is_admin():
@@ -635,7 +642,8 @@ class NewProductsView(APIView):
             
             if serializer.is_valid():
                 instance = serializer.save()
-                self.createVariants(request,instance,request.data['data'])
+                if data['has_variant']:
+                    self.createVariants(request,instance,request.data['data'])
                 self.saveAttachments(request,instance,json.loads(request.data['data']),request.FILES.getlist('document', None))
                 user_product = UserProduct(user_id=request.user.id, product=serializer.instance)
                 user_product.save()

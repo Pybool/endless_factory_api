@@ -189,6 +189,10 @@ LOGGING = {
             'handlers': ['console', 'logfile'],
             'level': 'DEBUG',
         },
+        'dashboard': {
+            'handlers': ['console', 'logfile'],
+            'level': 'DEBUG',
+        },
     }
 }
 

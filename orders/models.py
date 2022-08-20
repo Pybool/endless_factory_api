@@ -6,7 +6,7 @@ from decimal import Decimal
 
 from accounts.models import User, Address, CreditCard
 from orders.utils import ExchangeRate
-from products.models import Variant
+from products.models import Product, Variant
 CURRENCY_OPTIONS = (
   ('USD', 'USD'),
 )
@@ -53,24 +53,34 @@ class Cart(models.Model):
   
 class CartItem(models.Model):
   cart = models.ForeignKey(Cart, default=None, on_delete=models.CASCADE)
-  variant = models.ForeignKey(Variant, default=None, on_delete=models.CASCADE)
-  option_value = models.CharField(max_length=100, default='N/A')
-  option_type = models.CharField(max_length=100, default='N/A')
+  product = models.ForeignKey(Product,null=True, default=None, on_delete=models.CASCADE)
+  variant = models.ForeignKey(Variant, null=True, default=None, on_delete=models.CASCADE)
+  option_value = models.CharField(max_length=100, default='N/A',null=True)
+  option_type = models.CharField(max_length=100, default='N/A',null=True)
   quantity = models.IntegerField(validators=[MinValueValidator(1)], null=False, default=1)
   price = models.DecimalField(validators=[MinValueValidator(0)], null=False, default=0, decimal_places=2, max_digits=10)
   cost_price = models.DecimalField(validators=[MinValueValidator(0)], null=False, default=0, decimal_places=2, max_digits=10)
 
-  def product(self):
-    return self.variant.product
+  def products(self):
+    try:
+      return self.variant.product
+    except:
+      return self.product
   
   def product_cost_price(self):
-    return self.variant.product.cost_price
+    try:
+      return self.variant.product.cost_price
+    except:
+      return self.product.cost_price
 
   def display_variant(self):
     return self.option_type + ": " + self.option_value
 
   def subtotal(self):
-    return self.variant.price * self.quantity
+    try:
+      return self.variant.price * self.quantity
+    except:
+      return self.product.price * self.quantity
 
 class Order(models.Model):
   number = models.CharField(max_length=32, editable=False, null=False, unique=True)
@@ -95,14 +105,25 @@ class Order(models.Model):
   def set_line_items_from_cart(self, cart,number,buyer):
     
     for item in cart.cartitem_set.all():
-      business_source = item.variant.product.business_source
-      option_type=item.variant.product.option_type.name
-      option_value=item.variant.option_value.value
-      line_item = LineItem(order = self,user = buyer, variant = item.variant, business_source=business_source, quantity = item.quantity, price = item.price, cost_price = item.cost_price, option_type=option_type, option_value=option_value,number=number)
-      line_item.save()
-      variant = line_item.variant
-      variant.stock -= line_item.quantity
-      variant.save()
+      try:
+        business_source = item.variant.product.business_source
+        option_type=item.variant.product.option_type.name
+        option_value=item.variant.option_value.value
+        line_item = LineItem(order = self,user = buyer, variant = item.variant, business_source=business_source, quantity = item.quantity, price = item.price, cost_price = item.cost_price, option_type=option_type, option_value=option_value,number=number)
+        line_item.save()
+        variant = line_item.variant
+        variant.stock -= line_item.quantity
+        variant.save()
+      except:
+        business_source = ""
+        option_type=""
+        option_value=""
+        
+        line_item = LineItem(order = self,user = buyer,product=item.product, variant = item.variant, business_source=business_source, quantity = item.quantity, price = item.price, cost_price = item.cost_price, option_type=option_type, option_value=option_value,number=number)
+        line_item.save()
+        # variant = line_item.variant
+        # variant.stock -= line_item.quantity
+        # variant.save()
   
   def set_transaction(self, user, charge, card_number, save_card, time_range):
     
@@ -201,9 +222,10 @@ class Transaction(models.Model):
   
 # Create your models here.
 class LineItem(models.Model):
-  order = models.ForeignKey(Order, default=None, on_delete=models.CASCADE)
-  variant = models.ForeignKey(Variant, default=None, on_delete=models.CASCADE)
-  user = models.ForeignKey(User, default=2, null=True, blank=True, on_delete=models.CASCADE)
+  order = models.ForeignKey(Order, default=None, null=True, on_delete=models.CASCADE)
+  variant = models.ForeignKey(Variant, default=None, null=True, on_delete=models.CASCADE)
+  product = models.ForeignKey(Product, default=None, null=True, on_delete=models.CASCADE)
+  user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
   dispatched = models.BooleanField(default=False)
   dispatched_at = models.DateTimeField(null=True, blank=True)
   option_value = models.CharField(max_length=100, default='N/A')

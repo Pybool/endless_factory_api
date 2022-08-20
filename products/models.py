@@ -123,8 +123,8 @@ class Product(models.Model):
 
   #Variant
   # option_value = models.ForeignKey(OptionValue, default=None, on_delete=models.CASCADE, null=True)
-  initial_stock = models.IntegerField(validators=[MinValueValidator(0)],default=1)
-  current_stock = models.IntegerField(validators=[MinValueValidator(0)],default=1)
+  initial_stock = models.IntegerField(validators=[MinValueValidator(0)],default=100)
+  current_stock = models.IntegerField(validators=[MinValueValidator(0)],default=99)
   cost_price = models.DecimalField(decimal_places=2, max_digits=9, default=1000.0, validators=[MinValueValidator(1.0)])
   price = models.DecimalField(decimal_places=2, max_digits=9, default=1.0, validators=[MinValueValidator(1.0)])
   discount = models.DecimalField(decimal_places=2, max_digits=9, default=0.0, validators=[MinValueValidator(1.0)])

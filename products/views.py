@@ -46,8 +46,8 @@ class Products(APIView):
     # authentication_classes = [JWTAuthenticationMiddleWare]
     def get(self,request):
        
-        # products = Product.objects.filter(is_active=True, approved=True)
-        products = Product.objects.filter()
+        products = Product.objects.filter(is_active=True, approved=True,featured=True)
+        # products = Product.objects.filter()
         serializer= ProductSerializer(products, many=True)
         response = {"message":"Products listings","products":serializer.data,"status":True}
         return Response(serializer.data)

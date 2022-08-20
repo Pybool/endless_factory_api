@@ -160,7 +160,7 @@ class CartItemSerializer(serializers.ModelSerializer):
   product = CartProductSerializer(many=False)
   class Meta:
     model = CartItem
-    fields = ['id', 'option_value', 'option_type', 'quantity', 'price', 'product', 'display_variant']
+    fields = ['id', 'option_value', 'option_type', 'quantity', 'price', 'products', 'display_variant']
 
 class CartSerializer(serializers.ModelSerializer):
   cart_items = CartItemSerializer(many=True)

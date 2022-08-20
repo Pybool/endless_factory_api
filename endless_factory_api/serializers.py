@@ -76,14 +76,6 @@ class OrderSerializer(serializers.ModelSerializer):
     model = Order
     fields = ['number', 'created_at', 'total','shipping_address', 'is_shipped', 'id', 'items_count', 'tracking_number']
 
-class LineItemIndexSerializer(serializers.ModelSerializer):
-  user = OrderUserSerializer(many=False)
-  variant = LineItemVariantSerializer(many=False)
-  order = OrderSerializer(many=False)
-  class Meta:
-    model = LineItem
-    fields = ['user','order', 'variant', 'price','cost_price', 'dispatched', 'id', 'display_variant', 'tracking_number', 'quantity', 'tracking_number', 'courier_agency']
-
 class LineItemIndexSerializerDashboard(serializers.ModelSerializer):
   variant = LineItemVariantSerializer(many=False)
   order = OrderSerializer(many=False)
@@ -274,7 +266,7 @@ class ProductSerializer(serializers.ModelSerializer):
 class NewProductSerializer(serializers.ModelSerializer):
   class Meta:
     model = Product
-    fields = ('category','option_type','title','subtitle', 'description','condition_option','business_source','account_manager_phone_1','company_mailing_address','company_address_1', 'search_tags','eco_friendly','duration','price','cost_price','initial_stock')
+    fields = ('category','option_type','title','subtitle', 'description','condition_option','business_source', 'model_number','account_manager_phone_1','company_mailing_address','company_address_1', 'search_tags','eco_friendly','duration','price','cost_price','initial_stock')
 
 class ProductUpdateSerializer(serializers.ModelSerializer):
   class Meta:
@@ -296,7 +288,7 @@ class ProductIndexSerializer(serializers.ModelSerializer):
   variants = VariantIndexSerializer(many=True)
   class Meta:
     model = Product
-    fields = ['subtitle', 'images', 'category', 'variants', 'slug']
+    fields = ['title','subtitle', 'images', 'category', 'model_number', 'variants', 'slug']
   
 class CartProductSerializer(serializers.ModelSerializer):
   class Meta:
@@ -304,16 +296,25 @@ class CartProductSerializer(serializers.ModelSerializer):
     fields = ['subtitle', 'images', 'slug']
 
 class CartItemSerializer(serializers.ModelSerializer):
-  product = CartProductSerializer(many=False)
+  products = CartProductSerializer(many=False)
   class Meta:
     model = CartItem
-    fields = ['id', 'option_value', 'option_type', 'quantity', 'price','cost_price', 'product', 'display_variant']
+    fields = ['id', 'option_value', 'option_type', 'quantity', 'price','cost_price', 'products', 'display_variant']
 
 class CartSerializer(serializers.ModelSerializer):
   cart_items = CartItemSerializer(many=True)
   class Meta:
     model = Cart
     fields = ['token', 'cart_items', 'total', 'items_count']
+
+class LineItemIndexSerializer(serializers.ModelSerializer):
+  user = OrderUserSerializer(many=False)
+  variant = LineItemVariantSerializer(many=False)
+  order = OrderSerializer(many=False)
+  product = ProductSerializer(many=False)
+  class Meta:
+    model = LineItem
+    fields = ['user','order', 'variant','product', 'price','cost_price', 'dispatched', 'id', 'display_variant', 'tracking_number', 'quantity', 'tracking_number', 'courier_agency']
 
 class CreditCardSerializer(serializers.ModelSerializer):
   class Meta:
