@@ -15,7 +15,7 @@ def loginPage(request):
     if request.user.is_authenticated:
         messages.success(request, 'User already logged in.')
 
-        return redirect('/')
+        return redirect('/dashboards/home')
     else:
         if request.method == 'POST':
             email = request.POST.get('email')
@@ -25,7 +25,7 @@ def loginPage(request):
             if user is not None:
                 login(request, user)
                 messages.success(request, 'Logged in Successfully.')
-                return redirect('/')
+                return redirect('/dashboards/home')
             else:
                 messages.error(request, 'Email or Password is incorrect.')
         context = {'categories': product_categories,'lang': get_user_locale(request)}
@@ -79,7 +79,7 @@ def reset_password(request, token):
                 return redirect('reset_password', token)
     context = {'categories': product_categories, 'lang': get_user_locale(request)}
     return render(request, 'accounts/reset_password.html', context)
-    
+
 def validate_otp(request, token):
     product_categories = Category.objects.all().order_by('?')[:8]
     user_with_token =  User.objects.filter(reset_password_token = token).first()

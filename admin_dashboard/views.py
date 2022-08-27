@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from .forms import CategoryForm, TagForm, ProductForm, VariantForm, AttachmentForm, UserForm, UserProfileForm, CreditCardForm, AddressForm, OptionTypeForm, OptionValueForm
 from products.models import Category, Tag, Product, Variant, Attachment, OptionType, OptionValue
 from orders.models import Order, LineItem
-from accounts.models import IDCardsAttachment, ProofBusinessAttachment, User, WishlistedProduct, Address, UserProduct
+from accounts.models import IDCardsAttachment, ProofBusinessAttachment, User, WishlistedProduct, Address, UserProduct, CreditCard
 from endless_admin.translations import get_translations
 
 @login_required(login_url='login')
@@ -91,7 +91,7 @@ def edit_user(request, pk):
 @authorize_seller()
 def user_addresses(request, pk):
   user = User.objects.get(pk=pk)
-  addresses = user.addresses.all
+  addresses = Address.objects.filter(user=user).all()
   return render(request, 'dashboard/users/addresses/index.html', { 'user': user, 'addresses':addresses, 'section_active': 'addresses', 'lang': get_user_locale(request)})
 
 @login_required(login_url='login')
@@ -129,7 +129,7 @@ def edit_user_address(request, pk, address_id):
 @authorize_seller()
 def credit_cards(request, pk):
   user = User.objects.get(pk=pk)
-  credit_cards = user.credit_cards.all
+  credit_cards = CreditCard.objects.filter(user=user).all()
   return render(request, 'dashboard/users/credit_cards/index.html', { 'user': user, 'credit_cards':credit_cards, 'section_active': 'credit_cards', 'lang': get_user_locale(request)})
 
 #Orders
@@ -347,7 +347,6 @@ def new_product(request):
   form = ProductForm()
   if request.method == 'POST':
     form = ProductForm(request.POST)
-    print(form,request.POST)
     if form.is_valid():
       form.save()
       user_product = UserProduct(user_id=request.POST.get('user'), product=form.instance)

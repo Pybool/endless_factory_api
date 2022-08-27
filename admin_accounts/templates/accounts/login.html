@@ -3,14 +3,14 @@
 
 {% block main_content %}
     {%  load static %}
-    {%include 'frontend/_header.html'%}
+    {% include 'frontend/_header.html'%}
     <main>
         <section class="login">
             <div class="container">
                 <div class="form-wrap">
                     <div class="tabs">
-                        <h3 class="signup-tab"><a href="/user/register">{{'Sign Up'|translate:lang}}</a></h3>
-                        <h3 class="login-tab"><a class='active' href="/user/login">{{'Login'|translate:lang}}</a></h3>
+                        <h3 class="signup-tab"><a href="{% url 'register' %}">{{'Sign Up'|translate:lang}}</a></h3>
+                        <h3 class="login-tab"><a class='active' href="{% url 'login' %}">{{'Login'|translate:lang}}</a></h3>
                     </div>
             
                     <div class="tabs-content">
@@ -24,7 +24,7 @@
                                 <input type="submit" class="button" value="{{'Login'|translate:lang}}">
                             </form>
                             <div class="help-text">
-                                <p><a href="/user/forgot_password">{{'Forget your password?'|translate:lang}}</a></p>
+                                <p><a href="{% url 'forgot_password' %}">{{'Forget your password?'|translate:lang}}</a></p>
                             </div>
                         </div>
                     </div>
