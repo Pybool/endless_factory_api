@@ -110,7 +110,6 @@ class User(AbstractBaseUser,PermissionsMixin):
     biz_info_verified = models.BooleanField(default=False)
     contact_preferences = models.TextField(blank=True)
     
-    # company_address = models.ForeignKey(Address, on_delete=models.CASCADE, related_name='company_address', blank=True, null=True)
     country = models.CharField(max_length=255, null=False, choices=COUNTRY_CHOICES, default='United States')
 
     tax_id_number=models.CharField(max_length=100, blank=True)
@@ -160,7 +159,7 @@ class User(AbstractBaseUser,PermissionsMixin):
         return products
 
     def shipping_addresses(self):
-        return Address.objects.filter(user=self.id).values()
+        return Address.objects.filter(user=self.id, deleted=False).values()
     
     def default_address(self):
         return Address.objects.filter(user=self.id).values().first()
@@ -219,6 +218,8 @@ class Address(models.Model):
     state = models.CharField(max_length=255, null=False, default='N/A')
     country = models.CharField(max_length=255, null=False, choices=COUNTRY_CHOICES, default='United States')
     is_shipping_address = models.BooleanField(default=False)
+    is_default_address = models.BooleanField(default=False)
+    deleted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now=True)
     

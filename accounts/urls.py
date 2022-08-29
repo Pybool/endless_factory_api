@@ -14,6 +14,7 @@ urlpatterns = [
   path('forgot_password/send_reset_token', views.ForgotPasswordView.as_view()),
   path('forgot_password/reset_password', views.ResetPasswordView.as_view()),
   path('user/set_addresses', views.AddressesView.as_view()),
+  
   # path('user/wishlisted_products', views.wishlistedproducts),
   path('user/get_edit_addresses/<int:pk>', views.GetEditAddress.as_view()),
   

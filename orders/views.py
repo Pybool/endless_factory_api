@@ -1,3 +1,4 @@
+import json
 import logging
 log = logging.getLogger(__name__)
 from uuid import uuid4
@@ -102,7 +103,7 @@ class CheckoutView(APIView):
             self.initiate_transaction = InitiateTransaction(cart,stripe_order_token)
             time_sent = get_currrent_date_time()
             charge = self.initiate_transaction.create_charge() #UNCOMMENT IN PRODUCTION
-            log.info("Charge ",str(charge))
+            log.info("Charge ",json.dumps(charge))
         
             time_arrived = get_currrent_date_time()
             time_range = [time_sent,time_arrived]
@@ -118,6 +119,7 @@ class CheckoutView(APIView):
                 order.set_line_items_from_cart(cart,number,request.user)
                 order.set_transaction(request.user, charge, request.data['card_number'], request.data['save_card'],time_range)
                 cart.reset()
+                log.info(str(request.user.id)+ '==>'+ str(order.number)+ ' '+str(charge['receipt_url']))
                 return Response({'receipt':charge['receipt_url'],'message': 'Your order has been placed successfully.', 'status': True, 'order_id': order.number})
             else:
                 return Response({'message':'Your card was declined.', 'status': 'error'})

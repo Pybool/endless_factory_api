@@ -299,10 +299,10 @@ class MarkItemsShipped(APIView):
 ########################################################UNTESTED###########################
 
 class SellerHomeData(APIView):
+    
     authentication_classes = [JWTAuthenticationMiddleWare]
     def get(self,request):
 
-        # return Response({"User type ": request.user.is_seller()})
         if request.user.is_seller():
             user_products = request.user.products()
             product_serializer = ProductIndexSerializer(user_products, many=True)
@@ -317,7 +317,6 @@ class SellerHomeData(APIView):
             return Response({'orders': order_serializer.data, 'products': product_serializer.data})
 
         elif request.user.is_admin():
-            # if request.user.is_admin():
             order_items = LineItem.objects.select_related('variant')
             order_serializer= LineItemIndexSerializer(order_items, many=True)
             return Response({'orders': order_serializer.data})
@@ -327,30 +326,31 @@ class SellerHomeData(APIView):
 
 class SellerDashboardView(APIView):
     
-    def sales_report(self,request, filter, duration, **kwargs):
+    def sales_report(self,request, **kwargs):
         
+        filter = request.GET.get('filter')
+        duration = int(request.GET.get('duration'))
         if request.user.is_seller():
             
             self.datetimeutils = Datetimeutils(duration)
             start_date , end_date = self.datetimeutils.get_pages_created_on_date(filter)
             seller_product_variants = Variant.objects.filter(product__in=request.user.products()) 
-            # order_items = LineItem.objects.select_related('variant').filter(variant__in=seller_product_variants,created_at__range=[start_date,end_date]).values('price','created_at').order_by('created_at__date')
-            order_items = LineItem.objects.select_related('variant').filter(variant__in=seller_product_variants,created_at__range=[start_date,end_date]).values('created_at__date').order_by('created_at__date').annotate(Count("id"),day_sales=Sum('price'))
+            order_items = LineItem.objects.select_related('variant').filter(Q(variant__in=seller_product_variants,created_at__range=[start_date,end_date])|Q(product__in=request.user.products(),created_at__range=[start_date,end_date])).values('created_at__date').order_by('created_at__date').annotate(Count("id"),day_sales=Sum('price'))
+            log.info(str(order_items))
             order_items_cost = sum(order_items['day_sales'] for order_items in order_items)
-            
+    
             ########Get Pending and completed orders
             duration_uncompleted_orders_counts = LineItem.objects.select_related('variant').filter(variant__in=seller_product_variants,created_at__range=[start_date,end_date],order_status='N/A').values_list(Sum('price'),Count('id'))
             duration_completed_orders_counts = LineItem.objects.select_related('variant').filter(variant__in=seller_product_variants,created_at__range=[start_date,end_date],order_status='completed').values_list(Sum('price'),Count('id'),Sum('cost_price'))
-            
-            print(len(duration_uncompleted_orders_counts),"\n\n",len(duration_completed_orders_counts),duration_completed_orders_counts[0],duration_completed_orders_counts[1] )
             duration_completed_orders_counts_cost = sum(duration_completed_orders_counts[0] for duration_completed_orders_counts in duration_completed_orders_counts)
             duration_completed_orders_cost_price_total = sum(duration_completed_orders_counts[2] for duration_completed_orders_counts in duration_completed_orders_counts)
             duration_uncompleted_orders_counts_cost = sum(duration_uncompleted_orders_counts[0] for duration_uncompleted_orders_counts in duration_uncompleted_orders_counts)
-            print(duration_uncompleted_orders_counts_cost,duration_completed_orders_counts_cost)
-            
+                        
             ########Get recent orders#########
-            recent_orders =  LineItem.objects.select_related('variant').filter(variant__in=seller_product_variants).order_by('-created_at')[:20]
+            variant_recent_orders =  LineItem.objects.select_related('variant').filter(variant__in=seller_product_variants).order_by('-created_at')[:20]
+            recent_orders =  LineItem.objects.select_related('product').filter(product__in=request.user.products()).order_by('-created_at')[:20]
             serializer = LineItemIndexSerializerDashboard(recent_orders,many=True)
+            variant_serializer = LineItemIndexSerializerDashboard(variant_recent_orders,many=True)
             return {
                     "status": True,"revenue":order_items_cost,
                     "start_date":start_date, "end_date":end_date,
@@ -364,66 +364,21 @@ class SellerDashboardView(APIView):
                                             'earnings':(duration_completed_orders_counts_cost - duration_completed_orders_cost_price_total)
                                         },
                     'recent_orders':serializer.data,
+                    'variant_recent_orders':variant_serializer.data,
                     'section_active': 'sales_dashboard',
                     'lang': get_user_locale(request)
                     }
+            
+        else:
+            return{'status':False,"message":"You are not permitted, private endpoint"}
     
     authentication_classes = [JWTAuthenticationMiddleWare]
     @allowed_users() 
-    def get(self,request, filter,duration):
-        response = self.sales_report(request,filter,duration)
+    def get(self,request):
+        response = self.sales_report(request)
         return Response(response)
 
 
-################MARKETING AND CAMPAIGNS####################
-
-class NewCampaignView(APIView):
-    authentication_classes = [JWTAuthenticationMiddleWare]
-    @allowed_users()
-    def post(self,request):
-        if request.method == 'POST':
-            instance = CampaignSerializer(data=request.data)
-            listings,variants,listings_variant = instance.get_listings_Object(request.data)
-            request.data['listings'] = listings
-            request.data['variants'] = variants
-            request.data['listings_variants'] = listings_variant
-            data = request.data
-            instance = CampaignSerializer(data=data)
-            if instance.is_valid(raise_exception=True):
-                campaign = instance.create(data)
-                print(dir(campaign))
-                return Response({
-                                "status":True,
-                                "message":"Marketing campaign created successfully",
-                                "data":{
-                                        "campaign_name":campaign.campaign_name,
-                                        "start_date":campaign.start_date,
-                                        "end_date":campaign.end_date
-                                        }
-                                 })
-    def get(self,request):
-        
-        if request.method == 'GET':
-            promotions = Campaign.objects.filter(is_active=False)
-            # print(promotions)
-            # for promotion in promotions:
-            #     print(type(promotion))
-            #     listings = promotion.listings.all()
-            #     variants = promotion.variants.all()
-            #     listings_serializer = ProductSerializer(listings,many=True)
-            #     variants_serializer = VariantSerializer(variants,many=True)
-            #     # print(listings_serializer.data)
-            #     # print("\n\n\n")
-            #     # print(variants_serializer.data)
-            #     # promotion.listings = listings
-            #     promotion.listings.set(listings)
-            #     print(PromoSerializer(promotions,many=False).data)
-            serializer = PromoSerializer(promotions,many=True)
-            
-            print(serializer.data)
-            return Response({"status":True,"data":serializer.data})
-            
-                     
 # #Option Types CRUD ================
 # @login_required(login_url='login')
 # @allowed_users()
@@ -439,16 +394,16 @@ class NewOptionTypeView(APIView):
     @allowed_users()
     @authorize_seller()
     def post(self,request):
-        if request.method == 'POST':
-            serializer = NewOptionTypeSerializer(data=request.data)
-            print(request.data)
-            if serializer.is_valid():
-                
-                serializer.save()
-                context = {'message':get_translations('OptionType created successfully', get_user_locale(request)),'section_active': 'categories', 'lang': get_user_locale(request)}
-                return Response({'context': context, "status": True})
+        serializer = NewOptionTypeSerializer(data=request.data)
+        print(request.data)
+        if serializer.is_valid():
+            
+            serializer.save()
+            context = {'message':get_translations('OptionType created successfully', get_user_locale(request)),'section_active': 'categories', 'lang': get_user_locale(request)}
+            return Response({'context': context, "status": True})
 
-            return Response({"status": False})
+        return Response({"status": False})
+    
 # @login_required(login_url='login')
 # @allowed_users()
 # @authorize_seller()
@@ -481,16 +436,15 @@ class NewOptionValueView(APIView):
     
     authentication_classes = [JWTAuthenticationMiddleWare]
     @allowed_users()
-    # @authorize_seller()
+    @authorize_seller()
     def post(self,request):
-        if request.method == 'POST':
-            serializer = NewOptionValueSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                context = {'message':get_translations('OptionValue created successfully', get_user_locale(request)),'section_active': 'categories', 'lang': get_user_locale(request)}
-                return Response({'context': context, "status": True})
+        serializer = NewOptionValueSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            context = {'message':get_translations('OptionValue created successfully', get_user_locale(request)),'section_active': 'categories', 'lang': get_user_locale(request)}
+            return Response({'context': context, "status": True})
 
-            return Response({"status": False})
+        return Response({"status": False})
 # @login_required(login_url='login')
 # @allowed_users()
 # @authorize_seller()
@@ -521,14 +475,13 @@ class NewCategoriesView(APIView):
     @allowed_users()
     @authorize_seller()
     def post(self,request):
-    #   form = CategoryForm()
-        if request.method == 'POST':
-            serializer = NewCategorySerializer(data=request.data)
-            print(serializer)
-            if serializer.is_valid():
-                serializer.save()
-                context = {'message':get_translations('Category created successfully', get_user_locale(request)),'section_active': 'categories', 'lang': get_user_locale(request)}
-                return Response({'context': context, "status": True})
+        
+        serializer = NewCategorySerializer(data=request.data)
+        print(serializer)
+        if serializer.is_valid():
+            serializer.save()
+            context = {'message':get_translations('Category created successfully', get_user_locale(request)),'section_active': 'categories', 'lang': get_user_locale(request)}
+            return Response({'context': context, "status": True})
 # @login_required(login_url='login')
 # @allowed_users()
 # @authorize_seller()
@@ -629,11 +582,10 @@ class NewProductsView(APIView):
         if request.method == 'POST':
             print("List of images ",request.FILES.getlist('document', None))
             if len(request.FILES.getlist('document', None)) < 1:
-                # print("Number of images ",len(request.FILES.getlist('document', None)))
+                log.info("Uploaded images "+ str(request.FILES.getlist('document', None)))
                 return Response({'No image was provided for product': "message", "status": False})
             
             data = json.loads(request.data['data'])
-            print('Business source ',request.user.company_name, data)
             data['business_source'] = request.user.company_name
             data['account_manager_phone_1'] = request.user.account_manager_phone_1
             data['company_address_1'] = request.user.store_name
@@ -706,13 +658,12 @@ class NewProductVariantView(APIView):
         product = Product.objects.get(slug=slug)
         option_values = OptionValue.objects.filter(option_type=product.option_type)
 
-        if request.method == 'POST':
-            form = VariantSerializer(request.POST)
-            if form.is_valid():
-                form.instance.option_value = OptionValue.objects.get(pk=request.POST.get('option_value'))
-                form.save()
-                messages.success(request, get_translations('Product variant created successfully', get_user_locale(request)))
-                return redirect('product_variants_list', product.slug)
+        form = VariantSerializer(request.POST)
+        if form.is_valid():
+            form.instance.option_value = OptionValue.objects.get(pk=request.POST.get('option_value'))
+            form.save()
+            messages.success(request, get_translations('Product variant created successfully', get_user_locale(request)))
+            return redirect('product_variants_list', product.slug)
         # return render(request, 'dashboard/products/variants/new.html', {'form': form, 'option_values': option_values, 'product': product, 'section_active': 'products', 'lang': get_user_locale(request)})
 
 
@@ -782,14 +733,12 @@ class NewProductVariantView(APIView):
 class RefundsView(APIView):
     
     authentication_classes = [JWTAuthenticationMiddleWare]
-    
     @allowed_users() 
     @authorize_seller() 
     def get(self,request,q='',charge_id='',refund_id='',limit=1000):
         if request.method == 'GET':
             
-            singlecharge = True if isinstance(int(q),int) else False
-                
+            singlecharge = True if isinstance(int(q),int) else False   
             self.createrefund = RefundTransactions(charge_id=charge_id,refund_id=refund_id)
             refunds = RefundTransactions.list_refunds(q, data_obj='', singlecharge=singlecharge, limit=limit)
             context = {'data': refunds, 'message':get_translations('Refund list was successfully fetched', get_user_locale(request)),'section_active': 'refundlist', 'lang': get_user_locale(request)}

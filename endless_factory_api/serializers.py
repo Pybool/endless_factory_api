@@ -39,7 +39,9 @@ class SellerCentreBusinessInfoSerializer(serializers.ModelSerializer):
 class LineItemProductSerializer(serializers.ModelSerializer):
   class Meta:
     model = Product
-    fields = ['id', 'subtitle']
+    fields=('id', 'title','subtitle', 'description','price', 'color', 'business_source','account_manager_phone_1','company_mailing_address','company_address_1', 'category', 'option_type', 'delivery_option', 'product_type', 'search_tags', 'slug', 'images', 'reviews')
+
+    
     
 class LineItemVariantSerializer(serializers.ModelSerializer):
   product = LineItemProductSerializer(many=False)
@@ -62,27 +64,19 @@ class AddressSerializer(serializers.ModelSerializer):
   
   class Meta:
     model = Address
-    fields = ['user', 'first_name', 'last_name', 'line_1', 'line_2', 'city', 'zipcode', 'state', 'country', 'is_shipping_address']
+    fields = ['user', 'first_name', 'last_name', 'line_1', 'line_2', 'city', 'zipcode', 'state', 'country', 'is_shipping_address','is_default_address']
 
 class GetAddressSerializer(serializers.ModelSerializer):
   
   class Meta:
     model = Address
-    fields = ['id','user', 'first_name', 'last_name', 'line_1', 'line_2', 'city', 'zipcode', 'state', 'country', 'is_shipping_address']
+    fields = ['id','user', 'first_name', 'last_name', 'line_1', 'line_2', 'city', 'zipcode', 'state', 'country', 'is_shipping_address','is_default_address']
 
 class OrderSerializer(serializers.ModelSerializer):
   shipping_address = OrderAddressSerializer(many=False)
   class Meta:
     model = Order
     fields = ['number', 'created_at', 'total','shipping_address', 'is_shipped', 'id', 'items_count', 'tracking_number']
-
-class LineItemIndexSerializerDashboard(serializers.ModelSerializer):
-  variant = LineItemVariantSerializer(many=False)
-  order = OrderSerializer(many=False)
-  class Meta:
-    model = LineItem
-    fields = ['order', 'variant', 'price','cost_price', 'dispatched', 'id', 'display_variant', 'tracking_number', 'quantity', 'tracking_number', 'courier_agency','order_status']
-
 
 class LineItemPriceIndexSerializer(serializers.ModelSerializer):
   class Meta:
@@ -100,6 +94,12 @@ class UserShowSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
     fields = ['id', 'name', 'email', 'phone_number', 'shipping_addresses', 'country', 'avatar', 'company_name', 'company_mailing_address', 'company_description', 'tax_id_number', 'entity_type', 'payment_acceptance_type', 'bank_info', 'contact_preferences', 'number_of_employees', 'year_founded', 'gross_annual_revenue']
+
+class UserProfileSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = User
+    fields = ['name','phone_number', 'email', 'shipping_addresses', 'country', 'company_name', 'company_mailing_address', 'company_description', 'tax_id_number', 'entity_type', 'bank_info','number_of_employees', 'year_founded', 'gross_annual_revenue']
+
 
 class UserIndexSerializer(serializers.ModelSerializer):
   class Meta:
@@ -187,6 +187,8 @@ class WishlistedProductSerializer(serializers.ModelSerializer):
   class Meta:
     model = WishlistedProduct
     fields = ('product',)
+
+
 
 class AttachmentSerializer(serializers.ModelSerializer):
 
@@ -320,6 +322,17 @@ class CreditCardSerializer(serializers.ModelSerializer):
   class Meta:
     model = CreditCard
     fields = ['id','user','card_number', 'exp_month', 'exp_year', 'brand', 'display_number', 'name_on_card']
+
+
+
+class LineItemIndexSerializerDashboard(serializers.ModelSerializer):
+  variant = LineItemVariantSerializer(many=False)
+  order = OrderSerializer(many=False)
+  product = ProductSerializer(many=False)
+  class Meta:
+    model = LineItem
+    fields = ['order','product', 'variant', 'price','cost_price', 'dispatched', 'id', 'display_variant', 'tracking_number', 'quantity', 'tracking_number', 'courier_agency','order_status']
+
 
 class CampaignUserSerializer(serializers.ModelSerializer):
   class Meta:

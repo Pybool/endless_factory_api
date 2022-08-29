@@ -152,8 +152,8 @@ class Order(models.Model):
       transaction.credit_card = credit_card
       transaction.save()
     else:
-      
-      credit_card = CreditCard(
+      if save_card:
+        credit_card = CreditCard(
         user_id = user.id,
         card_number=card_number,
         exp_month = charge['payment_method_details']['card']['exp_month'],
@@ -161,11 +161,13 @@ class Order(models.Model):
         brand = charge['payment_method_details']['card']['brand'],
         name_on_card = charge['billing_details']['name']
       )
-      if save_card:
         credit_card.save()
-      print(save_card)
-      transaction.credit_card = credit_card
-      transaction.save()
+        print(save_card)
+        transaction.credit_card = credit_card
+        transaction.save()
+      
+      
+      
 
   def items_count(self):
     quantity = 0

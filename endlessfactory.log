@@ -1,0 +1,665 @@
+[26/Aug/2022 08:05:10] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:05:11] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:05:11] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:05:12] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:05:12] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:07:59] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:07:59] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:09:05] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:09:05] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:09:06] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:09:06] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:09:06] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:09:06] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:09:07] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:09:07] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:10:38] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:10:38] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:11:09] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:11:09] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:11:34] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:11:34] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:13:24] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:13:24] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:13:25] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:13:25] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:13:26] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:13:26] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:13:26] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:13:26] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:14:15] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:14:15] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:14:16] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:14:16] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:15:34] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:15:34] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:15:35] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:15:35] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:15:36] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:15:36] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:15:37] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:15:37] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:16:10] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:16:10] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:16:15] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:16:15] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:16:42] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:16:42] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:17:12] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:17:12] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:18:26] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:18:26] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:22:08] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:22:08] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:22:09] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:22:09] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:22:14] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:22:14] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:22:15] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:22:15] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:22:33] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:22:33] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:22:34] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:22:34] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:22:34] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:22:34] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:22:35] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:22:35] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:24:44] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:24:44] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:24:44] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:24:44] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:29:36] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:29:36] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:29:36] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:29:36] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:34:41] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:34:41] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:34:42] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:34:42] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:36:14] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:36:14] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:36:15] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:36:15] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:36:26] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:36:26] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:36:26] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:36:26] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:36:48] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:36:48] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:36:49] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:36:49] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:36:50] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:36:50] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:36:51] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:36:51] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:40:36] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:40:36] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:41:51] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:41:51] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:46:41] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:46:41] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:46:52] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:46:52] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:47:12] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:47:12] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 08:47:12] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 08:47:12] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:02:25] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:02:25] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:03:03] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:03:03] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:06:33] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:06:33] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:06:48] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:06:48] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:06:54] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:06:54] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:07:19] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:07:19] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:10:43] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:10:43] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:11:21] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:11:21] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:14:36] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:14:36] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:14:48] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:14:48] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:15:00] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:15:00] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:15:07] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:15:07] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:15:08] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:15:08] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:15:16] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:15:16] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:15:24] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:15:24] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:15:29] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:15:29] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:22:40] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:22:40] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:25:10] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:25:10] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:27:49] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:27:49] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:27:50] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:27:50] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:28:11] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:28:11] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:28:18] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:28:18] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:28:53] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:28:53] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:29:17] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:29:17] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:29:18] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:29:18] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:30:27] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:30:27] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:30:34] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:30:34] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:31:05] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:31:05] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:31:54] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:31:54] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:31:54] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:31:54] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:31:54] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:31:54] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:31:54] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:31:54] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:31:54] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:31:54] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:31:57] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:31:57] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:31:57] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:31:57] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:31:57] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:31:57] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:31:57] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:31:57] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:31:58] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:31:58] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:31:58] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:31:58] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:01] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:01] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:02] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:02] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:03] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:03] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:03] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:03] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:03] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:03] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:04] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:04] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:06] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:06] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:06] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:06] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:06] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:06] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:07] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:07] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:07] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:07] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:10] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:10] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:10] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:10] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:10] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:10] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:10] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:10] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:10] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:10] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:11] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:11] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:14] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:14] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:14] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:14] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:14] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:14] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:15] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:15] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:15] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:15] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:16] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:16] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:19] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:19] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:19] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:19] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:20] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:20] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:20] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:20] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:21] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:21] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:21] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:21] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:24] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:24] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:24] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:24] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:24] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:24] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:25] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:25] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:25] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:25] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:25] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:25] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:28] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:28] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:28] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:28] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:28] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:28] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:28] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:28] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:28] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:28] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:28] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:28] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:46] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:46] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:32:47] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:32:47] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:33:11] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:33:11] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:33:34] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:33:34] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:50:26] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:50:26] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:50:35] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:50:35] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:51:48] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:51:48] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:52:13] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:52:13] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:52:29] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:52:29] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:53:32] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:53:32] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:53:33] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:53:33] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:53:37] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:53:37] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:53:38] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:53:38] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:53:46] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:53:46] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:53:47] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:53:47] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:53:50] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:53:50] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:53:51] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:53:51] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:53:57] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:53:57] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:53:58] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:53:58] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:54:01] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:54:01] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:54:02] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:54:02] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:54:06] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:54:06] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:55:39] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:55:39] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:55:40] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:55:40] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:59:16] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:59:16] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:59:17] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:59:17] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 09:59:17] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 09:59:17] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:03:18] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:03:18] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:03:19] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:03:19] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:03:20] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:03:20] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:05:39] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:05:39] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:05:58] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:05:58] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:05:58] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:05:58] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:05:59] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:05:59] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:09:55] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:09:55] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:09:56] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:09:56] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:09:57] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:09:57] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:11:08] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:11:08] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:11:08] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:11:08] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:11:09] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:11:09] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:13:07] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:13:07] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:21:19] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:21:19] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:21:20] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:21:20] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:33:00] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:33:00] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:35:44] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:35:44] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:35:45] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:35:45] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:35:48] INFO [orders.views:41] Cart ===> Cart object (1)
+[26/Aug/2022 10:35:48] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:35:50] INFO [orders.views:41] Cart ===> Cart object (1)
+[26/Aug/2022 10:35:50] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:47:02] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:47:02] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:48:47] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:48:47] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:48:48] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:48:48] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:53:57] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:53:57] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:57:54] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:57:54] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 10:59:07] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 10:59:07] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:02:20] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:02:20] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:03:32] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:03:32] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:04:15] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:04:15] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:04:37] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:04:37] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:07:00] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:07:00] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:08:14] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:08:14] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:08:22] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:08:22] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:08:56] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:08:56] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:23:43] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:23:43] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:23:43] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:23:43] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:23:44] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:23:44] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:23:44] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:23:44] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:29:05] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:29:05] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:33:19] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:33:19] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:33:29] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:33:29] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:33:29] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:33:29] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:33:48] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:33:48] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:33:49] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:33:49] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:33:58] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:33:58] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:34:15] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:34:15] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:34:37] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:34:37] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:35:11] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:35:11] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:35:12] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:35:12] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:35:43] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:35:43] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:35:44] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:35:44] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 12:36:17] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 12:36:17] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:03:45] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:03:45] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:04:53] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:04:53] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:04:54] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:04:54] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:05:09] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:05:09] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:05:09] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:05:09] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:05:15] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:05:15] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:05:16] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:05:16] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:05:20] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:05:20] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:05:20] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:05:20] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:06:51] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:06:51] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:07:36] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:07:36] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:07:37] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:07:37] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:07:38] INFO [orders.views:122] 3==>EF0000000029 https://pay.stripe.com/receipts/payment/CAcaFwoVYWNjdF8xSUVrTWhFSjhyRkJxZTZTKKmno5gGMgaITOMjWc46LBYfmCV-S9OU32R6TNkbD3kSVE58L8YsV32g2WpnSmd2TFDtWTd_WdPUV0LP
+[26/Aug/2022 14:07:40] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:07:40] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:16:05] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:16:05] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:16:06] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:16:06] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:16:07] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:16:07] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:16:08] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:16:08] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:20:57] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:20:57] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:20:57] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:20:57] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:22:48] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:22:48] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:22:49] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:22:49] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:43:32] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:43:32] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:45:42] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:45:42] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 14:45:59] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 14:45:59] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 15:27:09] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 15:27:09] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 15:40:54] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 15:40:54] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 15:41:08] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 15:41:08] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 15:41:41] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 15:41:41] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 15:42:15] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 15:42:15] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 15:43:10] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 15:43:10] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 15:43:52] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 15:43:52] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 15:44:08] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 15:44:08] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 15:49:16] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 15:49:16] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 15:49:58] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 15:49:58] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 15:50:01] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 15:50:01] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 15:50:53] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 15:50:53] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 15:51:00] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 15:51:00] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 15:51:34] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 15:51:34] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 15:52:16] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 15:52:16] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 15:52:34] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 15:52:34] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 15:56:04] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 15:56:04] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:03:09] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:03:09] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:06:40] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:06:40] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:07:12] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:07:12] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:09:23] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:09:23] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:09:40] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:09:40] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:10:55] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:10:55] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:11:07] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:11:07] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:11:08] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:11:08] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:12:21] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:12:21] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:12:22] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:12:22] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:12:33] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:12:33] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:12:34] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:12:34] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:12:37] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:12:37] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:12:38] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:12:38] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:16:08] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:16:08] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:16:55] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:16:55] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:17:40] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:17:40] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:17:40] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:17:40] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:17:41] INFO [orders.views:122] 3==>EF0000000030 https://pay.stripe.com/receipts/payment/CAcaFwoVYWNjdF8xSUVrTWhFSjhyRkJxZTZTKKXko5gGMgaGFWilLRI6LBZPpvV9BJMEvl77W98Gvl-6VhbpnOG8tpX0ES3KDmBFTUabz6mA8wd4frRm
+[26/Aug/2022 16:17:43] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:17:43] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:35:59] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:35:59] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:36:00] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:36:00] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:38:07] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:38:07] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:41:37] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:41:37] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:43:02] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:43:02] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:45:17] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:45:17] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:45:43] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:45:43] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:45:44] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:45:44] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:46:02] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:46:02] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:47:54] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:47:54] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:49:06] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:49:06] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:51:48] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:51:48] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:51:49] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:51:49] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:51:49] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:51:49] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:54:22] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:54:22] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:55:11] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:55:11] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:56:54] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:56:54] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:57:10] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:57:10] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:57:50] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:57:50] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:58:05] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:58:05] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:59:26] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:59:26] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 16:59:43] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 16:59:43] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 17:00:25] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 17:00:25] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 17:00:58] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 17:00:58] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 17:03:10] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 17:03:10] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 17:03:51] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 17:03:51] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 17:06:11] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 17:06:11] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:08:23] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:08:23] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:08:23] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:08:23] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:29:10] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:29:10] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:38:33] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:38:33] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:38:45] INFO [accounts.views:340] {'name': 'Demola Opeyemi', 'phone_number': '07067903042', 'email': 'seller1@gmail.com', 'shipping_addresses': <QuerySet [{'id': 17, 'user_id': 3, 'first_name': 'Aluko', 'last_name': 'Folajimi', 'line_1': '07067903042', 'line_2': '07067903042', 'city': 'Akure', 'zipcode': '340271', 'state': 'Ondo', 'country': 'Nigeria', 'is_shipping_address': False, 'is_default_address': False, 'deleted': False, 'created_at': datetime.datetime(2022, 8, 26, 16, 10, 53, 253250, tzinfo=<UTC>), 'updated_at': datetime.datetime(2022, 8, 26, 16, 10, 53, 253260, tzinfo=<UTC>)}]>, 'country': 'Nigeria', 'company_name': 'Abos Tech', 'company_mailing_address': '', 'company_description': 'Abos is a startup company full of talented developers', 'tax_id_number': '', 'entity_type': 'LLC', 'bank_info': '', 'number_of_employees': 1, 'year_founded': 2022, 'gross_annual_revenue': '0.00'}
+[26/Aug/2022 18:38:47] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:38:47] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:39:22] INFO [accounts.views:340] {'name': 'Demola Opeyemi', 'phone_number': '07067903042', 'email': 'seller1@gmail.com', 'shipping_addresses': <QuerySet [{'id': 17, 'user_id': 3, 'first_name': 'Aluko', 'last_name': 'Folajimi', 'line_1': '07067903042', 'line_2': '07067903042', 'city': 'Akure', 'zipcode': '340271', 'state': 'Ondo', 'country': 'Nigeria', 'is_shipping_address': False, 'is_default_address': False, 'deleted': False, 'created_at': datetime.datetime(2022, 8, 26, 16, 10, 53, 253250, tzinfo=<UTC>), 'updated_at': datetime.datetime(2022, 8, 26, 16, 10, 53, 253260, tzinfo=<UTC>)}]>, 'country': 'Nigeria', 'company_name': 'Abos Technology', 'company_mailing_address': '', 'company_description': 'Abos is a startup company full of talented developers', 'tax_id_number': '', 'entity_type': 'LLC', 'bank_info': '', 'number_of_employees': 1, 'year_founded': 2022, 'gross_annual_revenue': '0.00'}
+[26/Aug/2022 18:39:24] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:39:24] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:39:46] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:39:46] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:39:47] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:39:47] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:39:56] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:39:56] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:39:57] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:39:57] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:48:09] INFO [orders.views:41] Cart ===> Cart object (1)
+[26/Aug/2022 18:48:09] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:49:06] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:49:06] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:49:06] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:49:06] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:49:35] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:49:35] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:49:35] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:49:35] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:49:48] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:49:48] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:49:49] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:49:49] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:49:53] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:49:53] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:49:56] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:49:56] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:49:57] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:49:57] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:51:03] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:51:03] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:51:14] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:51:14] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:51:14] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:51:14] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:51:16] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:51:16] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:51:16] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:51:16] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:51:18] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:51:18] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:51:19] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:51:19] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:51:22] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:51:22] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:51:22] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:51:22] WARNING [orders.views:43] cart items retrieved
+[26/Aug/2022 18:51:26] INFO [orders.views:41] Cart ===> Cart object (5)
+[26/Aug/2022 18:51:26] WARNING [orders.views:43] cart items retrieved

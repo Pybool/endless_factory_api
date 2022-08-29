@@ -1,3 +1,5 @@
+import logging
+log = logging.getLogger(__name__)
 from collections import namedtuple
 import datetime as dt
 from locale import currency
@@ -31,7 +33,7 @@ from orders.models import Cart, CartItem, Order, LineItem, Transaction
 from accounts.authentication import ( JWTAuthenticationMiddleWare, create_access_token, 
                                  create_refresh_token, decode_access_token, decode_refresh_token
                                  )
-from endless_factory_api.serializers import AddressSerializer, GetAddressSerializer, IdCardAttachmentSerializer, ProofBusinessAttachmentSerializer, SellerCentreBasicInfoSerializer, SellerCentreBusinessInfoSerializer, TransactionsSerializer, UserSerializer, OrderAddressSerializer, VariantSerializer, VariantUpdateSerializer, UserShowSerializer, CreditCardSerializer
+from endless_factory_api.serializers import AddressSerializer, GetAddressSerializer, IdCardAttachmentSerializer, ProofBusinessAttachmentSerializer, SellerCentreBasicInfoSerializer, SellerCentreBusinessInfoSerializer, TransactionsSerializer, UserProfileSerializer, UserSerializer, OrderAddressSerializer, VariantSerializer, VariantUpdateSerializer, UserShowSerializer, CreditCardSerializer
 from dotenv import load_dotenv
 from tasks.__task__email import *
 
@@ -49,8 +51,9 @@ def registration_otp(request):
        
         user.otp = random.randint(100000, 999999)
         print(user.otp)
-        expiry_time = timezone.now() + timezone.timedelta(minutes=1)
-        print("expiry time ", expiry_time)
+        
+        expiry_time = timezone.now() + timezone.timedelta(minutes=10)
+        log.info(str(expiry_time))
         user.otp_expires_at = expiry_time
         user.reset_password_token = get_random_string(length=32)
         user.save()
@@ -94,7 +97,7 @@ class LoginView(APIView):
         email = request.data.get('email')
         password = request.data.get('password')
         user_type = request.data.get('user_type')
-        user = authenticate(request, email=email) or User.objects.filter(email=email, user_type=user_type).first()
+        user = authenticate(request, email=email) or User.objects.filter(email=email).first()
         data = {}
         try:
             if not user.check_password(password):
@@ -161,7 +164,7 @@ class RegistrationValidateOtpView(APIView):
                 instance.is_verified_account = True
                 # instance.otp_expires_at = timezone.now()
                 instance.save()
-                user.delete()
+                # user.delete()
             return Response({'status':  True if is_otp_valid else False, 'message': "OTP validated" if is_otp_valid else "Inavlid OTP"})
         except Exception as e:
             print(e)
@@ -194,26 +197,35 @@ class ForgotPasswordView(APIView):
         reset_token = "".join(random.choice(string.ascii_lowercase + string.digits) for _ in range(50))
         try:
             reset_obj = ResetPassword.objects.get(email=request.data.get('email'))
-            print("Existing ",reset_obj.email)
+    
             if reset_obj.email == request.data.get('email'):
                 reset_obj.otp = reset_otp
                 reset_obj.reset_password_token = reset_token
                 reset_obj.save()
+                mailservicedata = {}
+                mailservicedata['otp'] = reset_otp
+                mailservicedata['subject'] = "Password reset mail"
+                mailservicedata['sender'] = ISSUER_NAME
+                mailservicedata['recipient'] = request.data['email']
+                send_password_reset_email_task.delay(mailservicedata,)
+                return Response({'status':True,'message':f'Password reset otp was sent to {request.data["email"]}','temporary_otp':reset_otp})
+
+            else:
+                return Response({'status':False,'message':f'Our database does not know you'})
         
-        except:
-            ResetPassword.objects.create(
-                otp = reset_otp,
-                email = request.data['email'],
-                reset_password_token = reset_token
-            )
+        except Exception as e:
+            log.info(str(e))
+            return Response({'status':False,'message':f'Our database does not know you'})
+            
+            # ResetPassword.objects.create(
+            #     otp = reset_otp,
+            #     email = request.data['email'],
+            #     reset_password_token = reset_token
+            # )
+            
+            
         # url = f"http:localhost:3000/confirmreset/{reset_token}" #MOVE THE BASE URL TO SETTINGS.PY
-        mailservicedata = {}
-        mailservicedata['otp'] = reset_otp
-        mailservicedata['subject'] = "Password reset mail"
-        mailservicedata['sender'] = ISSUER_NAME
-        mailservicedata['recipient'] = request.data['email']
-        send_password_reset_email_task.delay(mailservicedata,)
-        return Response({'status':True,'message':f'Password reset otp was sent to {request.data["email"]}','temporary_otp':reset_otp})
+        
     
 class ResetPasswordView(APIView):
     def post(self, request):
@@ -241,7 +253,7 @@ class AddressesView(generics.CreateAPIView):
     authentication_classes = [JWTAuthenticationMiddleWare]
     def get(self,request):
         
-        data = Address.objects.filter(user=request.user.id)
+        data = Address.objects.filter(user=request.user.id,deleted=False)
         serializer= GetAddressSerializer(data, many=True)
         return Response({'addresses': serializer.data})
     
@@ -262,7 +274,7 @@ class PreferredAddressView(APIView):
     
     authentication_classes = [JWTAuthenticationMiddleWare]
     def get(self,request):
-        address = Address.objects.filter(is_shipping_address=True,user=request.user.id).first()
+        address = Address.objects.filter(is_default_address=True,user=request.user.id,deleted=False).first()
         serializer= AddressSerializer(address, many=False)
         return Response({'preferred_address': serializer.data, "status": True})
 
@@ -271,20 +283,46 @@ class GetEditAddress(APIView):
     authentication_classes = [JWTAuthenticationMiddleWare]
     def get(self,request, pk):
         if request.method == 'GET':
-            address = get_object_or_404(Address, pk=pk)
+            address = get_object_or_404(Address, pk=pk, deleted=False)
             serializer= AddressSerializer(address, many=False)
             return Response({'address': serializer.data, "status": True})
     
     def put(self,request,pk):
         if request.method == 'PUT':
             address = get_object_or_404(Address, pk=pk)
-            serializer= AddressSerializer(address, data=request.data)
+            data = request.data
+            if data.get('is_default_address') == True:
+                try:
+                    reset = Address.objects.filter(user=request.user.id)
+                    for addr in reset:
+                        addr.is_default_address = False
+                    reset.save()
+                    previous_default = Address.objects.filter(is_default_address=True,user=request.user.id)
+                    
+                    if previous_default.is_default_address:
+                        return Response({'message': 'User has default address already, contact admin for help', "status": False})
+                except:
+                    return Response({'message': 'User has more than one default address already, contact admin for help', "status": False})
+                # if previous_default.is_default_address:
+                #     previous_default.is_default_address = False
+                #     previous_default.save()
+                    
+            serializer= AddressSerializer(address, data=data)
             if serializer.is_valid():
                 serializer.save()
                 return Response({'address': serializer.data, "status": True})
             else:
                 return Response({'errors': serializer.errors, "status": 'error'})
-
+            
+    def delete(self,request,pk):
+        if request.method == 'DELETE':
+            address = get_object_or_404(Address, pk=pk)
+            if address.is_default_address:
+                return Response({'message': 'Default address cannot be deleted', "status": False})
+            address.deleted = True
+            address.save()
+            return Response({'message': 'Address deleted', "status": True})
+           
 class ChangePassword(APIView):
     authentication_classes = [JWTAuthenticationMiddleWare]
     def post(self,request):
@@ -303,11 +341,13 @@ class UserProfile(APIView):
         serializer= UserShowSerializer(request.user, many=False)
         return Response({'user': serializer.data, "status": True})
     
-    def post(self,request):
-        if request.method == 'POST':
-            serializer= UserShowSerializer(request.user, data=request.data)
+    def put(self,request):
+        if request.method == 'PUT':
+            serializer= UserProfileSerializer(request.user, data=request.data)
+            
             if serializer.is_valid():
                 serializer.save()
+                log.info(serializer.data)
                 return Response({'user': serializer.data, "status": True})
             else:
                 return Response({'errors': serializer.errors, "status": False})
