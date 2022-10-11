@@ -54,9 +54,7 @@ class RefundTransactions(object):
                         refunds = Refunds.objects.filter(customer=q)
                         serializer = RefundSerializer(refunds,many=True)
                     else:
-                        refunds = Refunds.objects.filter(customer=q,
-                                                         amount=data_obj.amount,
-                                                         currency=data_obj.currency,
+                        refunds = Refunds.objects.filter(customer=q,amount=data_obj.amount,currency=data_obj.currency,
                                                          status=data_obj.status,
                                                          created_at__range=[data_obj.start_date,data_obj.end_date]
                                                          )

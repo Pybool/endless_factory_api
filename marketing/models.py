@@ -16,12 +16,15 @@ class Campaign(models.Model):
   sales = models.CharField(max_length=32, null=True, blank=True, default='N/A')
   price_range = models.CharField(max_length=32, null=True, blank=True, default='N/A')
   currency = models.CharField(max_length=32, null=True, blank=True, default='USD')
-  paid = models.BooleanField(default=True)
+  paid = models.BooleanField(default=False)
   is_active = models.BooleanField(default=False)
   is_schedule = models.BooleanField(default=False)
   clicks = models.PositiveIntegerField(default=0)
   created_at = models.DateTimeField(auto_now=True)
   updated_at = models.DateTimeField(auto_now=True)
+  tz = models.CharField(max_length=150, null=True, blank=True, default='America/New_York')
+  active_cmd = models.CharField(max_length=150, null=True, blank=True, default='system')
+  schedule_cmd = models.CharField(max_length=150, null=True, blank=True, default='system')
   
   def clean(self):
       if self.start_date > self.end_date:

@@ -11,17 +11,16 @@ class Mailservice(object):
             
         mailparameters = mail_parameters
         html_content = f"""<div>Use this code to confirm your mail {mailparameters['otp']}</div>"""
-        # msg = EmailMultiAlternatives(mailparameters['subject'],"",
-        #                             mailparameters['sender'], [mailparameters['recipient']])
-        # msg.attach_alternative(html_content, "text/html")
-        # mail_status = msg.send() 
-        # print("=================>>>>>>> Mailservice sent a single mail")
-        # return mail_status
         Mailservice.send_message(html_content)
             
         # except Exception as e:
         #     print("An error ocurred while sending mail ",e)
-            
+    def order_send_mail(mail_parameters):
+        
+        mailparameters = mail_parameters
+        html_content = f"""<div>{mailparameters['message']}</div>"""
+        Mailservice.send_message(html_content)
+        
     def pass_reset_send_mail(mail_parameters):
         
         try:
@@ -32,11 +31,10 @@ class Mailservice(object):
                                         mailparameters['sender'], [mailparameters['recipient']])
             msg.attach_alternative(html_content, "text/html")
             mail_status = msg.send() 
-            # print("=================>>>>>>> Mailservice sent a single password reset mail")
             return mail_status
             
-        except Exception as e:
-            print("An error ocurred while sending mail ",e)
+        except:
+            pass
             
 
     def send_message(html_content):

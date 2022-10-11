@@ -9,7 +9,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <h5>{{'Recent Orders'|translate:lang}}</h5>
                         <div>
-                            <a href="/dashboards/orders/list" class="btn btn-sm btn-default">{{'View All'|translate:lang}}</a>
+                            <a href="/careers/dashboards/orders/list" class="btn btn-sm btn-default">{{'View All'|translate:lang}}</a>
                         </div>
                     </div>
                     
@@ -48,10 +48,10 @@
                                                 <div class="d-flex align-items-center">
                                                     <span class="badge badge-success badge-dot m-r-10"></span>
                                                     <span>
-                                                        {% if line_item.dispatched %} 
+                                                        {% if line_item.order_status=='Dispatched' %} 
                                                             Dispatched 
                                                         {% else %}
-                                                            Processing
+                                                            line_item.order_status
                                                         {% endif %}
                                                     </span>
                                                 </div>

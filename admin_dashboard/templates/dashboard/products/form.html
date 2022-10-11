@@ -5,7 +5,7 @@
   <div class="row">
     <div class="col-9">
       <label class="font-weight-semibold" for="{{ form.name.label}}">{{'Name'|translate:lang}}:</label>
-      {{ form.name|add_class:"form-control"|attr:"placeholder: Name" }}
+      {{ form.title|add_class:"form-control"|attr:"placeholder: Name" }}
     </div>
     <div class="col-3">
       <label class="font-weight-semibold" for="{{ form.category.label}}">{{'Category'|translate:lang}}:</label>
@@ -65,6 +65,10 @@
     <div class="col-3">
       <label class="font-weight-semibold" for="{{ form.delivery_option.label}}">{{'Delivery Option'|translate:lang}}:</label>
       {{ form.delivery_option|add_class:"form-control" }}
+    </div>
+    <div class="col-3">
+      <label class="font-weight-semibold" for="{{ form.option_type.label}}">{{'Option Type'|translate:lang}}:</label>
+      {{ form.option_type|add_class:"form-control"|attr:"placeholder: Option Type" }}
     </div>
   </div>
 </div>

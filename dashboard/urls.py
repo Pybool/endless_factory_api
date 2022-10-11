@@ -26,9 +26,13 @@ urlpatterns = [
   path('dashboard/product_tags/<slug:slug>', views.TagsView.as_view()),
   path('dashboard/new_product', views.NewProductsView.as_view()),
   path('dashboard/products', views.ProductsView.as_view()),
+  path('dashboard/seller_listings', views.SellerProductListings.as_view()),
+  
   path('dashboard/orders', views.SellerHomeData.as_view()),
-  path('dashboard/search_orders/<search_string>', views.OrdersSearch.as_view()),
-  path('dashboard/orders/mark_shipped', views.MarkItemsShipped.as_view()),
+  path('dashboard/search_orders', views.OrdersSearch.as_view()),
+  path('dashboard/orders/process_order', views.ProcessOrder.as_view()),
+  path('dashboard/orders/set_status/<int:pk>', views.MarkOrderStatus.as_view()),
+  
   path('dashboard/sales_dashboard/statistics', views.SellerDashboardView.as_view()),
   path('dashboard/verification/sellers/<int:pk>', views.VerifySellerBusinessView.as_view()),
   path('dashboard/decline-verification/sellers/<int:pk>', views.DeclineSellerBusinessView.as_view()),

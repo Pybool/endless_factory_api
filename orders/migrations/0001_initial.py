@@ -58,8 +58,7 @@ class Migration(migrations.Migration):
             name='LineItem',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('dispatched', models.BooleanField(default=False)),
-                ('dispatched_at', models.DateTimeField(blank=True, null=True)),
+          
                 ('option_value', models.CharField(default='N/A', max_length=100)),
                 ('option_type', models.CharField(default='N/A', max_length=100)),
                 ('courier_agency', models.CharField(blank=True, default='N/A', max_length=32, null=True)),

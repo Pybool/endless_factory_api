@@ -3,10 +3,24 @@ from django.forms import ChoiceField
 from products.models import Category, Tag, Product, Variant, Attachment, OptionType, OptionValue
 from accounts.models import User, Address, CreditCard
 
+
 class CategoryForm(forms.ModelForm):
+ 
+  def CATEGORY_CHOICES():
+    
+      categories_tuple = [('-1','----',)]
+      categories = Category.objects.all().values_list('id','name')
+      for category in list(categories):
+          padded_cat = category
+          categories_tuple.append(padded_cat)
+      return tuple(categories_tuple) 
+      
+  CHOICES = CATEGORY_CHOICES()
+  parent = forms.ChoiceField(widget=forms.Select,choices=CHOICES)
+  
   class Meta:
     model = Category
-    fields = ('name', 'description', 'image')
+    fields = ('parent','name', 'description', 'image')
         
 class TagForm(forms.ModelForm):
   class Meta:
@@ -32,7 +46,6 @@ class VariantForm(forms.ModelForm):
   class Meta:
     model = Variant
     fields = ('stock', 'price', 'product', 'option_value')
-
 
 class AttachmentForm(forms.ModelForm):
   class Meta:

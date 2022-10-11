@@ -3,13 +3,28 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 import itertools
 from decimal import Decimal
+import logging
+from helpers import get_timezone_datetime
 
+from order_tracking.models import OrderTracking
+log = logging.getLogger(__name__)
 from accounts.models import User, Address, CreditCard
 from orders.utils import ExchangeRate
 from products.models import Product, Variant
+
 CURRENCY_OPTIONS = (
   ('USD', 'USD'),
 )
+
+ORDER_TRACKING_CHOICES = ( 
+    ("Pending", "Pending"), 
+    ("Processing", "Processing"), 
+    ("Dispatched", "Dispatched"),
+    ("Shipped", "Shipped"),
+    ("Delivered", "Delivered"),
+    
+)
+
 
 class Cart(models.Model):
   token = models.CharField(unique=True, max_length=32)
@@ -102,29 +117,45 @@ class Order(models.Model):
   def transaction(self):
     return self.transaction_set.first()
 
-  def set_line_items_from_cart(self, cart,number,buyer):
+  def set_line_items_from_cart(self, cart,order_number,buyer):
     
     for item in cart.cartitem_set.all():
       try:
         business_source = item.variant.product.business_source
         option_type=item.variant.product.option_type.name
         option_value=item.variant.option_value.value
-        line_item = LineItem(order = self,user = buyer, variant = item.variant, business_source=business_source, quantity = item.quantity, price = item.price, cost_price = item.cost_price, option_type=option_type, option_value=option_value,number=number)
+        line_item = LineItem(order = self,user = buyer, variant = item.variant, business_source=business_source, quantity = item.quantity, price = item.price, cost_price = item.cost_price, option_type=option_type, option_value=option_value,order_number=order_number)
         line_item.save()
         variant = line_item.variant
+        
+        log.info(f"Variant Previous stock {variant.stock}")
         variant.stock -= line_item.quantity
+        log.info(f"variant Quantity ordered to subtracy from stock {line_item.quantity}")
+        log.info(f"Variant Current stock {variant.stock}")
         variant.save()
-      except:
-        business_source = ""
+      except Exception as e:
+        log.info(str("AN info OCCURED WHILE SETTING LINE ITEMS ")+str(e))
+        
+        try:
+          business_source = item.product.business_source
+        except Exception as e:
+          business_source = ''
+          log.info(str("AN INNER ERROR OCCURED WHILE SETTING BUSINESS SOURCE IN INNER EXCEPTION ")+str(e))
         option_type=""
         option_value=""
         
-        line_item = LineItem(order = self,user = buyer,product=item.product, variant = item.variant, business_source=business_source, quantity = item.quantity, price = item.price, cost_price = item.cost_price, option_type=option_type, option_value=option_value,number=number)
+        line_item = LineItem(order = self,user = buyer,product=item.product, variant = item.variant, business_source=business_source, quantity = item.quantity, price = item.price, cost_price = item.cost_price, option_type=option_type, option_value=option_value,order_number=order_number)
         line_item.save()
-        # variant = line_item.variant
-        # variant.stock -= line_item.quantity
-        # variant.save()
-  
+        try:
+          product = line_item.product
+          log.info(f"Product Previous stock {item.quantity}")
+          product.current_stock -= line_item.quantity
+          log.info(f"Product Quantity ordered to subtracy from stock {line_item.quantity}")
+          log.info(f"product Current stock {product.current_stock}")
+          product.save()
+        except Exception as e:
+          log.error(str("An error occured while decrementing non variant product stock ")+str(e))
+          
   def set_transaction(self, user, charge, card_number, save_card, time_range):
     
     transaction = Transaction(order = self)
@@ -132,7 +163,7 @@ class Order(models.Model):
     transaction.transaction_id = charge['id']
     transaction.time_sent = time_range[0]
     transaction.time_arrived = time_range[1]
-    transaction.amount = charge['amount']
+    transaction.amount_paid = charge['amount']
     transaction.status = charge['paid']
     transaction.currency = charge['currency']
     transaction.receipt_url = charge['receipt_url']
@@ -147,7 +178,6 @@ class Order(models.Model):
       transaction.transaction_fee = 0.00
       
     credit_card =   CreditCard.objects.filter(user=user,card_number=card_number).first()
-    print(credit_card)
     if credit_card != None:
       transaction.credit_card = credit_card
       transaction.save()
@@ -164,11 +194,8 @@ class Order(models.Model):
         credit_card.save()
         print(save_card)
         transaction.credit_card = credit_card
-        transaction.save()
+    transaction.save()
       
-      
-      
-
   def items_count(self):
     quantity = 0
     for item in self.lineitem_set.all():
@@ -227,9 +254,8 @@ class LineItem(models.Model):
   order = models.ForeignKey(Order, default=None, null=True, on_delete=models.CASCADE)
   variant = models.ForeignKey(Variant, default=None, null=True, on_delete=models.CASCADE)
   product = models.ForeignKey(Product, default=None, null=True, on_delete=models.CASCADE)
+  ordertracking = models.ForeignKey(OrderTracking, default=None, null=True, on_delete=models.CASCADE)
   user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
-  dispatched = models.BooleanField(default=False)
-  dispatched_at = models.DateTimeField(null=True, blank=True)
   option_value = models.CharField(max_length=100, default='N/A')
   option_type = models.CharField(max_length=100, default='N/A')
   courier_agency = models.CharField(max_length=32, null=True, blank=True, default='N/A')
@@ -238,8 +264,11 @@ class LineItem(models.Model):
   price = models.DecimalField(validators=[MinValueValidator(0)], null=False, default=0, decimal_places=2, max_digits=10)
   cost_price = models.DecimalField(validators=[MinValueValidator(0)], null=False, default=0, decimal_places=2, max_digits=10)
   business_source = models.CharField(max_length=250, default='N/A')
-  order_status = models.CharField(max_length=100, default='N/A')
+  order_status_desc = models.CharField(max_length=250, default='')
+  order_status = models.CharField(max_length=100, choices=ORDER_TRACKING_CHOICES, default='Pending')
+  order_number = models.CharField(max_length=100, default='N/A')
   number = models.CharField(max_length=100, default='N/A')
+  expected_delivery_timeframe =  models.CharField(max_length=500, default='')
   created_at = models.DateTimeField(auto_now=True)
   updated_at = models.DateTimeField(auto_now=True)
 

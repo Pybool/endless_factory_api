@@ -14,19 +14,35 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
+from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import include, path
+from django.views import defaults as default_views
+from django.views.generic import TemplateView
+from chat.consumer import ChatConsumer
+# from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+
+# from conversa_dj.users.api.views import CustomObtainAuthTokenView
+
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
+    
+    path('', include('frontend.urls')),
+    path("", include("config.api_router")),
+    path('', include('marketing.urls')),
+    path('', include('admin_dashboard.urls')),
     path('api/v1/', include('accounts.urls')),
     path('api/v1/', include('dashboard.urls')),
     path('api/v1/', include('products.urls')),
     path('api/v1/', include('orders.urls')),
+    path('api/v1/', include('order_tracking.urls')),
+    path('api/v1/', include('notifications.urls')),
     path('api/v1/', include('chat.urls')),
-    path('', include('admin_dashboard.urls')),
     path('admin/', include('admin_accounts.urls')),
     path('dashboards/', include('admin_dashboard.urls')),
-    path('', include('frontend.urls')),
+    path('careers/', include('careers.urls')),
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 

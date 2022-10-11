@@ -3,6 +3,9 @@ from django.urls import path
 from admin_dashboard import views
 
 urlpatterns = [
+    #Admin
+    path('dashboards/orders', views.orders, name='dashboard_orders'),
+    
     path('home', views.home, name='dashboard_home'),
     path('users/profile', views.profile, name='user_profile'),
     
@@ -49,12 +52,12 @@ urlpatterns = [
     # Products
     path('products', views.products, name='products_list'),
     path('products/new', views.new_product, name='new_product'),
-    path('products/<slug:slug>/edit', views.edit_product, name='edit_product'),
+    # path('products/<slug:slug>/edit', views.edit_product, name='edit_product'),
 
     # Variants
     path('products/<slug:slug>/variants', views.product_variants, name='product_variants_list'),
     path('products/<slug:slug>/variants/new', views.new_product_variant, name='new_product_variant'),
-    path('products/<slug:slug>/variants/<int:id>/edit', views.edit_product_variant, name='edit_product_variant'),
+    # path('products/<slug:slug>/variants/<int:id>/edit', views.edit_product_variant, name='edit_product_variant'),
 
     # Attachments
     path('products/<slug:slug>/attachments', views.product_attachments, name='product_attachments_list'),

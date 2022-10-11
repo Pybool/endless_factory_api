@@ -37,8 +37,8 @@
 
           </div>
           <div class="col-md-6 sh-right">
-            {% if order_item.dispatched %}
-              <h6>{{'Dispatched on'|translate:lang}} <strong><span>{{ order_item.dispatched_at }}</span></strong> </h6>
+            {% if order_item.dispatched =='Dispatched' %}
+              <h6>{{'Dispatched on'|translate:lang}} <strong><span>{{ order_item.updated_at }}</span></strong> </h6>
             {%else%}
               <h6>{{'Order placed on'|translate:lang}} <strong><span>{{ order_item.created_at|date:"d b, Y"|title }}</span></strong> </h6>
             {% endif %}

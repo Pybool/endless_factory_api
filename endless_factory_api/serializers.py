@@ -1,14 +1,23 @@
+from datetime import date, datetime
 from decimal import Decimal
 import uuid
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from chat.models import DocumentChatAttachment, ImageChatAttachment, Message, VideoChatAttachment
+from careers.models import Applicant, ApplicantsResume, Applications, Company, Job
+from chat.models import Conversation, DocumentChatAttachment, ImageChatAttachment, Message, Room, VideoChatAttachment
 from dashboard.models import Refunds
+from helpers import convert_to_timezone, get_user_timezone
 from marketing.models import Campaign
+from notifications.models import Notifications
+from order_tracking.models import OrderTracking
 from orders.models import Order, Cart, CartItem, LineItem, Transaction
 from products.models import Product, Tag, Attachment, Category, Variant, OptionValue, OptionType
-from accounts.models import IDCardsAttachment, ProofBusinessAttachment, WishlistedProduct, User, Address, Review, CreditCard
+from accounts.models import IDCardsAttachment, NDAAttachment, NDAPurchases, NDAUser, ProofBusinessAttachment, QuotesAttachment, WishlistedProduct, User, Address, Review, CreditCard ,NDA,NDAProposals
+from accounts.chatuser_serializer import UserSerializer as ChatUserSerializer_
 import operator, functools
 from django.db import transaction
+import logging
+log = logging.getLogger(__name__)
 
 class TransactionsSerializer(serializers.ModelSerializer):
   class Meta:
@@ -134,7 +143,7 @@ class UserSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
   class Meta:
     model = Category
-    fields = ['id', 'name', 'image', 'slug']
+    fields = ['id', 'name', 'image', 'slug','parent']
 
 class NewCategorySerializer(serializers.ModelSerializer):
   class Meta:
@@ -179,7 +188,7 @@ class WishlistedProductVariantSerializer(serializers.ModelSerializer):
   option_value = OptionValueSerializer(many=False)
   class Meta:
     model = Variant
-    fields=('id', 'price', 'option_value', 'stock')
+    fields=('id', 'price', 'option_value','initial_stock', 'stock')
 
 class WishlistedProductSerializer(serializers.ModelSerializer):
   product =FavoruriteProductSerializer(many=False)
@@ -239,19 +248,36 @@ class ProofBusinessAttachmentSerializer(serializers.ModelSerializer):
     model = Attachment  
     fields=('product', 'file', 'attachment_type')
     
+class QuoteAttachmentSerializer(serializers.ModelSerializer):
+
+  def create(self, validated_data):
+        documents = self.context['quote-documents']
+        quote = validated_data['quote']
+        print("Type ",str(documents).rsplit(" ",1)[1])
+        attachment_type = "Image" if "image" in str(documents).rsplit(" ",1)[1] else "Document"
+          
+        for document in documents:
+            instance = QuotesAttachment.objects.create(quote=quote,file=document,attachment_type=attachment_type)
+            instance.save()
+        return instance
+      
+  class Meta:
+    model = Attachment  
+    fields=('product', 'file', 'attachment_type')
+    
 class VariantSerializer(serializers.ModelSerializer):
   option_value = OptionValueSerializer(many=False)
 
   class Meta:
     model = Variant
-    fields=('id', 'price', 'option_value', 'stock')
+    fields=('id','product', 'price', 'option_value','initial_stock', 'stock') #,'variant_images'
     
 class CreateVariantSerializer(serializers.ModelSerializer):
   # option_value = OptionValueSerializer(many=False)
 
   class Meta:
     model = Variant
-    fields=('option_value', 'stock', 'price','product')
+    fields=('option_value','initial_stock', 'stock', 'price','product')
     
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -263,12 +289,12 @@ class ProductSerializer(serializers.ModelSerializer):
   class Meta:
     model = Product
     fields=('id', 'title','subtitle', 'description','price','cost_price','initial_stock','current_stock', 'min_order_quantity', 'max_order_quantity', 'color', 'business_source','account_manager_phone_1','company_mailing_address','company_address_1', 'category', 'option_type', 'delivery_option', 'product_type', 'search_tags', 'slug', 'variants', 'images', 'reviews')
-
-
+  
+    
 class NewProductSerializer(serializers.ModelSerializer):
   class Meta:
     model = Product
-    fields = ('category','option_type','title','subtitle', 'description','condition_option','business_source', 'model_number','account_manager_phone_1','company_mailing_address','company_address_1', 'search_tags','eco_friendly','duration','price','cost_price','initial_stock')
+    fields = ('category','option_type','title','subtitle', 'description','condition_option','business_source', 'model_number','account_manager_phone_1','company_mailing_address','company_address_1', 'search_tags','eco_friendly','duration','price','cost_price','initial_stock','current_stock','min_order_quantity','max_order_quantity')
 
 class ProductUpdateSerializer(serializers.ModelSerializer):
   class Meta:
@@ -278,7 +304,7 @@ class ProductUpdateSerializer(serializers.ModelSerializer):
 class VariantUpdateSerializer(serializers.ModelSerializer):
   class Meta:
     model = Variant
-    fields=('id', 'stock', 'price','cost_price', 'option_value', 'product')
+    fields=('id','initial_stock', 'stock', 'price', 'option_value', 'product')
 
 class VariantIndexSerializer(serializers.ModelSerializer):
   class Meta:
@@ -291,7 +317,21 @@ class ProductIndexSerializer(serializers.ModelSerializer):
   class Meta:
     model = Product
     fields = ['title','subtitle', 'images', 'category', 'model_number', 'variants', 'slug']
-  
+
+######################################################################################################
+class SellerListingVariantIndexSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Variant
+    fields=('id', 'price')
+
+class ProductIndexSerializer(serializers.ModelSerializer):
+  category = CategorySerializer(many=False)
+  variants = SellerListingVariantIndexSerializer(many=True)
+  class Meta:
+    model = Product
+    fields = ['title','subtitle', 'images', 'category', 'model_number', 'variants', 'slug']
+    
+#########################################################################################################
 class CartProductSerializer(serializers.ModelSerializer):
   class Meta:
     model = Product
@@ -307,7 +347,20 @@ class CartSerializer(serializers.ModelSerializer):
   cart_items = CartItemSerializer(many=True)
   class Meta:
     model = Cart
-    fields = ['token', 'cart_items', 'total', 'items_count']
+    fields = ['id','token', 'cart_items', 'total', 'items_count']
+
+class OrderTrackingSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = OrderTracking
+    fields = '__all__'
+
+class OrderTrackingLineItemSerializer(serializers.ModelSerializer):
+  ordertracking = OrderTrackingSerializer(many=False)
+  class Meta:
+    model = LineItem
+    fields = ['order_number','tracking_number','order_status', 'business_source', 'order_status_desc', 'expected_delivery_timeframe','created_at','updated_at']
+
+
 
 class LineItemIndexSerializer(serializers.ModelSerializer):
   user = OrderUserSerializer(many=False)
@@ -316,7 +369,27 @@ class LineItemIndexSerializer(serializers.ModelSerializer):
   product = ProductSerializer(many=False)
   class Meta:
     model = LineItem
-    fields = ['user','order', 'variant','product', 'price','cost_price', 'dispatched', 'id', 'display_variant', 'tracking_number', 'quantity', 'tracking_number', 'courier_agency']
+    fields = ['user','order', 'variant','product', 'price','cost_price', 'id', 'display_variant', 'tracking_number', 'quantity', 'tracking_number', 'courier_agency','order_status','expected_delivery_timeframe']
+
+
+class ChatUsersProductSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Product
+    fields = ['id']
+    
+class ChatUsersVariantIndexSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Variant
+    fields=('product')
+  
+
+class LineItemChatIndexSerializer(serializers.ModelSerializer):
+  variant = ChatUsersVariantIndexSerializer(many=False)
+  product = ChatUsersProductSerializer(many=False)
+  class Meta:
+    model = LineItem
+    fields = ['variant','product']
+
 
 class CreditCardSerializer(serializers.ModelSerializer):
   class Meta:
@@ -331,7 +404,7 @@ class LineItemIndexSerializerDashboard(serializers.ModelSerializer):
   product = ProductSerializer(many=False)
   class Meta:
     model = LineItem
-    fields = ['order','product', 'variant', 'price','cost_price', 'dispatched', 'id', 'display_variant', 'tracking_number', 'quantity', 'tracking_number', 'courier_agency','order_status']
+    fields = ['order','product', 'variant', 'price','cost_price', 'id', 'display_variant', 'tracking_number', 'quantity', 'order_number', 'courier_agency','order_status']
 
 
 class CampaignUserSerializer(serializers.ModelSerializer):
@@ -339,17 +412,24 @@ class CampaignUserSerializer(serializers.ModelSerializer):
     model = User
     fields = ['email', 'phone_number', 'name', 'user_type', 'country']
 
-class PromoSerializer(serializers.ModelSerializer):
+class AdsSerializer(serializers.ModelSerializer):
   listings = ProductSerializer(many=True)
   variants = VariantSerializer(many=True)
   class Meta:
     model = Campaign
-    fields = ['campaign_name','is_active', 'start_date', 'end_date','listings','variants']
-
+    fields = ['id','campaign_name','sold_id','ad_fees','sales','is_active','is_schedule', 'start_date', 'end_date','listings','variants']
 
 
 class CampaignSerializer(serializers.ModelSerializer):
-
+  
+  def is_sheduled(self,start,end,tz=''):
+    log.info(tz)
+    tznow = get_user_timezone(tz)
+    log.info(f"dcvc {tznow , convert_to_timezone(datetime.strptime(start, '%Y-%m-%d %H:%M:%S'),tz,tz)} and {tznow , convert_to_timezone(datetime.strptime(end, '%Y-%m-%d %H:%M:%S'),tz,tz)}")
+    log.info(f"dcvc {tznow >= convert_to_timezone(datetime.strptime(start, '%Y-%m-%d %H:%M:%S'),tz,tz)} and {tznow <= convert_to_timezone(datetime.strptime(end, '%Y-%m-%d %H:%M:%S'),tz,tz)}")
+    return tznow >= convert_to_timezone(datetime.strptime(start, '%Y-%m-%d %H:%M:%S'),tz,tz) and tznow <= convert_to_timezone(datetime.strptime(end, '%Y-%m-%d %H:%M:%S'),tz,tz)
+       
+    
   def parseListings(self,data):
     
     keys_tuple = []
@@ -401,6 +481,8 @@ class CampaignSerializer(serializers.ModelSerializer):
       with transaction.atomic():
         user = User.objects.get(pk=int(validated_data['user']))
         validated_data['user'] = user
+        validated_data['is_schedule'] = self.is_sheduled(validated_data['start_date'],validated_data['end_date'],validated_data['tz'])
+        log.info(validated_data['is_schedule'])
         listings = validated_data['listings']
         variants = validated_data['variants']
         listings_variants = validated_data['listings_variants']
@@ -416,7 +498,7 @@ class CampaignSerializer(serializers.ModelSerializer):
   
   class Meta:
     model = Campaign
-    fields = ['campaign_name','user', 'start_date', 'end_date', 'sold_id', 'ad_fees','price_range','currency','paid']
+    fields = ['campaign_name','user', 'start_date', 'end_date','is_schedule', 'sold_id', 'ad_fees','price_range','currency','paid','tz']
 
 
 #############Chat Serializers################
@@ -433,63 +515,43 @@ class ChatUserSerializer(serializers.ModelSerializer):
 
 class MessageDownloadSerializer(serializers.ModelSerializer):
     """For Serializing Message"""
-    sender = CampaignUserSerializer(many=False)
-    receiver = CampaignUserSerializer(many=False)
+    from_user = CampaignUserSerializer(many=False)
+    to_user = CampaignUserSerializer(many=False)
     
     class Meta:
         model = Message
-        fields = ['id','chat_uid','sender', 'receiver', 'message','attached_media_type', 'timestamp']
+        fields = ['id','conversation','from_user', 'to_user', 'content','attached_media_type', 'timestamp']
   
 class MessageSerializer(serializers.ModelSerializer):
     """For Serializing Message"""
-    sender = serializers.SlugRelatedField(many=False, slug_field='id', queryset=User.objects.all()) # Change Id to email
-    receiver = serializers.SlugRelatedField(many=False, slug_field='id', queryset=User.objects.all())
-    
-    def create(self,validated_data):
-    
-      with transaction.atomic():
-        sender = validated_data['sender']
-        receiver = validated_data['receiver']
-        chat_uid = validated_data['chat_uid']
-        print(chat_uid,type(chat_uid))
-        if chat_uid == "None":
-           validated_data['chat_uid'] = str('c-uid') + str(uuid.uuid4()) + "@" + str(sender) + "_" + str(receiver)
-           print(validated_data['chat_uid'])
-        else:
-            conversation_id = Message.objects.filter(chat_uid=str(validated_data['chat_uid']))
-            print("Conversation id ", conversation_id)
-        validated_data['sender'] = User.objects.get(pk=int(validated_data['sender']))
-        validated_data['receiver'] = User.objects.get(pk=int(validated_data['receiver']))
-        print(validated_data)
-        instance = self.Meta.model(**validated_data)
-        instance.save()
-       
-        return instance
-      
+
     class Meta:
         model = Message
-        fields = ['id','sender', 'receiver', 'message', 'timestamp']
+        fields = ['id','conversation','from_user', 'to_user','content','event']
 
 class MessageAttachmentSerializer(serializers.ModelSerializer):
 
   def create(self, validated_data):
     
         documents = self.context['documents']
-        media_type = str(documents).rsplit(" ",1)[1]
-        message = Message.objects.get(pk=int(validated_data['message']))
-        
-        for document in documents:
-            if 'document' in media_type:
-              MessageAttachmentSerializer.Meta.model = DocumentChatAttachment # Update model in Meta class to documents chat attachment model
-              instance = DocumentChatAttachment.objects.create(message=message,file=document,attachment_type="Document")
-            elif 'image' in media_type:
-              MessageAttachmentSerializer.Meta.model = ImageChatAttachment # Update model in Meta class to image chat attachment model
-              instance = ImageChatAttachment.objects.create(message=message,file=document,attachment_type="Image")
-            elif 'video' in media_type:
-              MessageAttachmentSerializer.Meta.model = VideoChatAttachment # Update model in Meta class to video chat attachment model
-              instance = VideoChatAttachment.objects.create(message=message,file=document,attachment_type="Video")
-            # instance.save()
-        print(MessageAttachmentSerializer.Meta.model)
+        message = Message.objects.get(id=validated_data['message'])
+        try:
+          media_type = validated_data['attached_media_type']#str(documents).rsplit(" ",1)[1]
+          
+          for document in documents:
+              if 'document' in media_type:
+                MessageAttachmentSerializer.Meta.model = DocumentChatAttachment # Update model in Meta class to documents chat attachment model
+                instance = DocumentChatAttachment.objects.create(message=message,file=document,attachment_type="document")
+              elif 'image' in media_type:
+                MessageAttachmentSerializer.Meta.model = ImageChatAttachment # Update model in Meta class to image chat attachment model
+                instance = ImageChatAttachment.objects.create(message=message,file=document,attachment_type="image")
+              elif 'video' in media_type:
+                MessageAttachmentSerializer.Meta.model = VideoChatAttachment # Update model in Meta class to video chat attachment model
+                instance = VideoChatAttachment.objects.create(message=message,file=document,attachment_type="video")
+              # instance.save()
+          print(MessageAttachmentSerializer.Meta.model)
+        except Exception as e:
+          return 1 or message
         return 1 or message
       
   class Meta:
@@ -509,3 +571,95 @@ class RefundSerializer(serializers.ModelSerializer):
     class Meta:
           model = Refunds
           fields = ['id', 'customer', 'refund_id', 'amount', 'related_charge', 'refund_reason', 'status', 'created_at','updated_at']
+          
+class InboxSerializer(serializers.ModelSerializer):
+  
+    item = LineItemIndexSerializer(many=False)
+    class Meta:
+      model = Notifications
+      fields=('tracking_number', 'user','item', 'message','subject', 'created_at')
+
+class CareerUserSerilaizer(serializers.ModelSerializer):
+
+  class Meta:
+      model = User
+      fields= ("company_name","user_type")
+      
+class CareerCompanyUserSerilaizer(serializers.ModelSerializer):
+  user = CareerUserSerilaizer(many=False)
+  class Meta:
+      model = Company
+      fields= "__all__"
+
+class JobSerializer(serializers.ModelSerializer):
+    company = CareerCompanyUserSerilaizer(many=False)
+    class Meta:
+      model = Job
+      fields= "__all__"
+      
+class ApplicationSerializer(serializers.ModelSerializer):
+    class Meta:
+      model = Applications
+      fields= ("company","job","applicant")
+
+class ApplicationResumeSerializer(serializers.ModelSerializer):
+    
+      def create(self, validated_data):
+        documents = self.context['resume-documents']
+        application = Applications.objects.get(job=get_object_or_404(Job,slug=validated_data['slug']), applicant= get_object_or_404(Applicant,user=validated_data['user']))
+        for document in documents:
+            instance = ApplicantsResume.objects.create(application=application,file=document,attachment_type="pdf")
+            instance.save()
+        return application
+      
+      class Meta:
+        model = ApplicantsResume  
+        fields=('application', 'file', 'attachment_type')
+
+class NDAUserSerializer(serializers.ModelSerializer):
+    class Meta:
+      model = NDAUser
+      fields= ("user",)
+      
+class NDAProposalsSerializer(serializers.ModelSerializer):
+    to_user = serializers.SerializerMethodField()
+    from_user = serializers.SerializerMethodField()
+    
+    def get_from_user(self, obj):
+        return get_object_or_404(User,id=NDAUserSerializer(obj.from_user).data['user']).name
+
+    def get_to_user(self, obj):
+        return get_object_or_404(User,id=NDAUserSerializer(obj.to_user).data['user']).name
+      
+    class Meta:
+      model = NDAProposals
+      fields= "__all__"
+
+class NDAAttachmentSerializer(serializers.ModelSerializer):
+  
+    def create(self):
+        documents = self.context['nda-document']
+        
+        attachment_type = "document"
+        for document in documents:
+            instance = NDAAttachment.objects.create(file=document,attachment_type=attachment_type)
+            instance.save()
+        return instance
+      
+    class Meta:
+      model = NDAAttachment
+      fields= "__all__"
+
+
+class NDASerializer(serializers.ModelSerializer):
+    
+    class Meta:
+      model = NDA
+      fields= "__all__"
+      
+class NDAPurchaseSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+      model = NDAPurchases
+      fields= "__all__"
+      

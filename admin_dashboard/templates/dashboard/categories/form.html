@@ -2,6 +2,12 @@
 {% load translate %}
 
 {% csrf_token %}
+
+<div class="form-group">
+    <label class="font-weight-semibold" for="{{ form.parent.label}}">{{'Parent'|translate:lang}}:</label>
+    {{ form.parent|add_class:"form-control"|attr:"placeholder: Parent Category" }}
+</div>
+
 <div class="form-group">
     <label class="font-weight-semibold" for="{{ form.name.label}}">{{'Name'|translate:lang}}:</label>
     {{ form.name|add_class:"form-control"|attr:"placeholder: Name" }}

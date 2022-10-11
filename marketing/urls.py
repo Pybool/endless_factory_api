@@ -5,5 +5,11 @@ from django.http import HttpRequest
 from .import views
 
 urlpatterns = [
-  path('marketing/new_campaign', views.NewCampaignView.as_view()),
+  path('adsmarketing', views.NewCampaignView.as_view()), 
+  path('adsmarketing/actions', views.CampaignActionsView.as_view()),
+  path('adsmarketing/feeder', views.CampaignFeederView.as_view()),
+  path('adsmarketing/clicks', views.CampaignAdsClick.as_view()),
+
+  
+  
  ]
