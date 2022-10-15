@@ -8,7 +8,7 @@ from chat.api.views import ConversationViewSet, MessageViewSet
 from django.conf.urls import url
 from django.urls import path
 from django.conf import settings
-from .import views
+#from . import views
 
 
 urlpatterns = [

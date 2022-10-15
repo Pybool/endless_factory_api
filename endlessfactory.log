@@ -3,3 +3,21 @@
 [29/Sep/2022 09:11:16] INFO [chat.consumer:169] Reload 
 [29/Sep/2022 09:11:16] INFO [chat.consumer:192] Receive json error occured 'NoneType' object has no attribute 'username'
 [29/Sep/2022 09:11:17] INFO [chat.consumer:192] Receive json error occured Group name must be a valid unicode string containing only ASCII alphanumerics, hyphens, or periods.
+[15/Oct/2022 17:33:45] INFO [config.api_router:18] [<URLPattern 'conversations/<metadata>/'>]
+[15/Oct/2022 17:34:41] INFO [config.api_router:18] [<URLPattern 'conversations/<metadata>/'>]
+[15/Oct/2022 17:38:20] INFO [config.api_router:18] [<URLPattern 'conversations/<metadata>/'>]
+[15/Oct/2022 17:41:06] INFO [config.api_router:18] [<URLPattern 'conversations/<metadata>/'>]
+[15/Oct/2022 17:45:33] INFO [config.api_router:18] [<URLPattern 'conversations/<metadata>/'>]
+[15/Oct/2022 17:48:14] INFO [config.api_router:18] [<URLPattern 'conversations/<metadata>/'>]
+[15/Oct/2022 18:02:45] INFO [config.api_router:18] [<URLPattern 'conversations/<metadata>/'>]
+[15/Oct/2022 18:04:11] INFO [config.api_router:18] [<URLPattern 'conversations/<metadata>/'>]
+[15/Oct/2022 18:08:38] INFO [config.api_router:18] [<URLPattern 'conversations/<metadata>/'>]
+[15/Oct/2022 18:17:14] INFO [config.api_router:18] [<URLPattern 'conversations/<metadata>/'>]
+[15/Oct/2022 18:22:36] INFO [config.api_router:18] [<URLPattern 'conversations/<metadata>/'>]
+[15/Oct/2022 18:28:41] INFO [config.api_router:18] [<URLPattern 'conversations/<metadata>/'>]
+[15/Oct/2022 18:35:23] INFO [config.api_router:18] [<URLPattern 'conversations/<metadata>/'>]
+[15/Oct/2022 18:40:28] INFO [config.api_router:18] [<URLPattern 'conversations/<metadata>/'>]
+[15/Oct/2022 18:42:41] INFO [config.api_router:18] [<URLPattern 'conversations/<metadata>/'>]
+[15/Oct/2022 18:44:19] INFO [config.api_router:18] [<URLPattern 'conversations/<metadata>/'>]
+[15/Oct/2022 18:48:16] INFO [config.api_router:18] [<URLPattern 'conversations/<metadata>/'>]
+[15/Oct/2022 18:49:45] INFO [config.api_router:18] [<URLPattern 'conversations/<metadata>/'>]

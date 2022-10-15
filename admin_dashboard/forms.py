@@ -18,9 +18,7 @@ class CategoryForm(forms.ModelForm):
   CHOICES = CATEGORY_CHOICES()
   parent = forms.ChoiceField(widget=forms.Select,choices=CHOICES)
   
-  class Meta:
-    model = Category
-    fields = ('parent','name', 'description', 'image')
+  
         
 class TagForm(forms.ModelForm):
   class Meta:

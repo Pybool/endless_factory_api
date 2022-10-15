@@ -38,11 +38,11 @@ class Category(models.Model):
     categories_tuple = []
     categories = Category.objects.all().values_list('name')#SubcategoryChoices(Category)
     for category in list(categories):
-        print(category[0],category)
+        #print(category[0],category)
         name = category[0]
         padded_cat = category + (name,)
         categories_tuple.append(padded_cat)
-    print(tuple(categories_tuple))
+    #print(tuple(categories_tuple))
     
     return tuple(categories_tuple)
   

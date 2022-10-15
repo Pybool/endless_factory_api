@@ -126,18 +126,18 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 262144000
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': str(os.path.join(BASE_DIR, "db.sqlite3")),
-    # }
     'default': {
-        'ENGINE'  : 'django.db.backends.mysql',  
-        'NAME'    : 'ENDLESS_FACTORY',                  
-        'USER'    : 'endless_factory_rootuser',                     
-        'PASSWORD': 'pass@endlessrootuser',              
-        'HOST'    : 'localhost',                
-        'PORT'    : '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': str(os.path.join(BASE_DIR, "db.sqlite3")),
     }
+    # 'default': {
+    #     'ENGINE'  : 'django.db.backends.mysql',  
+    #     'NAME'    : 'ENDLESS_FACTORY',                  
+    #     'USER'    : 'endless_factory_rootuser',                     
+    #     'PASSWORD': 'pass@endlessrootuser',              
+    #     'HOST'    : 'localhost',                
+    #     'PORT'    : '3306',
+    # }
 }
 
 AUTH_USER_MODEL = 'accounts.User'
