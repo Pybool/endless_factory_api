@@ -8,6 +8,8 @@ from products.models import Category, Tag, Product, Variant, Attachment, OptionT
 from orders.models import Order, LineItem
 from accounts.models import IDCardsAttachment, ProofBusinessAttachment, User, WishlistedProduct, Address, UserProduct, CreditCard
 from endless_admin.translations import get_translations
+import logging
+log = logging.getLogger(__name__)
 
 @login_required(login_url='login')
 @allowed_users()
@@ -144,6 +146,7 @@ def orders(request):
     if request.user.is_admin():
       order_items = LineItem.objects.select_related('variant')
       return render(request, 'dashboard/orders/index.html', {"order_items": order_items, 'section_active': 'orders', 'lang': get_user_locale(request)})
+    
     elif request.user.is_seller():
       seller_product_variants = Variant.objects.filter(product__in=request.user.products())
       order_items = LineItem.objects.select_related('variant').filter(variant__in=seller_product_variants)
@@ -273,6 +276,7 @@ def new_category(request):
   form = CategoryForm()
   if request.method == 'POST':
     form = CategoryForm(request.POST, request.FILES)
+    #print(form)
     if form.is_valid():
       form.save()
       messages.success(request, get_translations('Category created successfully', get_user_locale(request)))
@@ -359,13 +363,18 @@ def new_product(request):
 @allowed_users()
 def edit_product(request, slug):
   product = Product.objects.get(slug=slug)
+  print(product)
   form = ProductForm(instance=product)
+  log.info(str(form.fields))
   if request.method == 'POST':
     form = ProductForm(request.POST, instance=product)
+    
     if form.is_valid():
+      print(form,'form is valid??')
       form.save()
       messages.success(request, get_translations('Product updated successfully', get_user_locale(request)))
       return redirect('products_list')
+    log.info(str(form.errors))
   return render(request, 'dashboard/products/edit.html', {'form': form, 'product': product, 'section_active': 'products', 'lang': get_user_locale(request)})
 
 #Product Variants CRUD =================================

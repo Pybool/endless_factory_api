@@ -29,10 +29,9 @@
                                                     <td><a href="{% url 'orders_list' %}?oid={{item.id}}">{{ item.order.number }}</a></td>
                                                     <td>{{ item.created_at }}</td>
                                                     <td>
-                                                        <a href="{% url 'edit_product' item.variant.product.slug %}">{{item.variant.product.name}} - {{item.display_variant}}</a>
+                                                        <a href="{% url 'edit_product' item.variant.product.slug %}">{{item.variant.product.title}} - {{item.display_variant}}</a>
                                                     </td>
                                                     <td>{{'Placed'|translate:lang}}</td>
-
                                                     <td>
                                                         {% if item.dispatched %} {{'Shipped'|translate:lang}} {% else %} {{'Pending'|translate:lang}} {% endif %}
                                                     </td>

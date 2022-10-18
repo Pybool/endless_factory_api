@@ -77,7 +77,7 @@
                       <div class="container-prod">
                         <a href="{% url 'product' product.slug %}">
                           {% if product.attachment_set.first.file != None %}
-                            <img src="/media/{{ product.attachment_set.first.file }}" style='height: 230px; width: 100%;' alt="">
+                            <img src="/{{ product.attachment_set.first.file }}" style='height: 230px; width: 100%;' alt="">
                           {% else %}
                             <img src="{% static 'images/no_picture.jpeg' %}" style='height: 230px; width: 100%;' alt="">
                           {% endif%}
@@ -85,7 +85,7 @@
                       </div>
                       <div class="container-information">
                         <div class="title">
-                          {{product.name}}
+                          {{product.title}}
                           <a href="javascript:void(0)" class="more close"><i class="fa fa-times"></i></a>                
                         </div>
                         <div class="description">{{'Item Added to Wishlist'|translate:lang}}</div>

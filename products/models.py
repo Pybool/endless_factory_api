@@ -33,11 +33,29 @@ PRODUCT_CONDITION = (
 
 # Create your models here
 class Category(models.Model):
+  
+  def CATEGORY_CHOICES():
+    categories_tuple = []
+    categories = Category.objects.all().values_list('name')#SubcategoryChoices(Category)
+    for category in list(categories):
+        #print(category[0],category)
+        name = category[0]
+        padded_cat = category + (name,)
+        categories_tuple.append(padded_cat)
+    #print(tuple(categories_tuple))
+    
+    return tuple(categories_tuple)
+  
   name = models.CharField(max_length=50,unique=True)
+  parent = models.IntegerField(default=-1, blank=True)
   slug = models.SlugField(null=False, unique=True, editable=False)
   description = models.TextField(null=False, default='N/A')
   image = models.ImageField(upload_to='media/category_image', null=True, blank=True)
-    
+  
+  # def SubcategoryChoices(self):
+  #   print("\n\n",self.objects.all())
+      
+      
   def generate_slug(self):
     value = self.name
     slug_candidate = slug_original = slugify(value, allow_unicode=True)
@@ -55,6 +73,8 @@ class Category(models.Model):
 
   def __str__(self):
     return self.name
+
+  
 
 class Tag(models.Model):
   name = models.CharField(max_length=50,unique=True, null=False, error_messages={'required':'Name can not be blank'})
@@ -94,11 +114,6 @@ class OptionValue(models.Model):
   class Meta:
     unique_together = ('value', 'option_type')
 
-class ProductCountViews(models.Model):
-  user =  models.IntegerField()
-  product_uid = models.UUIDField(primary_key=False, editable=False)
-  view_counts = models.IntegerField(default=None)
-  
 class Product(models.Model):
   category = models.ForeignKey(Category, default=None, on_delete=models.CASCADE, null=False)
   item_id = models.UUIDField(primary_key=False, default=uuid.uuid4, editable=False)
@@ -113,19 +128,19 @@ class Product(models.Model):
   company_mailing_address = models.CharField(max_length=100, default='None',null = True, blank=True)
   company_address_1 = models.CharField(max_length=100, default='None',null = True, blank=True)
   min_order_quantity = models.IntegerField(validators=[MinValueValidator(0)],default=1)
-  max_order_quantity = models.IntegerField(validators=[MinValueValidator(0)],default=1)
+  max_order_quantity = models.IntegerField(validators=[MinValueValidator(0)])
   condition_option = models.CharField(max_length=100, choices=PRODUCT_CONDITION, default='New')
   delivery_option = models.CharField(max_length=100, choices=DELIVERY_OPTION_CHOICES, default='Both')
   pricing_option = models.CharField(max_length=200, choices=PRICE_OPTION_CHOICES, default='Fixed Price')
-  product_type = models.CharField(max_length=200,default='')
+  product_type = models.CharField(max_length=200, default='')
   eco_friendly = models.BooleanField(default=False)
   duration = models.IntegerField(default=30)
 
   #Variant
   # option_value = models.ForeignKey(OptionValue, default=None, on_delete=models.CASCADE, null=True)
-  initial_stock = models.IntegerField(validators=[MinValueValidator(0)],default=1)
-  current_stock = models.IntegerField(validators=[MinValueValidator(0)],default=1)
-  cost_price = models.DecimalField(decimal_places=2, max_digits=9, default=1000.0, validators=[MinValueValidator(1.0)])
+  initial_stock = models.IntegerField(validators=[MinValueValidator(0)])
+  current_stock = models.IntegerField(validators=[MinValueValidator(0)])
+  cost_price = models.DecimalField(decimal_places=2, max_digits=9, validators=[MinValueValidator(1.0)])
   price = models.DecimalField(decimal_places=2, max_digits=9, default=1.0, validators=[MinValueValidator(1.0)])
   discount = models.DecimalField(decimal_places=2, max_digits=9, default=0.0, validators=[MinValueValidator(1.0)])
   # view_counts = models.ForeignKey(ProductCountViews, default=None, on_delete=models.CASCADE, null=False)
@@ -195,12 +210,30 @@ class Product(models.Model):
   def __str__(self):
     return self.subtitle
 
+
+class ProductCountViews(models.Model):
+  user =  models.IntegerField(null=True)
+  session= models.CharField(max_length=100, null=True) #For Anonymous users
+  product = models.ForeignKey(Product, default=None, on_delete=models.CASCADE, null=False)
+  slug = models.SlugField(null=True)
+  view_counts = models.IntegerField(default=None)
+
+
 class Variant(models.Model):
-  product = models.ForeignKey(Product, default=None, on_delete=models.CASCADE)
+  product = models.ForeignKey(Product, default=None, on_delete=models.PROTECT) # My major mistake
   option_value = models.ForeignKey(OptionValue, default=None, on_delete=models.CASCADE, null=True)
+  initial_stock = models.IntegerField(validators=[MinValueValidator(0)],default=20)
   stock = models.IntegerField(validators=[MinValueValidator(0)])
-  price = models.DecimalField(decimal_places=2, max_digits=9, default=1.0, validators=[MinValueValidator(1.0)])
+  price = models.DecimalField(decimal_places=2, max_digits=9, validators=[MinValueValidator(1.0)])
+  # cost_price = models.DecimalField(decimal_places=2, max_digits=9, validators=[MinValueValidator(1.0)])
   discount = models.DecimalField(decimal_places=2, max_digits=9, default=0.0, validators=[MinValueValidator(1.0)])
+  
+  def variant_images(self):
+    images_paths = []
+    for attachment in self.variantattachment_set.filter(attachment_type='Image'):
+      if attachment.file and hasattr(attachment.file, 'url'):
+        images_paths.append(attachment.file.url)
+    return images_paths
   
   class Meta:
     unique_together = ('product', 'option_value')
@@ -214,5 +247,13 @@ class Attachment(models.Model):
   def url(self):
     return self.file.url if self.file and hasattr(self.file, 'url') else None
   
+  
+class VariantAttachment(models.Model):
+  variant = models.ForeignKey(Variant, default=None, on_delete=models.CASCADE)
+  attachment_type = models.CharField(max_length=200, choices=ATTACHMENT_TYPE_OPTIONS, default='Image')
+  file = models.FileField(upload_to='media/product_attachments', null=True, blank=False)
+
+  def url(self):
+    return self.file.url if self.file and hasattr(self.file, 'url') else None
   
   

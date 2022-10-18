@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+      <!-- Favicon -->
+    <link rel="shortcut icon" href="{% static 'images/logo/only-logo.png' %}">
+
+    <!-- page css -->
+
+    <!-- Core css -->
+    <link href="{% static 'css/app.min.css' %}" rel="stylesheet">
+
+    <title>Endless Factory</title>
+</head>
+<body>
+
+{% block content %}
+
+{% endblock %}
+<!-- Core Vendors JS -->
+    <script src="{% static 'js/vendors.min.js' %}"></script>
+
+    <!-- page js -->
+
+    <!-- Core JS -->
+    <script src="{% static 'js/app.min.js'%}"></script>
+
+</body>
+</html>

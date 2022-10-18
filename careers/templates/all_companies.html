@@ -1,0 +1,47 @@
+{% extends 'admin_main.html' %}
+{% block body %}
+{% load translate %}
+{% load static %}
+{% block title %} All Companies {% endblock title %}
+<!--{% block application_form %} active {% endblock %}-->
+{% block css %}
+{% endblock css %}
+
+    <div class="main-content">
+        <div class="container mt-4">
+        <table class="table table-hover" id="example">
+            <thead>
+                <tr>
+                    <th>Sr.No</th>
+                    <th>Company Name</th>
+                    <th>Email Id</th>
+                    <th>Contact</th>
+                    <th>Location</th>
+                    <th>Logo</th>
+                    <th>Status</th>
+                    <th>Change Status</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for company in companies %}
+                <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td>{{company.company_name}}</td>
+                    <td>{{company.user.email}}</td>
+                    <td>{{company.phone}}</td>
+                    <td>{{company.location}}</td>
+                    <td><img src="{{company.image.url}}" class="rounded-circle" width="90px" height="70px"></td>
+                    <td>{{company.status}}</td>
+                    <td><a href="/careers/change_status/{{company.id}}/" class="btn btn-secondary">Change Status</a></td>
+                    <td><a href="/careers/company_homepage/?uid={{company.id}}" class="btn btn-primary">Edit</a></td>
+                    <td><a href="/careers/delete_company/{{company.user.id}}/" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this company?')">Delete</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="{% url 'admin_create_company'%}" class='btn btn-primary btn-sm'>{{'New Company'|translate:lang}}</a>
+        </div>
+    </div>
+{% endblock body %}

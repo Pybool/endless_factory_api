@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils import timezone
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
@@ -40,6 +40,18 @@ USER_TYPE_CHOICES = (
 ATTACHMENT_TYPE_OPTIONS = (
   ('Image', 'Image'),
   ('Video', 'Video'),
+)
+
+NDA_STATUS = (
+    ('Pending','Pending'),
+    ('Approved','Approved'),
+    ('Declined','Declined')
+)
+
+DECLINE_REASONS = (
+    ('Shady Proposal','Shady Proposal'),
+    ('Has Previous Scam History','Has Previous Scam History'),
+    ('I am Uninterested','I am Uninterested')
 )
     
 class UserManager(BaseUserManager):
@@ -110,7 +122,6 @@ class User(AbstractBaseUser,PermissionsMixin):
     biz_info_verified = models.BooleanField(default=False)
     contact_preferences = models.TextField(blank=True)
     
-    # company_address = models.ForeignKey(Address, on_delete=models.CASCADE, related_name='company_address', blank=True, null=True)
     country = models.CharField(max_length=255, null=False, choices=COUNTRY_CHOICES, default='United States')
 
     tax_id_number=models.CharField(max_length=100, blank=True)
@@ -125,14 +136,14 @@ class User(AbstractBaseUser,PermissionsMixin):
     
     avatar = models.FileField(upload_to='user_avatar', null=True, blank=True)
     otp = models.IntegerField(blank=True, validators=[MinValueValidator(100000), MaxValueValidator(999999)], default=None, null=True)
-    otp_expires_at = models.DateTimeField(auto_now=True)
+    otp_expires_at = models.DateTimeField(default= timezone.now)
     cart_token = models.CharField(max_length=100, blank=True, null=True)
     
     is_verified_account = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default= timezone.now)
+    updated_at = models.DateTimeField(default= timezone.now)
 
     objects = UserManager()
 
@@ -155,12 +166,11 @@ class User(AbstractBaseUser,PermissionsMixin):
 
     def wishlisted_products(self):
         products = []
-        for wishlisted_product in self.wishlistedproduct_set.all():
-            products.append(wishlisted_product.product)
-        return products
+        variants = []
+        
 
     def shipping_addresses(self):
-        return Address.objects.filter(user=self.id).values()
+        return Address.objects.filter(user=self.id, deleted=False).values()
     
     def default_address(self):
         return Address.objects.filter(user=self.id).values().first()
@@ -219,8 +229,10 @@ class Address(models.Model):
     state = models.CharField(max_length=255, null=False, default='N/A')
     country = models.CharField(max_length=255, null=False, choices=COUNTRY_CHOICES, default='United States')
     is_shipping_address = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    is_default_address = models.BooleanField(default=False)
+    deleted = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default= timezone.now)
+    updated_at = models.DateTimeField(default= timezone.now)
     
 class CreditCard(models.Model):
     user = models.ForeignKey(User,default=None, on_delete=models.CASCADE)
@@ -256,23 +268,88 @@ class UserProduct(models.Model):
         unique_together = ('product', 'user')
         
 class WishlistedProduct(models.Model):
-    product = models.ForeignKey(Product, default=None, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, null=True, default=None, on_delete=models.CASCADE)
+    variant = models.ForeignKey(Variant, null=True, default=None, on_delete=models.CASCADE)
     user = models.ForeignKey(User, default=None, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ('product', 'user')
+        unique_together = ('product','variant', 'user')
     
 class Review(models.Model):
-  product = models.ForeignKey(Product, default=None, on_delete=models.CASCADE)
+  product = models.ForeignKey(Product, null=True, default=None, on_delete=models.CASCADE)
+  variant = models.ForeignKey(Variant, null=True, default=None, on_delete=models.CASCADE)
   user = models.ForeignKey(User, default=None, on_delete=models.CASCADE)
   review = models.CharField(max_length=300)
   rating = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
-  created_at = models.DateTimeField(auto_now=True)
-  updated_at = models.DateTimeField(auto_now=True)
+  created_at = models.DateTimeField(default= timezone.now)
+  updated_at = models.DateTimeField(default= timezone.now)
+
+class Quotes(models.Model):
+    customer = models.IntegerField()
+    seller = models.ForeignKey(User, default=None, on_delete=models.CASCADE)
+    quote = models.TextField(blank=True)
+    product_fielded_by = models.ForeignKey(Product, null=True, default=None, on_delete=models.CASCADE)
+
+class QuotesAttachment(models.Model): 
+    quote = models.ForeignKey(Quotes, default=None, on_delete=models.CASCADE)
+    attachment_type = models.CharField(max_length=200, choices=ATTACHMENT_TYPE_OPTIONS, default='Image')
+    file = models.FileField(upload_to='quotes_attachments/%Y/%m/%d/', null=True, blank=False)
+
+class ReportSeller(models.Model):
+    customer = models.IntegerField()
+    seller = models.ForeignKey(User, default=None, on_delete=models.CASCADE)
+    complaint = models.TextField(blank=True)
+    radio_text = models.CharField(max_length=300)
+#NDA Models
+
+class NDA(models.Model):
+    nda_title = models.CharField(max_length=300,default="Generic NDA")
+    created_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
-# @receiver(post_save, sender=User)
-# def create_jwt_token(sender, instance=None, created=False, **kwargs):
-#     if created:
-#         print(dir(Token))
-#         Token.objects.create(user=instance)
-#         print("In receiver after", created,instance)
+    def nda_attachment(self):
+        images_paths = []
+        for attachment in self.ndaattachment_set.filter(attachment_type='document'):
+            if attachment.file and hasattr(attachment.file, 'url'):
+                images_paths.append(attachment.file.url)
+        return images_paths
+    
+class NDAUser(models.Model):
+    user = models.ForeignKey(User,unique=True, on_delete=models.CASCADE)
+    nda_count = models.IntegerField(null=False, validators=[MinValueValidator(0)],default= 0)
+    nda_bought = models.IntegerField(null=True, validators=[MinValueValidator(1)])
+    created_at = models.DateTimeField(default= timezone.now)
+    updated_at = models.DateTimeField(default= timezone.now)
+    expires_at = models.DateTimeField(null=True)
+    
+class NDAPurchases(models.Model):
+    nda_user = models.ForeignKey(NDAUser,default=None, on_delete=models.CASCADE)
+    nda_bought = models.ForeignKey(NDA,default=None, on_delete=models.CASCADE)
+    transaction_ref = models.CharField(max_length=200, default='')
+    amount = models.IntegerField(null=False, validators=[MinValueValidator(0)])
+    price = models.FloatField(default=0.00)
+    created_at = models.DateTimeField(default= timezone.now)
+    updated_at = models.DateTimeField(default= timezone.now)
+    expires_at = models.DateTimeField(default= timezone.now() + timezone.timedelta(minutes=10080)) #{"transaction_ref":"Trf739i3e9933722","amount":10,"price":1000,"nda_bought":4,"buyer":"buyer1@gmail.com"}
+
+class NDAProposals(models.Model):
+    from_user = models.ForeignKey(NDAUser,default=None, related_name='sender', on_delete=models.CASCADE)
+    to_user = models.ForeignKey(NDAUser,default=None, related_name='recepient', on_delete=models.CASCADE)
+    slug = models.SlugField(default=None,max_length=500)
+    status = models.CharField(max_length=100, choices=NDA_STATUS, default='Pending')
+    decline_reason = models.CharField(max_length=500, choices=DECLINE_REASONS, default='')
+    created_at = models.DateTimeField(default= timezone.now)
+    updated_at = models.DateTimeField(default= timezone.now)
+    
+class NDATransferHistory(models.Model):
+    from_user = models.ForeignKey(NDAUser,default=None, related_name='hist_sender', on_delete=models.CASCADE)
+    to_user = models.ForeignKey(NDAUser,default=None, related_name='hist_recepient', on_delete=models.CASCADE)
+    nda = models.ForeignKey(NDA, default=None, on_delete=models.CASCADE)
+    amount = models.IntegerField(null=False, validators=[MinValueValidator(0)])
+    created_at = models.DateTimeField(default= timezone.now)
+    updated_at = models.DateTimeField(default= timezone.now)
+    
+class NDAAttachment(models.Model): 
+    nda = models.ForeignKey(NDA, default=None, on_delete=models.CASCADE)
+    attachment_type = models.CharField(max_length=200, choices=ATTACHMENT_TYPE_OPTIONS, default='document')
+    file = models.FileField(upload_to='nda_attachments/%Y/%m/%d/', null=True, blank=False)

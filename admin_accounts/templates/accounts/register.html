@@ -9,11 +9,13 @@
         <section class="login">
             <div class="container">
                 <div class="form-wrap">
+                    <!-- a comment in html 
                     <div class="tabs">
-                        <h3 class="signup-tab"><a class='active' href="/user/register">{{'Sign Up'|translate:lang}}</a></h3>
-                        <h3 class="login-tab"><a href="/user/login">{{'Login'|translate:lang}}</a></h3>
+
+                        <h3 class="signup-tab"><a class='active' href="{% url 'register' %}">{{'Sign Up'|translate:lang}}</a></h3>
+                        <h3 class="login-tab"><a href="{% url 'login' %}">{{'Login'|translate:lang}}</a></h3>
                     </div>
-            
+                    -->
                     <div class="tabs-content">
                         <div id="signup-tab-content" class="active">
                             <form class="signup-form" action="" method="post">
@@ -23,8 +25,10 @@
                                 {{ form.email|add_class:"input"|attr:"id: user_email"|attr:"placeholder:Email" }}
                                 
                                 <select name="user_type" id='user_name' class="form-control" style='margin-bottom: 0.8em; padding: .8em 0 10px .8em; height: 48px;'>
+                                    <option value="Admin">Admin</option>
                                     <option value="Buyer">Buyer</option>
                                     <option value="Seller">Seller</option>
+
                                 </select>
                                 {{ form.country|add_class:"input"|attr:"id: user_country"|attr:"placeholder:'Country'|translate:lang" }}
 

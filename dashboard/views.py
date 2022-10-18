@@ -1,5 +1,11 @@
+import logging
+from re import search
+from notifications.models import Notifications
+
+from order_tracking.models import OrderTracking
+log = logging.getLogger(__name__)
 from collections import namedtuple
-import json
+import os, json
 from django.db.models import Sum, Count
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
@@ -8,8 +14,8 @@ from rest_framework.response import Response
 from accounts.authentication import JWTAuthenticationMiddleWare
 from dashboard.models import Refunds
 from endless_admin.translations import get_translations
-from endless_factory_api.serializers import AddressSerializer, CampaignSerializer, CategorySerializer, CreateVariantSerializer, CreditCardSerializer, LineItemIndexSerializer, LineItemIndexSerializerDashboard, LineItemPriceIndexSerializer, LineItemProductSerializer, NewAttachmentSerializer, NewCategorySerializer, NewOptionTypeSerializer, NewOptionValueSerializer, NewProductSerializer, NewRefundSerializer, OptionTypeSerializer, OptionValueSerializer, ProductIndexSerializer, ProductSerializer, PromoSerializer, RefundSerializer, TagSerializer, UserAllSerializer, UserSerializer, UserShowSerializer, VariantSerializer, WishlistedProductSerializer
-from helpers import Datetimeutils
+from endless_factory_api.serializers import AddressSerializer, CampaignSerializer, CategorySerializer, CreateVariantSerializer, CreditCardSerializer, LineItemIndexSerializer, LineItemIndexSerializerDashboard, LineItemPriceIndexSerializer, LineItemProductSerializer, NewAttachmentSerializer, NewCategorySerializer, NewOptionTypeSerializer, NewOptionValueSerializer, NewProductSerializer, NewRefundSerializer, OptionTypeSerializer, OptionValueSerializer, ProductIndexSerializer, ProductSerializer, AdsSerializer, RefundSerializer, TagSerializer, UserAllSerializer, UserSerializer, UserShowSerializer, VariantSerializer, VariantUpdateSerializer, WishlistedProductSerializer
+from helpers import Datetimeutils, get_timezone_datetime
 from marketing.models import Campaign
 from decorators import unnauthenticate_user, allowed_users, authorize_seller
 from django.contrib import messages
@@ -22,6 +28,13 @@ from products.models import Category, Tag, Product, Variant, Attachment, OptionT
 from orders.models import Cart, Order, LineItem, Transaction
 from accounts.models import CreditCard, IDCardsAttachment, ProofBusinessAttachment, User, WishlistedProduct, Address, UserProduct
 # from endless_admin.translations import get_translations
+from dotenv import load_dotenv
+from tasks.__task__email import *
+from django.db import transaction
+
+load_dotenv()
+refresh_jwt_token_life = int(os.getenv("REFRESH_JWT_TOKEN_LIFE"))
+ISSUER_NAME = os.getenv("2FA_ISSUER_NAME")
 
 
 def get_user_locale(request):
@@ -30,6 +43,13 @@ def get_user_locale(request):
     except:
         return 'en'
 
+def send_mail(data):
+    mail = {"message":data['message'],
+            "subject":data['subject'],
+            "sender":ISSUER_NAME,
+            "recipient":data['user'].email}
+    send_order_status_mail_task.delay(mail)
+    
 class HomeView(APIView):
     
     authentication_classes = [JWTAuthenticationMiddleWare]
@@ -181,12 +201,8 @@ class SingleUsersCreditCardsView(APIView):
         context = {'creditcards': serializer.data, 'section_active': 'creditcards', 'lang': get_user_locale(request)}
         return Response({'context': context, "status": True})
     
-
 class VerifySellerBusinessView(APIView):
     
-    # authentication_classes = [JWTAuthenticationMiddleWare]
-    # @allowed_users()  
-    # @authorize_seller()
     def get(self,request,pk):
         seller = User.objects.filter(pk=pk).update(biz_info_verified=True,user_type='Both')
         context = {'message':'Seller verified successfully', 'section_active': 'sellers_verification', 'lang': get_user_locale(request)}
@@ -194,11 +210,8 @@ class VerifySellerBusinessView(APIView):
     
 class DeclineSellerBusinessView(APIView):
     
-    # authentication_classes = [JWTAuthenticationMiddleWare]
-    # @allowed_users()  
-    # @authorize_seller()
     def get(self,request,pk):
-        User.objects.filter(pk=pk).update(biz_info_verified=False,user_type='Buyer')
+        User.objects.filter(pk=pk).update(biz_info_submitted=False, biz_info_verified=False,user_type='Buyer')
         user = User.objects.get(pk=pk)
         idcard = IDCardsAttachment.objects.get(company=user).delete()
         pob = ProofBusinessAttachment.objects.get(company=user).delete()
@@ -236,19 +249,37 @@ class Orders(APIView):
 class OrdersSearch(APIView):
     authentication_classes = [JWTAuthenticationMiddleWare]
     @allowed_users()
-    def get(self,request,search_string):
+    def get(self,request):
+        
+        search_string = request.GET.get('search_string', 'None')
+        date_filter = request.GET.get('date_filter', 'None')
+        status_filter = request.GET.get('status_filter', 'None')
+        tracking_number = request.GET.get('tracking_number', 'None')
+        log.info(search_string,date_filter,status_filter,tracking_number)
+        
         if request.user.is_seller() or request.user.is_admin():
-            user_products = request.user.products()
-            product_serializer = ProductIndexSerializer(user_products, many=True)
-            seller_product_variants = Variant.objects.filter(product__in=user_products)
-            print(seller_product_variants[0])
-            lookups =  Q(number__icontains=search_string) | Q(price__icontains=search_string) | Q(tracking_number__icontains=search_string) | Q(courier_agency__icontains=search_string)
-            orders = LineItem.objects.select_related('variant').filter(variant__in=seller_product_variants).filter(lookups)
-            print(orders[1].user.default_address(),search_string)
-            order_serializer= LineItemIndexSerializer(orders, many=True)
-            return Response({'orders': order_serializer.data, 'products': product_serializer.data})
-         
+            if search_string is not 'None' and date_filter is 'None' and status_filter is 'None' and tracking_number is 'None':
+                user_products = request.user.products()
+                product_serializer = ProductIndexSerializer(user_products, many=True)
+                seller_product_variants = Variant.objects.filter(product__in=user_products)
+                log.info(seller_product_variants[0])
+                lookups =  Q(order_number__icontains=search_string) | Q(price__icontains=search_string) | Q(tracking_number__icontains=search_string) | Q(courier_agency__icontains=search_string)
+                orders = LineItem.objects.select_related('variant','product').filter(Q(variant__in=seller_product_variants) | Q(product__in=user_products)).filter(lookups)
+                order_serializer= LineItemIndexSerializer(orders, many=True)
+                return Response({'orders': order_serializer.data, 'products': product_serializer.data})
             
+            elif search_string is 'None' and date_filter is not 'None' or status_filter is not 'None' or tracking_number is not 'None':
+                
+                user_products = request.user.products()
+                product_serializer = ProductIndexSerializer(user_products, many=True)
+                seller_product_variants = Variant.objects.filter(product__in=user_products)
+                log.info(seller_product_variants[0])
+                lookups = Q(created_at__icontains=date_filter) |  Q(order_status__icontains=status_filter) | Q(tracking_number__icontains=tracking_number)
+                orders = LineItem.objects.select_related('variant','product').filter(Q(variant__in=seller_product_variants) | Q(product__in=user_products)).filter(lookups)
+                order_serializer= LineItemIndexSerializer(orders, many=True)
+                return Response({'orders': order_serializer.data, 'products': product_serializer.data})
+
+
 class MarkOrderStatus(APIView):
     authentication_classes = [JWTAuthenticationMiddleWare]
     @allowed_users()
@@ -256,36 +287,99 @@ class MarkOrderStatus(APIView):
         if request.method == 'POST':
             try:
                 item = LineItem.objects.get(id=pk)
-               
-                if item.status == request.data['status']:
+                comment = request.data.get('comment')
+                if item.order_status == request.data['status']:
                         context = {"message":get_translations(f"Order item already marked as {request.data['status']}", get_user_locale(request))}
                         return Response({'context': context, "status": False})
                 else:
-                    item.status = request.data['status']
+                    item.order_status = request.data['status']
+                    item.updated_at = get_timezone_datetime()
+                    if request.data['status'].lower() == "dispatched":
+                        ordertracking = item.ordertracking
+                        ordertracking.shipped_at = str(get_timezone_datetime())
+                        ordertracking.dispatched_comment = comment
+                        ordertracking.active_status = "Dispatched"
+                        ordertracking.save()
+                        subject = "Item Dispatched"
+                        message = comment if comment != None else f"Your Item has been dispatched by {item.business_source}"
+                        kwargs = {"tracking_number":item.tracking_number,"user":item.user,"subject":subject,"item":item,"message":message,"created_at":ordertracking.processed_at}
+                        Notifications.objects.create(**kwargs)
+                        # self.send_notifications(kwargs)
+                        
+                    elif request.data['status'].lower() == "shipped":
+                        item.order.is_shipped = True
+                        ordertracking = item.ordertracking
+                        ordertracking.shipped_at = str(get_timezone_datetime())
+                        ordertracking.shipping_comment = comment
+                        ordertracking.active_status = "Shipped"
+                        ordertracking.save()
+                        subject = "Item Shipped"
+                        message = comment if comment != None else f"Your Item has been Shipped by {item.courier_agency}"
+                        kwargs = {"tracking_number":item.tracking_number,"user":item.user,"subject":subject,"item":item,"message":message,"created_at":ordertracking.processed_at}
+                        Notifications.objects.create(**kwargs)
+                        # self.send_notifications(kwargs)
+                        
+                    elif request.data['status'].lower() == "delivered":
+                        item.ordertracking.delivered_at = str(get_timezone_datetime())
+                        ordertracking = item.ordertracking
+                        ordertracking.delivery_comment = comment
+                        ordertracking.active_status = "Delivered"
+                        ordertracking.save()
+                        subject = "Item Delivered"
+                        message = comment if comment != None else f"Your Item has been delivered by {item.courier_agency}"
+                        kwargs = {"tracking_number":item.tracking_number,"user":item.user,"subject":subject,"item":item,"message":message,"created_at":ordertracking.processed_at}
+                        Notifications.objects.create(**kwargs)
+                        # self.send_notifications(kwargs)
                     item.save()
+                    
                     context = {"url":"/dashboards/orders?oid=" + str(pk),"message": get_translations(f"Item marked as {request.data['status']} successfully", get_user_locale(request))}
                     return Response({'context': context, "status": True})
-            except:
-                context = {"url":"/dashboards/orders?oid=" + str(pk),"message": get_translations('Invalid Order Item', get_user_locale(request))}
+            except Exception as e:
+                log.info(str(e))
+                context = {"url":"/dashboards/orders?oid=" + str(pk),"message": "oops an error occured"}
                 return Response({'context': context, "status": False})
         else:
             context = {"url":"/dashboards/orders?oid=" + str(pk),"message": get_translations('Invalid Action Performed', get_user_locale(request))}
             return Response({'context': context, "status": False})
 
 
-
-class MarkItemsShipped(APIView):
+class ProcessOrder(APIView):
     authentication_classes = [JWTAuthenticationMiddleWare]
     @allowed_users()
     def post(self,request):
         if request.method == 'POST':
             try:
-                parsed_dispatched_at =  datetime.strptime(request.data.get('dispatched_at'), '%d-%m-%Y').replace(tzinfo=timezone.utc)
-                item = LineItem.objects.filter(pk__in=request.data['line_items']).update(dispatched_at=parsed_dispatched_at,dispatched=True,
-                                                                                         courier_agency=request.data.get('courier_agency'),
-                                                                                         tracking_number=request.data.get('tracking_number')
-                                                                                         )
-                context = {"message": get_translations('Item marked as shipped successfully', get_user_locale(request))}
+                start_date = request.data.get('start_date')
+                end_date = request.data.get('end_date')
+                start_day = request.data.get('start_day')
+                end_day = request.data.get('end_day')
+                processing_comment = request.data.get('comment')
+                processing_comment = None if processing_comment == '' else processing_comment
+                expected_delivery_timeframe = f"Your Item is expected to be delivered between {start_day} {start_date} and {end_day} {end_date}"
+                
+                instance,create = OrderTracking.objects.update_or_create(tracking_number=request.data.get('tracking_number'))
+                
+                parsed_updated_at =  datetime.strptime(request.data.get('updated_at'), '%d-%m-%Y').replace(tzinfo=timezone.utc)
+                LineItem.objects.filter(pk__in=request.data['line_items']).update(ordertracking_id=instance.id,updated_at=parsed_updated_at,
+                                                                                    order_status="Processing",
+                                                                                    courier_agency=request.data.get('courier_agency'),
+                                                                                    tracking_number=request.data.get('tracking_number'),
+                                                                                    expected_delivery_timeframe = expected_delivery_timeframe,
+                                                                                    )
+                
+                line_item = LineItem.objects.get(pk__in=request.data['line_items'])
+                ordertracking = line_item.ordertracking
+                ordertracking.processed_at = str(get_timezone_datetime())
+                ordertracking.processing_comment=processing_comment
+                # ordertracking.order_created_at = str(line_item.created_at)
+                ordertracking.active_status = "Processing"
+                ordertracking.save()
+                subject = "Item Processing"
+                processing_comment = processing_comment if processing_comment != None else f"Your Item is currently being processed by {line_item.business_source}"
+                kwargs = {"tracking_number":line_item.tracking_number,"user":line_item.user,"subject":subject,"item":line_item,"message":processing_comment,"created_at":ordertracking.processed_at}
+                Notifications.objects.create(**kwargs)
+                # self.send_notifications(kwargs)
+                context = {"message": get_translations('Item was marked as processing successfully', get_user_locale(request))}
                 return Response({'context': context, "status": True})
             except Exception as e:
                 context = {"error":str(e),"message": get_translations('Invalid Order Item', get_user_locale(request))}
@@ -293,130 +387,105 @@ class MarkItemsShipped(APIView):
         else:
             context = {"message": get_translations('Invalid Action Performed', get_user_locale(request))}
             return Response({'context': context, "status": False})
-        
+    
+    def send_notification(self,**kwargs):
+        return True
+    
 ########################################################UNTESTED###########################
 
 class SellerHomeData(APIView):
+    
     authentication_classes = [JWTAuthenticationMiddleWare]
+    @allowed_users()
     def get(self,request):
 
-        # return Response({"User type ": request.user.is_seller()})
         if request.user.is_seller():
             user_products = request.user.products()
-            product_serializer = ProductIndexSerializer(user_products, many=True)
             seller_product_variants = Variant.objects.filter(product__in=user_products)
-            orders = LineItem.objects.select_related('variant').filter(variant__in=seller_product_variants)
+            log.info("Seller variants "+ str(len(seller_product_variants)))
+            
+            orders = LineItem.objects.select_related('variant').filter(Q(variant__in=seller_product_variants)|Q(product__in=request.user.products()))
             order_serializer= LineItemIndexSerializer(orders, many=True)
-            return Response({'orders': order_serializer.data, 'products': product_serializer.data})
+            return Response({'orders': order_serializer.data, 'orders_count': len(orders)})
 
         elif request.user.is_admin():
-            # if request.user.is_admin():
             order_items = LineItem.objects.select_related('variant')
             order_serializer= LineItemIndexSerializer(order_items, many=True)
-            return Response({'orders': order_serializer.data})
+            return Response({'orders': order_serializer.data, 'orders_count': len(order_items)})
+            
+
+class SellerProductListings(APIView):
+    
+    authentication_classes = [JWTAuthenticationMiddleWare]
+    @allowed_users()
+    def get(self,request):
+
+        if request.user.is_seller():
+            user_products = request.user.products()
+            product_serializer = ProductSerializer(user_products, many=True)
+            return Response({'products': product_serializer.data, 'products_count': len(user_products)})
 
 #####################SELLER DASHBOARD#######################################
 
-
 class SellerDashboardView(APIView):
     
-    def sales_report(self,request, filter, duration, **kwargs):
+    def sales_report(self,request, **kwargs):
         
+        filter = request.GET.get('filter')
+        duration = int(request.GET.get('duration'))
         if request.user.is_seller():
             
             self.datetimeutils = Datetimeutils(duration)
             start_date , end_date = self.datetimeutils.get_pages_created_on_date(filter)
-            seller_product_variants = Variant.objects.filter(product__in=request.user.products()) 
-            # order_items = LineItem.objects.select_related('variant').filter(variant__in=seller_product_variants,created_at__range=[start_date,end_date]).values('price','created_at').order_by('created_at__date')
-            order_items = LineItem.objects.select_related('variant').filter(variant__in=seller_product_variants,created_at__range=[start_date,end_date]).values('created_at__date').order_by('created_at__date').annotate(Count("id"),day_sales=Sum('price'))
-            order_items_cost = sum(order_items['day_sales'] for order_items in order_items)
+            seller_product_variants = Variant.objects.filter(product__in=request.user.products())
+            order_items = LineItem.objects.select_related('variant').filter(Q(variant__in=seller_product_variants,created_at__range=[start_date,end_date])|Q(product__in=request.user.products(),created_at__range=[start_date,end_date])).values('created_at__date').order_by('created_at__date').annotate(Count("id"),day_sales=Sum('price'))
+            log.info(str(seller_product_variants)+str(start_date)+str(end_date))
+            order_items_cost = sum(order_item['day_sales'] for order_item in order_items)
             
             ########Get Pending and completed orders
-            duration_uncompleted_orders_counts = LineItem.objects.select_related('variant').filter(variant__in=seller_product_variants,created_at__range=[start_date,end_date],order_status='N/A').values_list(Sum('price'),Count('id'))
-            duration_completed_orders_counts = LineItem.objects.select_related('variant').filter(variant__in=seller_product_variants,created_at__range=[start_date,end_date],order_status='completed').values_list(Sum('price'),Count('id'),Sum('cost_price'))
+            # log.info(LineItem.objects.select_related('product').filter(product__in=request.user.products(),created_at__range=[start_date,end_date]).values('order_status'))
+            log.info(LineItem.objects.filter(Q(variant__in=seller_product_variants,created_at__range=[start_date,end_date])|Q(order_status='Delivered') |Q(product__in=request.user.products(),created_at__range=[start_date,end_date])))
             
-            print(len(duration_uncompleted_orders_counts),"\n\n",len(duration_completed_orders_counts),duration_completed_orders_counts[0],duration_completed_orders_counts[1] )
+            duration_uncompleted_orders_counts = LineItem.objects.select_related('variant','product').filter(order_status='Pending').filter(Q(variant__in=seller_product_variants,created_at__range=[start_date,end_date]) |Q(product__in=request.user.products(),created_at__range=[start_date,end_date])).values_list(Sum('price'),Count('id'))
+            duration_completed_orders_counts = LineItem.objects.select_related('variant','product').filter(Q(variant__in=seller_product_variants,created_at__range=[start_date,end_date])|Q(order_status='Delivered') |Q(product__in=request.user.products(),created_at__range=[start_date,end_date])).values_list(Sum('price'),Count('id'),Sum('cost_price'))
             duration_completed_orders_counts_cost = sum(duration_completed_orders_counts[0] for duration_completed_orders_counts in duration_completed_orders_counts)
             duration_completed_orders_cost_price_total = sum(duration_completed_orders_counts[2] for duration_completed_orders_counts in duration_completed_orders_counts)
             duration_uncompleted_orders_counts_cost = sum(duration_uncompleted_orders_counts[0] for duration_uncompleted_orders_counts in duration_uncompleted_orders_counts)
-            print(duration_uncompleted_orders_counts_cost,duration_completed_orders_counts_cost)
-            
+                        
             ########Get recent orders#########
-            recent_orders =  LineItem.objects.select_related('variant').filter(variant__in=seller_product_variants).order_by('-created_at')[:20]
+            variant_recent_orders =  LineItem.objects.select_related('variant').filter(variant__in=seller_product_variants).order_by('-created_at')[:20]
+            recent_orders =  LineItem.objects.select_related('product').filter(product__in=request.user.products()).order_by('-created_at')[:20]
             serializer = LineItemIndexSerializerDashboard(recent_orders,many=True)
+            variant_serializer = LineItemIndexSerializerDashboard(variant_recent_orders,many=True)
             return {
                     "status": True,"revenue":order_items_cost,
                     "start_date":start_date, "end_date":end_date,
                     'chart_data':order_items,
-                    'pending_orders_data':{'count':len(duration_uncompleted_orders_counts),
+                    'pending_orders_data': {'count':len(duration_uncompleted_orders_counts),
                                             'revenue':duration_uncompleted_orders_counts_cost
                                             },
                     'completed_orders_data':{'count':len(duration_completed_orders_counts),
                                             'revenue':duration_completed_orders_counts_cost,
                                             'cost_incurred':duration_completed_orders_cost_price_total,
                                             'earnings':(duration_completed_orders_counts_cost - duration_completed_orders_cost_price_total)
-                                        },
+                                            },
                     'recent_orders':serializer.data,
+                    'variant_recent_orders':variant_serializer.data,
                     'section_active': 'sales_dashboard',
                     'lang': get_user_locale(request)
                     }
+            
+        else:
+            return{'status':False,"message":"You are not permitted, private endpoint"}
+        
     
     authentication_classes = [JWTAuthenticationMiddleWare]
     @allowed_users() 
-    def get(self,request, filter,duration):
-        response = self.sales_report(request,filter,duration)
+    def get(self,request):
+        response = self.sales_report(request)
         return Response(response)
 
 
-################MARKETING AND CAMPAIGNS####################
-
-class NewCampaignView(APIView):
-    authentication_classes = [JWTAuthenticationMiddleWare]
-    @allowed_users()
-    def post(self,request):
-        if request.method == 'POST':
-            instance = CampaignSerializer(data=request.data)
-            listings,variants,listings_variant = instance.get_listings_Object(request.data)
-            request.data['listings'] = listings
-            request.data['variants'] = variants
-            request.data['listings_variants'] = listings_variant
-            data = request.data
-            instance = CampaignSerializer(data=data)
-            if instance.is_valid(raise_exception=True):
-                campaign = instance.create(data)
-                print(dir(campaign))
-                return Response({
-                                "status":True,
-                                "message":"Marketing campaign created successfully",
-                                "data":{
-                                        "campaign_name":campaign.campaign_name,
-                                        "start_date":campaign.start_date,
-                                        "end_date":campaign.end_date
-                                        }
-                                 })
-    def get(self,request):
-        
-        if request.method == 'GET':
-            promotions = Campaign.objects.filter(is_active=False)
-            # print(promotions)
-            # for promotion in promotions:
-            #     print(type(promotion))
-            #     listings = promotion.listings.all()
-            #     variants = promotion.variants.all()
-            #     listings_serializer = ProductSerializer(listings,many=True)
-            #     variants_serializer = VariantSerializer(variants,many=True)
-            #     # print(listings_serializer.data)
-            #     # print("\n\n\n")
-            #     # print(variants_serializer.data)
-            #     # promotion.listings = listings
-            #     promotion.listings.set(listings)
-            #     print(PromoSerializer(promotions,many=False).data)
-            serializer = PromoSerializer(promotions,many=True)
-            
-            print(serializer.data)
-            return Response({"status":True,"data":serializer.data})
-            
-                     
 # #Option Types CRUD ================
 # @login_required(login_url='login')
 # @allowed_users()
@@ -432,16 +501,16 @@ class NewOptionTypeView(APIView):
     @allowed_users()
     @authorize_seller()
     def post(self,request):
-        if request.method == 'POST':
-            serializer = NewOptionTypeSerializer(data=request.data)
-            print(request.data)
-            if serializer.is_valid():
-                
-                serializer.save()
-                context = {'message':get_translations('OptionType created successfully', get_user_locale(request)),'section_active': 'categories', 'lang': get_user_locale(request)}
-                return Response({'context': context, "status": True})
+        serializer = NewOptionTypeSerializer(data=request.data)
+        print(request.data)
+        if serializer.is_valid():
+            
+            serializer.save()
+            context = {'message':get_translations('OptionType created successfully', get_user_locale(request)),'section_active': 'categories', 'lang': get_user_locale(request)}
+            return Response({'context': context, "status": True})
 
-            return Response({"status": False})
+        return Response({"status": False})
+    
 # @login_required(login_url='login')
 # @allowed_users()
 # @authorize_seller()
@@ -474,16 +543,15 @@ class NewOptionValueView(APIView):
     
     authentication_classes = [JWTAuthenticationMiddleWare]
     @allowed_users()
-    # @authorize_seller()
+    @authorize_seller()
     def post(self,request):
-        if request.method == 'POST':
-            serializer = NewOptionValueSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                context = {'message':get_translations('OptionValue created successfully', get_user_locale(request)),'section_active': 'categories', 'lang': get_user_locale(request)}
-                return Response({'context': context, "status": True})
+        serializer = NewOptionValueSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            context = {'message':get_translations('OptionValue created successfully', get_user_locale(request)),'section_active': 'categories', 'lang': get_user_locale(request)}
+            return Response({'context': context, "status": True})
 
-            return Response({"status": False})
+        return Response({"status": False})
 # @login_required(login_url='login')
 # @allowed_users()
 # @authorize_seller()
@@ -514,14 +582,13 @@ class NewCategoriesView(APIView):
     @allowed_users()
     @authorize_seller()
     def post(self,request):
-    #   form = CategoryForm()
-        if request.method == 'POST':
-            serializer = NewCategorySerializer(data=request.data)
-            print(serializer)
-            if serializer.is_valid():
-                serializer.save()
-                context = {'message':get_translations('Category created successfully', get_user_locale(request)),'section_active': 'categories', 'lang': get_user_locale(request)}
-                return Response({'context': context, "status": True})
+        
+        serializer = NewCategorySerializer(data=request.data)
+        print(serializer)
+        if serializer.is_valid():
+            serializer.save()
+            context = {'message':get_translations('Category created successfully', get_user_locale(request)),'section_active': 'categories', 'lang': get_user_locale(request)}
+            return Response({'context': context, "status": True})
 # @login_required(login_url='login')
 # @allowed_users()
 # @authorize_seller()
@@ -575,8 +642,8 @@ class TagsView(APIView):
 # Products CRUD =================================
 class ProductsView(APIView):
     
-    # authentication_classes = [JWTAuthenticationMiddleWare]
-    # @allowed_users()
+    authentication_classes = [JWTAuthenticationMiddleWare]
+    @allowed_users()
     def get(self,request):
         products = request.user.products() if request.user.is_seller() else Product.objects.all()
         serializer = ProductSerializer(products,many=True)
@@ -586,8 +653,8 @@ class ProductsView(APIView):
 
 class ProductsformView(APIView):
     
-    authentication_classes = [JWTAuthenticationMiddleWare]
-    @allowed_users()  
+    # authentication_classes = [JWTAuthenticationMiddleWare]
+    # @allowed_users()  
     def get(self,request):
 
         categories = Category.objects.all()
@@ -600,7 +667,6 @@ class ProductsformView(APIView):
         tag_serializer = TagSerializer(tags, many=True)
 
         return Response({'categories': categories_serializer.data, 'option_types': option_type_serializer.data, 'tags': tag_serializer.data, 'status': True})
-
 
 
 class OptionValuesView(APIView):
@@ -617,16 +683,24 @@ class OptionValuesView(APIView):
 class NewProductsView(APIView):
     
     authentication_classes = [JWTAuthenticationMiddleWare]
+    
+    def get(self,request):
+
+        category_id = int(request.GET.get('cat_id'))
+        categories = Category.objects.filter(parent=category_id)
+        sub_categories_serializer= CategorySerializer(categories, many=True)
+        return Response({'sub_categories': sub_categories_serializer.data, 'status': True})
+
+        
     @allowed_users()  
     def post(self,request):
         if request.method == 'POST':
             print("List of images ",request.FILES.getlist('document', None))
             if len(request.FILES.getlist('document', None)) < 1:
-                # print("Number of images ",len(request.FILES.getlist('document', None)))
+                log.info("Uploaded images "+ str(request.FILES.getlist('document', None)))
                 return Response({'No image was provided for product': "message", "status": False})
             
             data = json.loads(request.data['data'])
-            print('Business source ',request.user.company_name, data)
             data['business_source'] = request.user.company_name
             data['account_manager_phone_1'] = request.user.account_manager_phone_1
             data['company_address_1'] = request.user.store_name
@@ -635,7 +709,8 @@ class NewProductsView(APIView):
             
             if serializer.is_valid():
                 instance = serializer.save()
-                self.createVariants(request,instance,request.data['data'])
+                if data['has_variant']:
+                    self.createVariants(request,instance,request.data['data'])
                 self.saveAttachments(request,instance,json.loads(request.data['data']),request.FILES.getlist('document', None))
                 user_product = UserProduct(user_id=request.user.id, product=serializer.instance)
                 user_product.save()
@@ -643,21 +718,68 @@ class NewProductsView(APIView):
                 return Response({'context': context, "status": True})
             else:
                 return Response({'error': serializer.errors, "status": False})
+    
+    @allowed_users() 
+    def put(self,request):
+        slug = request.GET.get('slug')
+        product = Product.objects.get(slug=slug)
+        if request.method == 'PUT':
             
-    def createVariants(self,request,instance,data):
-        product = Product.objects.get(slug=instance.slug)
-        option_values = OptionValue.objects.filter(option_type=product.option_type)
+            search_tags_obj = []
+            src_data = json.loads(request.data['data'])
+            data = src_data.get('main_product')
+            search_tags = src_data.get('search_tags')
+            variants = src_data.get('edited_variants')
+            new_variants = src_data.get('new_variants')
+            request.variants_ids = [ sub['id'] for sub in variants ]
+            request.variants_data = variants
+            product = Product.objects.get(id=product.id)
+            
+            Product.objects.filter(id=product.id).update(**data)#Update parent product 
+            
+            if len(search_tags) > 0: #Update search Tags
+                for search_tag in search_tags:
+                    search_tags_obj.append(get_object_or_404(Tag,id=search_tag))
+                    
+                product.search_tags.set(search_tags_obj, clear=True)
+            
+            if len(variants) > 0: #Update variants
+                response = self.updateVariants(request,product)
+            
+            if len(new_variants) > 0: #Create new variants if user added one
+                data['variants'] = new_variants
+                self.createVariants(request,product,data)
+                
+            return Response({'product': str(response)})
         
-        if request.method == 'POST':
+    def createVariants(self,request,instance,data):
+        
+        product = Product.objects.get(slug=instance.slug)
+        OptionValue.objects.filter(option_type=product.option_type)
+        
+        if request.method == 'POST' or request.method == 'PUT':
             data = json.loads(request.data['data'])
+            log.info({'var': str(data)})
+            
             for i in range(0,len(data['variants'])):
                 data['variants'][i]['product'] = str(instance.id)
                 
             serializer = CreateVariantSerializer(data=data['variants'],many=True)
             if serializer.is_valid():
                 print("Serializer data ",serializer.data)
-                # serializer.option_value = OptionValue.objects.get(pk=data['variants']['option_value'])
                 serializer.save()
+    
+    def updateVariants(self,request,product):
+        
+        for idx, variant in enumerate(request.variants_ids):
+            variant_obj = get_object_or_404(Variant,id=variant)
+        
+            serializer= VariantUpdateSerializer(variant_obj, data=request.variants_data[idx])
+            if serializer.is_valid():
+                serializer.save()
+                return {"status": True}
+            else:
+                return {'errors': serializer.errors, "status": False}
                 
     def saveAttachments(self,request,instance,data,files):
         
@@ -668,19 +790,7 @@ class NewProductsView(APIView):
             if _serializer.is_valid():
                 _serializer.save()
                 
-# @login_required(login_url='login')
-# @allowed_users()
-# def edit_product(request, slug):
-#   product = Product.objects.get(slug=slug)
-#   form = ProductForm(instance=product)
-#   if request.method == 'POST':
-#     form = ProductForm(request.POST, instance=product)
-#     if form.is_valid():
-#       form.save()
-#       messages.success(request, get_translations('Product updated successfully', get_user_locale(request)))
-#       return redirect('products_list')
-#   return render(request, 'dashboard/products/edit.html', {'form': form, 'product': product, 'section_active': 'products', 'lang': get_user_locale(request)})
-
+                
 #Product Variants CRUD =================================
 # @login_required(login_url='login')
 # @allowed_users()
@@ -698,13 +808,12 @@ class NewProductVariantView(APIView):
         product = Product.objects.get(slug=slug)
         option_values = OptionValue.objects.filter(option_type=product.option_type)
 
-        if request.method == 'POST':
-            form = VariantSerializer(request.POST)
-            if form.is_valid():
-                form.instance.option_value = OptionValue.objects.get(pk=request.POST.get('option_value'))
-                form.save()
-                messages.success(request, get_translations('Product variant created successfully', get_user_locale(request)))
-                return redirect('product_variants_list', product.slug)
+        form = VariantSerializer(request.POST)
+        if form.is_valid():
+            form.instance.option_value = OptionValue.objects.get(pk=request.POST.get('option_value'))
+            form.save()
+            messages.success(request, get_translations('Product variant created successfully', get_user_locale(request)))
+            return redirect('product_variants_list', product.slug)
         # return render(request, 'dashboard/products/variants/new.html', {'form': form, 'option_values': option_values, 'product': product, 'section_active': 'products', 'lang': get_user_locale(request)})
 
 
@@ -774,14 +883,12 @@ class NewProductVariantView(APIView):
 class RefundsView(APIView):
     
     authentication_classes = [JWTAuthenticationMiddleWare]
-    
     @allowed_users() 
     @authorize_seller() 
     def get(self,request,q='',charge_id='',refund_id='',limit=1000):
         if request.method == 'GET':
             
-            singlecharge = True if isinstance(int(q),int) else False
-                
+            singlecharge = True if isinstance(int(q),int) else False   
             self.createrefund = RefundTransactions(charge_id=charge_id,refund_id=refund_id)
             refunds = RefundTransactions.list_refunds(q, data_obj='', singlecharge=singlecharge, limit=limit)
             context = {'data': refunds, 'message':get_translations('Refund list was successfully fetched', get_user_locale(request)),'section_active': 'refundlist', 'lang': get_user_locale(request)}

@@ -52,7 +52,7 @@
                                     <div class="container-prod">
                                         <a href="{% url 'product' product.slug %}">
                                         {% if product.attachment_set.first.file != None %}
-                                            <img src="/media/{{ product.attachment_set.first.file }}" style='height: 230px; width: 100%;' alt="">
+                                            <img src="/{{ product.attachment_set.first.file }}" style='height: 230px; width: 100%;' alt="">
                                         {% else %}
                                             <img src="{% static 'images/no_picture.jpeg' %}" style='height: 230px; width: 100%;' alt="">
                                         {% endif%}

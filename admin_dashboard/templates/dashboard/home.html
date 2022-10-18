@@ -41,17 +41,17 @@
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td><a href="{% url 'product' line_item.variant.product.slug %}">{{line_item.variant.product.name}}</a></td>
+                                            <td><a href="{% url 'product' line_item.variant.product.slug %}">{{ line_item.variant.product.name }}</a></td>
                                             <td>{{ line_item.created_at }}</td>
                                             <td>${{ line_item.item_total }}</td>
                                             <td>
                                                 <div class="d-flex align-items-center">
                                                     <span class="badge badge-success badge-dot m-r-10"></span>
                                                     <span>
-                                                        {% if line_item.dispatched %} 
+                                                        {% if line_item.order_status == 'Dispatched' %} 
                                                             Dispatched 
                                                         {% else %}
-                                                            Processing
+                                                            line_item.order_status
                                                         {% endif %}
                                                     </span>
                                                 </div>

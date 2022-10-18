@@ -1,4 +1,9 @@
+import json
 import logging
+
+from helpers import get_timezone_datetime
+import notifications
+from notifications.models import Notifications
 log = logging.getLogger(__name__)
 from uuid import uuid4
 import uuid, time
@@ -13,7 +18,7 @@ from accounts.authentication import JWTAuthenticationMiddleWare, decode_access_t
 from rest_framework.response import Response
 from accounts.models import Address, User, WishlistedProduct
 from dashboard.transactions import InitiateTransaction
-from endless_factory_api.serializers import CartSerializer, CategorySerializer, LineItemIndexSerializer, ProductIndexSerializer
+from endless_factory_api.serializers import CartSerializer, CategorySerializer, LineItemIndexSerializer, ProductIndexSerializer, ProductSerializer, VariantIndexSerializer, VariantSerializer
 from orders.utils import get_currrent_date_time
 from products.models import Product, Variant, Category, Tag
 from orders.models import Order, LineItem, Cart, CartItem
@@ -27,49 +32,93 @@ from .utils import get_sample_response
 
 # @method_decorator(csrf_exempt, name='dispatch')
 
-class TestLogger(APIView):
-    
-    def get(self,request):
-        log.info("Hey there it works!!")
-        return Response({'message':'Logger worked', "status": True})
-
-
 class CartView(APIView):
     
     def get(self,request,cart_token):
         cart = get_cart(request,cart_token)
-        cart = CartSerializer(cart).data
-        return Response({ 'lang': get_user_locale(request), 'cart':cart,'message':'Cart items retrieved successfully', "status": True})
+        cart_serializer = CartSerializer(cart)
+        return Response({ 'lang': get_user_locale(request), 'cart':cart_serializer.data,'message':'Cart items retrieved successfully', "status": True})
 
-    def put(self, request, pk):
-        cart = get_cart(request,None)
-        cart_item = CartItem.objects.get(pk=pk)
-        cart_item.quantity = int(request.data['quantity'])
-
-        if cart_item.quantity > cart_item.variant.stock:
-           return Response({'message':'Insufficient stock!', "status": True})
-        else:
-            cart_item.price = int(cart_item.quantity) * cart_item.variant.price
-            cart_item.save()
-            return Response({'message':'Cart item updated successfully.', "status": True})
+    def put(self, request, cart_token):
+        cart = get_cart(request,cart_token)
+        cart_item =  CartItem.objects.get(cart=cart,pk=int(request.data['cart_item']))
+        
+        try:
+            cart_item.quantity = int(request.data['quantity'])
+            if cart_item.quantity > cart_item.variant.stock:
+                if request.data['action'] == 'add':
+                    return Response({'message':'Insufficient stock!', "status": False})
+                return False
+            else:
+                
+                cart_item.price =  cart_item.variant.price
+                cart_item.save()
+                return Response({'message':'Cart item updated successfully.', "status": True})
+            
+        except Exception as e:
+            if "has no attribute" in str(e):
+                cart_item.quantity = int(request.data['quantity'])
+                if cart_item.quantity > cart_item.product.current_stock:
+                    if request.data['action'] == 'add':
+                        return Response({'message':'Insufficient stock!', "status": False})
+                    return False
+                else:
+                    cart_item.quantity = int(request.data['quantity'])
+                    cart_item.price = cart_item.product.price
+                    cart_item.save()
+                    return Response({'message':'Cart item updated successfully.', "status": True})
+            return Response({'error':str( request.data['action']), "status": False})
+            
 
 class AddCartView(APIView):
     @csrf_exempt
     def post(self,request,cart_token=''):
         cart = get_cart(request,None)
-        print("\n\nProduct variant ",request.data['variant'],cart)
-        variant = Variant.objects.get(pk=request.data['variant'])
-        print("variant ", variant.product)
-        item, created = CartItem.objects.get_or_create(cart=cart, variant=variant, option_type=variant.product.option_type.name, 
-                                                       option_value=variant.option_value.value,cost_price=variant.product.cost_price)
-        item.quantity = request.data['quantity']
-        if int(item.quantity) > variant.stock:
-            return Response({'message':'Insufficient stock!', "status": False})
-        else:
-            item.price = int(item.quantity) * item.variant.price
-            item.save()
-            return Response({'message':'Item added to cart successfully.', "status": True})   
+        if request.data['variant'] !="":
+            
+            variant = Variant.objects.get(pk=request.data['variant'])
+            
+            if int(request.data['quantity']) > variant.stock:
+                return Response({'message':'Insufficient stock!', "status": False})
+            else:
+                exist = CartItem.objects.filter(cart=cart,variant=variant).exists()
+                if exist:
+                    try:
+                        item = CartItem.objects.get(cart=cart, variant=variant)
+                        item.quantity += int(request.data['quantity'])
+                    except:
+                        pass
+                    
+                else:
+                    
+                    item, created = CartItem.objects.get_or_create(cart=cart, variant=variant, option_type=variant.product.option_type.name, 
+                                                            option_value=variant.option_value.value,cost_price=variant.product.cost_price)
+                    item.quantity = request.data['quantity']
+                item.price =  item.variant.price #* int(item.quantity) 
+                item.save()
+                return Response({'message':'Item added to cart successfully.', "status": True})   
 
+        else:
+            product = Product.objects.get(pk=request.data['product_id'])
+            
+            if int(request.data['quantity']) > product.current_stock:
+                return Response({'message':'Insufficient stock!', "status": False})
+            else:
+                exist = CartItem.objects.filter(cart=cart,product=product).exists()
+                if exist:
+                    try:
+                        item = CartItem.objects.get(cart=cart, product=product)
+                        item.quantity += int(request.data['quantity'])
+                    except:
+                        pass
+                
+                else:
+                    item, created = CartItem.objects.get_or_create(cart=cart,product=product,quantity=request.data['quantity'],price= product.price,cost_price=product.cost_price)
+                    item.quantity = request.data['quantity']
+
+                item.price =  product.price #* int(item.quantity)
+                item.save()
+                return Response({'message':'Item added to cart successfully.', "status": True,'cart-':str(cart.token)})
 
 class RemoveCartItemView(APIView):
     
@@ -83,23 +132,18 @@ class CheckoutView(APIView):
     authentication_classes = [JWTAuthenticationMiddleWare]
     def post(self,request):
         cart = get_cart(request,None)
-        # stripe_pub_key = settings.STRIPE_PUBLISHABLE_KEY
         
         if request.method == 'POST':
             # try:
             stripe_order_token = request.data['stripe_token']
             self.initiate_transaction = InitiateTransaction(cart,stripe_order_token)
-            time_sent = get_currrent_date_time()
+            time_sent = get_timezone_datetime()
             charge = self.initiate_transaction.create_charge() #UNCOMMENT IN PRODUCTION
-            print("Charge ",charge)
-            # charge = get_sample_response() # MOCK CHARGE CREATION , COMMENT OUT IN PRODUCTION
-            
-            # time.sleep(2)  # REMOVE THIS LINE OF CODE
-            time_arrived = get_currrent_date_time()
+            log.info("Charge ",json.dumps(charge))
+        
+            time_arrived = get_timezone_datetime()
             time_range = [time_sent,time_arrived]
-            print(charge)
-            # log.info(str(charge))
-            # return Response({'message':'debugging','charge':charge})
+            
             if charge['status'] == 'succeeded':
                 order = Order(user=request.user)
                 order.item_total = cart.total()
@@ -107,15 +151,16 @@ class CheckoutView(APIView):
                 order.endless_factory_cut = cart.endless_factory_cut()
                 
                 order.shipping_address = Address.objects.filter(pk=request.data['address_id']).first()
-                number = order.save()
-                order.set_line_items_from_cart(cart,number,request.user)
+                order_number = order.save()
+                order.set_line_items_from_cart(cart,order_number,request.user)
                 order.set_transaction(request.user, charge, request.data['card_number'], request.data['save_card'],time_range)
                 cart.reset()
+                log.info(str(request.user.id)+ '==>'+ str(order.number)+ ' '+str(charge['receipt_url']))
                 return Response({'receipt':charge['receipt_url'],'message': 'Your order has been placed successfully.', 'status': True, 'order_id': order.number})
             else:
                 return Response({'message':'Your card was declined.', 'status': 'error'})
             # except Exception as e:
-            #     print(e)
+            #     log.warning(e)
             #     return Response({'error':str(e),'message':'An error occured', 'status': 'error'})
 
 
@@ -134,51 +179,115 @@ class OrderStatusView(APIView):
 
 class WishListView(APIView):
     authentication_classes = [JWTAuthenticationMiddleWare]
-    
-    def get(request):
-        wishlisted_products = request.user.wishlistedproduct_set.all()
-        page_title = 'Wishlisted Products' 
-        product_categories = Category.objects.all().order_by('?')[:8]
-        context = {'categories': product_categories, 'lang': get_user_locale(request), 'wishlisted_products': wishlisted_products, 
-                   'page_title': page_title, 'cart': get_cart(request,None),'status':True}
+
+    def get(self,request):
+        products = []
+        variants = []
+
+        for wishlisted_product in request.user.wishlistedproduct_set.all():
+            try:
+                if wishlisted_product.product != None:
+                    products.append(ProductSerializer(wishlisted_product.product).data)
+            except:
+                pass
+            try:
+                if wishlisted_product.variant.product != None:
+                    variants.append(ProductSerializer(wishlisted_product.variant.product).data)
+            except:
+                pass
+
+        context = {'lang': get_user_locale(request), 'variants': variants, 'no_variants':products, 
+                 'status':True}
         return  Response(context)
 
-    def post(request, pk):
-        product = Product.objects.get(pk=pk)
-        wishlist_product, created = WishlistedProduct.objects.get_or_create(product=product, user=request.user)
-        Response({'redirect_url':product.slug,'message':'Product added to wishlist successfully','status':True})
+    def post(self,request):
+        
+        pk = request.data.get('pk')
+        is_variant = request.data.get('is_variant')
+        log.info(is_variant)
+        
+        if is_variant.lower() == 'true':
+            variant = Variant.objects.get(pk=pk)
+            variant_wishlist_product, created = WishlistedProduct.objects.get_or_create(variant=variant, user=request.user)
+            if created:
+                return Response({'message':'Product added to wishlist successfully','status':True})
+            else:
+                return Response({'message':'There was a problem saving this product','status':False})
+            
+        if is_variant.lower() == 'false':
+            product = Product.objects.get(pk=pk)
+            wishlist_product, created = WishlistedProduct.objects.get_or_create(product=product, user=request.user)
+            if created:
+                return Response({'message':'Product added to wishlist successfully','status':True})
+            else:
+                return Response({'message':'There was a problem saving this product, it might be saved already','status':False})
 
-    def delete(request, pk):
-        product = Product.objects.get(pk=pk)
-        wishlist_product = WishlistedProduct.objects.filter(product=product, user=request.user).first()
-        if wishlist_product != None:
-            wishlist_product.delete()
-        Response({'redirect_url':product.slug,'message':'Product removed from wishlist successfully','status':True})
+    def delete(self,request):
+        
+        print(request.data)
+        pk = request.data.get('pk')
+        is_variant = request.data.get('is_variant')
+        
+        if is_variant.lower() == 'true':
+            variant = Variant.objects.get(pk=pk)
+            wishlist_product = WishlistedProduct.objects.filter(variant=variant, user=request.user).first()
+            
+        if is_variant.lower() == 'false':
+            product = Product.objects.get(pk=pk)
+            wishlist_product = WishlistedProduct.objects.filter(product=product, user=request.user).first()
+        
+        try:
+            if wishlist_product != None:
+                wishlist_product.delete()
+                return Response({'message':'Product removed from wishlist successfully','status':True})
+            
+            else:
+                return Response({'message':'There was a problem deleting this product from saved items','status':False})
+        except:
+            pass
 
 
 class OrdersView(APIView):
+    
     authentication_classes = [JWTAuthenticationMiddleWare]
     def get(self,request):
+        
         status = request.GET.get('status')
-        print("Status ",status)
+        log.info(status)
         if status is not None:
+            
             if status == 'delivered':
-                order_items = LineItem.objects.select_related('order', 'variant').filter(order__user_id=request.user.id, dispatched=True)
+                order_items = LineItem.objects.select_related('order', 'variant').filter(order__user_id=request.user.id, order_status='Delivered')
                 serializer= LineItemIndexSerializer(order_items, many=True)
                 return Response({'order_items': serializer.data})
             
             elif status == 'processing':
-                order_items = LineItem.objects.select_related('order', 'variant').filter(order__user_id=request.user.id, dispatched=False)
+                order_items = LineItem.objects.select_related('order', 'variant').filter(order__user_id=request.user.id, order_status='Processing')
                 serializer= LineItemIndexSerializer(order_items, many=True)
                 return Response({'order_items': serializer.data})
+            
+            elif status == 'pending':
+                order_items = LineItem.objects.select_related('order', 'variant').filter(order__user_id=request.user.id, order_status='Pending')
+                serializer= LineItemIndexSerializer(order_items, many=True)
+                return Response({'order_items': serializer.data})
+            
+            elif status == 'shipped':
+                order_items = LineItem.objects.select_related('order', 'variant').filter(order__user_id=request.user.id, order_status='Shipped')
+                serializer= LineItemIndexSerializer(order_items, many=True)
+                return Response({'order_items': serializer.data})
+            
+            elif status == 'dispatched':
+                order_items = LineItem.objects.select_related('order', 'variant').filter(order__user_id=request.user.id, order_status='Dispatched')
+                serializer= LineItemIndexSerializer(order_items, many=True)
+                return Response({'order_items': serializer.data})
+            
         else:
-            print('User id',request.user.id)
-            order_items = LineItem.objects.select_related('order', 'variant').filter(order__user_id=request.user.id)
+
+            order_items = LineItem.objects.select_related('order', 'variant','product').filter(order__user_id=request.user.id)
             serializer= LineItemIndexSerializer(order_items, many=True)
             return Response({'order_items': serializer.data})  
-        
-        
-
+    
+    
 def set_locale(request):
   current_path = request.GET['current_path'] if request.GET['current_path'] != None else '/'
   locale = request.GET['locale'] if request.GET['locale'] != None else 'en'

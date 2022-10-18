@@ -3,10 +3,26 @@ from django.forms import ChoiceField
 from products.models import Category, Tag, Product, Variant, Attachment, OptionType, OptionValue
 from accounts.models import User, Address, CreditCard
 
+
 class CategoryForm(forms.ModelForm):
+
   class Meta:
     model = Category
-    fields = ('name', 'description', 'image')
+    fields = ('name', "parent", "description")
+ 
+  def CATEGORY_CHOICES():
+    
+      categories_tuple = [('-1','----',)]
+      categories = Category.objects.all().values_list('id','name')
+      for category in list(categories):
+          padded_cat = category
+          categories_tuple.append(padded_cat)
+      return tuple(categories_tuple) 
+      
+  CHOICES = CATEGORY_CHOICES()
+  parent = forms.ChoiceField(widget=forms.Select,choices=CHOICES)
+  
+  
         
 class TagForm(forms.ModelForm):
   class Meta:
@@ -26,13 +42,12 @@ class OptionTypeForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
   class Meta:
     model = Product
-    fields = ('title', 'description', 'is_active', 'model_number', 'min_order_quantity', 'max_order_quantity', 'delivery_option', 'search_tags', 'category', 'option_type', 'approved', 'featured')
+    fields = ('title', 'description', 'is_active', 'model_number', 'min_order_quantity', 'max_order_quantity', 'delivery_option', 'initial_stock', 'current_stock', 'search_tags', 'category', 'option_type', 'approved', 'featured')
 
 class VariantForm(forms.ModelForm):
   class Meta:
     model = Variant
     fields = ('stock', 'price', 'product', 'option_value')
-
 
 class AttachmentForm(forms.ModelForm):
   class Meta:

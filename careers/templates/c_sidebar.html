@@ -1,0 +1,142 @@
+{% load translate %}
+
+<div class="side-nav">
+    <div class="side-nav-inner">
+        <ul class="side-nav-menu scrollable">
+            <li class="nav-item dropdown">
+                <a class="dropdown-toggle" href="javascript:void(0);">
+                    <span class="icon-holder">
+                        <i class="anticon anticon-dashboard"></i>
+                    </span>
+                    <span class="title">{{'Dashboard'|translate:lang}}</span>
+                    <span class="arrow">
+                        <i class="arrow-icon"></i>
+                    </span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li class="{% if section_active == 'dashboards' %} {{'active'}} {% endif %}">
+                        <a href="{% url 'dashboard_home' %}">{{'Home'|translate:lang}}</a>
+                    </li>
+                </ul>
+            </li>
+            {% if request.user.is_admin %}
+                <li class="nav-item dropdown">
+                    <a class="dropdown-toggle" href="javascript:void(0);">
+                        <span class="icon-holder">
+                            <i class="anticon anticon-user"></i>
+                        </span>
+                        <span class="title">{{'Company'|translate:lang}}</span>
+                        <span class="arrow">
+                            <i class="arrow-icon"></i>
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="{% if section_active == 'all_companies' %} {{'active'}} {% endif %}">
+                            <a href="{% url 'all_companies' %}">{{'All Companies'|translate:lang}}</a>
+                        </li>
+                        <li class="{% if section_active == 'accepted_companies' %} {{'active'}} {% endif %}">
+                            <a href="{% url 'accepted_companies' %}">{{'Accepted'|translate:lang}}</a>
+                        </li>
+                        <li class="{% if section_active == 'rejected_companies' %} {{'active'}} {% endif %}">
+                            <a href="{% url 'rejected_companies' %}">{{'Rejected'|translate:lang}}</a>
+                        </li>
+                        <li class="{% if section_active == 'pending_companies' %} {{'active'}} {% endif %}">
+                            <a href="{% url 'pending_companies' %}">{{'Pending'|translate:lang}}</a>
+                        </li>
+                    </ul>
+                </li>
+            {% endif %}
+            <li class="nav-item dropdown">
+                <a class="dropdown-toggle" href="javascript:void(0);">
+                    <span class="icon-holder">
+                        <i class="anticon anticon-ordered-list"></i>
+                    </span>
+                    <span class="title">{{'View Applicant'|translate:lang}}</span>
+                    <span class="arrow">
+                        <i class="arrow-icon"></i>
+                    </span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li class="{% if section_active == 'view_applicants' %} {{'active'}} {% endif %}">
+                        <a href="{% url 'view_applicants' %}">{{'All Applicant'|translate:lang}}</a>
+                    </li>
+                </ul>
+            </li>
+            <!--
+            <li class="nav-item dropdown">
+                <a class="dropdown-toggle" href="javascript:void(0);">
+                    <span class="icon-holder">
+                        <i class="anticon anticon-shopping-cart"></i>
+                    </span>
+                    <span class="title">{{'Catalogue'|translate:lang}}</span>
+                    <span class="arrow">
+                        <i class="arrow-icon"></i>
+                    </span>
+                </a>
+                {% if request.user.is_admin %}
+                    <ul class="dropdown-menu">
+                        <li class="{% if section_active == 'categories' %} {{'active'}} {% endif %}">
+                            <a href="{% url 'categories_list' %}">{{'Categories'|translate:lang}}</a>
+                        </li>
+                    </ul>
+                    <ul class="dropdown-menu">
+                        <li class="{% if section_active == 'tags' %} {{'active'}} {% endif %}">
+                            <a href="{% url 'tags_list' %}">{{'Tags'|translate:lang}}</a>
+                        </li>
+                    </ul>
+                {% endif %}
+
+                <ul class="dropdown-menu">
+                    <li class="{% if section_active == 'products' %} {{'active'}} {% endif %}">
+                        <a href="{% url 'products_list' %}">{{'Products'|translate:lang}}</a>
+                    </li>
+                </ul>
+            </li>
+            {% if request.user.is_admin %}
+                <li class="nav-item dropdown">
+                    <a class="dropdown-toggle" href="javascript:void(0);">
+                        <span class="icon-holder">
+                            <i class="anticon anticon-setting"></i>
+                        </span>
+                        <span class="title">{{'Careers'|translate:lang}}</span>
+                        <span class="arrow">
+                            <i class="arrow-icon"></i>
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="{% if section_active == 'option_types' %} {{'active'}} {% endif %}">
+                            <a href="{% url 'all_companies' %}">{{'All Comapany'|translate:lang}}</a>
+                        </li>
+                    </ul>
+                </li>
+            {% endif %}
+
+            {% if request.user.is_admin %}
+                <li class="nav-item dropdown">
+                    <a class="dropdown-toggle" href="javascript:void(0);">
+                        <span class="icon-holder">
+                            <i class="anticon anticon-setting"></i>
+                        </span>
+                        <span class="title">{{'Configurations'|translate:lang}}</span>
+                        <span class="arrow">
+                            <i class="arrow-icon"></i>
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="{% if section_active == 'option_types' %} {{'active'}} {% endif %}">
+                            <a href="{% url 'option_types_list' %}">{{'Option Types'|translate:lang}}</a>
+                        </li>
+                    </ul>
+                    <ul class="dropdown-menu">
+                        <li class="{% if section_active == 'option_values' %} {{'active'}} {% endif %}">
+                            <a href="{% url 'option_values_list' %}">{{'Option Values'|translate:lang}}</a>
+                        </li>
+                    </ul>
+
+                </li>
+            {% endif %}
+        -->
+        </ul>
+
+    </div>
+</div>

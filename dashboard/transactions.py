@@ -1,5 +1,4 @@
 import os, stripe
-
 from dashboard.models import Refunds
 from endless_factory_api.serializers import RefundSerializer
 from dotenv import load_dotenv
@@ -24,6 +23,7 @@ class InitiateTransaction(object):
 class RefundTransactions(object):
     
     def __init__(self,charge_id,refund_id=''):
+        
         self.charge_id = charge_id
         self.refund_id = refund_id
     
@@ -54,15 +54,11 @@ class RefundTransactions(object):
                         refunds = Refunds.objects.filter(customer=q)
                         serializer = RefundSerializer(refunds,many=True)
                     else:
-                        refunds = Refunds.objects.filter(customer=q,
-                                                         amount=data_obj.amount,
-                                                         currency=data_obj.currency,
+                        refunds = Refunds.objects.filter(customer=q,amount=data_obj.amount,currency=data_obj.currency,
                                                          status=data_obj.status,
-                                                         created_at__range=[data_obj.start_date,
-                                                                            data_obj.end_date]
+                                                         created_at__range=[data_obj.start_date,data_obj.end_date]
                                                          )
                         serializer = RefundSerializer(refunds,many=True)
-                        print(refunds.values())
                 return serializer.data
         else:
             if source == 'stripe':

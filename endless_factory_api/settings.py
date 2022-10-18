@@ -38,46 +38,56 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'tasks',
+    'django_celery_beat',
+    'django_celery_results',
     'widget_tweaks',
+    'channels',
     'rest_framework',
     'rest_framework.authtoken',
+    'channels_redis',
     'corsheaders',
     'frontend',
     'accounts',
     'dashboard',
     'products',
     'orders',
+    'order_tracking',
     'marketing',
     'chat',
     'admin_accounts',
     'admin_dashboard',
+    'notifications',
+    'config',
+    'careers'
+    
 ]
 
 REST_FRAMEWORK = {
-    
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.IsAuthenticated',
-    # ]
-    # ,
+
     'DEFAULT_AUTHENTICATION_CLASSES':[
         'rest_framework.authentication.TokenAuthentication'
-    ]
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 12
    
 }
+
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_IMPORTS = ('tasks.__task__promotions' )
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'endless_factory_api.urls'
-
 
 TEMPLATES = [
     {
@@ -97,7 +107,17 @@ TEMPLATES = [
 ]
 
 # WSGI_APPLICATION = 'endless_factory_api.wsgi.application'
-ASGI_APPLICATION =  'endless_factory_api.asgi.application'
+ASGI_APPLICATION =  'endless_factory_api.routing.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [('0.0.0.0', 6379)],
+        },
+    },
+}
+
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 262144000
 FILE_UPLOAD_MAX_MEMORY_SIZE = 262144000
@@ -106,18 +126,18 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 262144000
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': str(os.path.join(BASE_DIR, "db.sqlite3")),
-    # }
     'default': {
-        'ENGINE'  : 'django.db.backends.mysql',  
-        'NAME'    : 'ENDLESS_FACTORY',                  
-        'USER'    : 'endless_factory_rootuser',                     
-        'PASSWORD': 'pass@endlessrootuser',              
-        'HOST'    : 'localhost',                
-        'PORT'    : '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': str(os.path.join(BASE_DIR, "db.sqlite3")),
     }
+    # 'default': {
+    #     'ENGINE'  : 'django.db.backends.mysql',  
+    #     'NAME'    : 'ENDLESS_FACTORY',                  
+    #     'USER'    : 'endless_factory_rootuser',                     
+    #     'PASSWORD': 'pass@endlessrootuser',              
+    #     'HOST'    : 'localhost',                
+    #     'PORT'    : '3306',
+    # }
 }
 
 AUTH_USER_MODEL = 'accounts.User'
@@ -189,6 +209,38 @@ LOGGING = {
             'handlers': ['console', 'logfile'],
             'level': 'DEBUG',
         },
+        'dashboard': {
+            'handlers': ['console', 'logfile'],
+            'level': 'DEBUG',
+        },
+        'accounts': {
+            'handlers': ['console', 'logfile'],
+            'level': 'DEBUG',
+        },
+        'admin_dashboard': {
+            'handlers': ['console', 'logfile'],
+            'level': 'DEBUG',
+            
+        },'chat': {
+            'handlers': ['console', 'logfile'],
+            'level': 'DEBUG',
+        }
+        ,'marketing': {
+            'handlers': ['console', 'logfile'],
+            'level': 'DEBUG',
+        },
+        'config': {
+            'handlers': ['console', 'logfile'],
+            'level': 'DEBUG',
+        },
+        'endless_factory_api': {
+            'handlers': ['console', 'logfile'],
+            'level': 'DEBUG',
+        },
+        'task': {
+            'handlers': ['console', 'logfile'],
+            'level': 'DEBUG',
+        }
     }
 }
 
@@ -245,13 +297,17 @@ CELERY_RESULT_SERIALIZER = 'json'
 SERVER_PORT = "8000"
 SERVER_URL = "http://165.232.185.232"
 
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = (
-                        'http://165.232.185.232',
-                        'https://endlessfactory.com',
-                        'http://endlessfactory.com',
-                        'http://localhost:3000',
-                        'http://127.0.0.1:3000',
-                        'http://127.0.0.1'
+CORS_ALLOW_ALL_ORIGINS = True
+
+# CORS_ORIGIN_ALLOW_ALL = False
+# CORS_ORIGIN_WHITELIST = (
+#                         'http://165.232.185.232',
+#                         'https://165.232.185.232',
+#                         'https://endlessfactory.com',
+#                         'http://endlessfactory.com',
+#                         'http://localhost:3000',
+#                         'http://127.0.0.1:3000',
+#                         'http://127.0.0.1'
                         
-                        )
+#                         )
+# CORS_ALLOWED_ORIGINS = "*" #["http://localhost:3000","http://endlessfactory.com"]  

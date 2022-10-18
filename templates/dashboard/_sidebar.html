@@ -15,7 +15,7 @@
                 </a>
                 <ul class="dropdown-menu">
                     <li class="{% if section_active == 'dashboards' %} {{'active'}} {% endif %}">
-                        <a href="/dashboards/home">{{'Home'|translate:lang}}</a>
+                        <a href="{% url 'dashboard_home' %}">{{'Home'|translate:lang}}</a>
                     </li>
                 </ul>
             </li>
@@ -85,6 +85,24 @@
                     </li>
                 </ul>
             </li>
+            {% if request.user.is_admin %}
+                <li class="nav-item dropdown">
+                    <a class="dropdown-toggle" href="javascript:void(0);">
+                        <span class="icon-holder">
+                            <i class="anticon"></i>
+                        </span>
+                        <span class="title">{{'Careers'|translate:lang}}</span>
+                        <span class="arrow">
+                            <i class="arrow-icon"></i>
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="{% if section_active == 'option_types' %} {{'active'}} {% endif %}">
+                            <a href="{% url 'all_companies' %}">{{'Goto Career'|translate:lang}}</a>
+                        </li>
+                    </ul>
+                </li>
+            {% endif %}
 
             {% if request.user.is_admin %}
                 <li class="nav-item dropdown">

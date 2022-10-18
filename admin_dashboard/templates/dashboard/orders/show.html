@@ -8,7 +8,7 @@
                     <div class="card-header">
                         <h4 class="card-title">
                             {{'Showing Order'|translate:lang}} #{{item.order.number}}
-                            {% if item.dispatched == False and request.user.is_seller %}
+                            {% if item.order_status != Dispatched and request.user.is_seller %}
                                 <div class="modal" tabindex="-1" role="dialog" id="markItemShippedModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
@@ -24,7 +24,7 @@
                                                 <div class="modal-body">
                                                     <div class="form-group">
                                                         <label>{{'Dispatched At'|translate:lang}}</label>
-                                                        <input type='date' name='dispatched_at' class='form-control' required />
+                                                        <input type='date' name='updated_at' class='form-control' required />
                                                     </div>
                                                     <div class="form-group">
                                                         <label>{{'Courier Agency'|translate:lang}}</label>

@@ -19,7 +19,8 @@ def get_authorization_token(request,auth):
             print(auth)
             return auth[1].decode('utf-8')
         if auth is True:
-            raise exceptions.AuthenticationFailed('Unauthenticated')
+            pass
+            # raise exceptions.AuthenticationFailed('Unauthenticated')
         return False
     
 # Authentication MIDDLEWARE CLASS 
@@ -55,7 +56,8 @@ def decode_access_token(token,cart=False):
         return jwt.decode(token,jwt_token_secret_key,algorithms=algorithm)['cart_token']
     except Exception as e:
         if cart is False:
-            raise exceptions.AuthenticationFailed('Unauthenticated user')
+            pass
+            # raise exceptions.AuthenticationFailed('Unauthenticated user')
         else:
             cart_token= Cart.objects.create(token=get_random_string(length=32)).token
             return create_access_token({"id":cart_token,"cart_token":cart_token}),cart_token
