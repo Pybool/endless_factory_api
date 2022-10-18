@@ -351,7 +351,6 @@ def new_product(request):
   form = ProductForm()
   if request.method == 'POST':
     form = ProductForm(request.POST)
-    #print(form, request.POST)
     if form.is_valid():
       form.save()
       user_product = UserProduct(user_id=request.POST.get('user'), product=form.instance)
