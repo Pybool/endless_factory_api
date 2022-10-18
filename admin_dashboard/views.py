@@ -276,7 +276,7 @@ def new_category(request):
   form = CategoryForm()
   if request.method == 'POST':
     form = CategoryForm(request.POST, request.FILES)
-    print(form)
+    #print(form)
     if form.is_valid():
       form.save()
       messages.success(request, get_translations('Category created successfully', get_user_locale(request)))
@@ -351,7 +351,7 @@ def new_product(request):
   form = ProductForm()
   if request.method == 'POST':
     form = ProductForm(request.POST)
-    print(form,request.POST)
+    #print(form, request.POST)
     if form.is_valid():
       form.save()
       user_product = UserProduct(user_id=request.POST.get('user'), product=form.instance)

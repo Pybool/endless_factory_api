@@ -1,5 +1,5 @@
 {%  load static %}
-{%load translate%}
+{% load translate %}
 <header class="header">
     <div class="container">
         <div class="row">
@@ -40,17 +40,19 @@
                             <div class="col-md-9 user-log">
                                 {% if request.user.is_authenticated %}
                                     <ul>
-                                        <li><a href="/users/profile"><i class="fa fa-user" aria-hidden="true"></i> {{request.user.name.split.0}}</a></li>
-                                        <li><a href="/user/logout">{{'Log Out'|translate:lang}}</a></li>
+                                        <li><a href="{% url 'user_profile' %}"><i class="fa fa-user" aria-hidden="true"></i> {{request.user.name.split.0}}</a></li>
+                                        <li><a href="{% url 'logout' %}">{{'Log Out'|translate:lang}}</a></li>
                                     </ul>
                                 {% else %}
                                     <ul>
-                                        <li><a href="/user/register/"><i class="fa fa-user" aria-hidden="true"></i> {{'Sign Up'|translate:lang}}</a></li>
-                                        <li><a href="/user/login/">{{'Login'|translate:lang}}</a></li>
+                                        <li><a href="{% url 'register' %}"><i class="fa fa-user" aria-hidden="true"></i> {{'Sign Up'|translate:lang}}</a></li>
+                                        <li><a href="{% url 'login' %}">{{'Login'|translate:lang}}</a></li>
                                     </ul>
                                 {% endif %}
                             </div>
+                            <!--
                             <div class="col-md-3 cart"><h6 style='padding: 8px 7px; margin-bottom: 0.25rem; margin-top: 0.25rem;'><a style='color: black;' href="/cart"><i class="fa fa-shopping-cart" aria-hidden="true"></i> {{'Cart'|translate:lang}}</a></h6></div>
+                            -->
                             <div class="col-md-12 lc">
                                 <ul>
                                   <li>
@@ -75,30 +77,6 @@
                                 </ul>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="nav-menu">
-                    <div class="navigation-wrap bg-light start-header start-style" style="padding-top: 10px; padding-bottom: 10px;">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-12">
-                                    <nav class="navbar navbar-expand-md navbar-light">
-                                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
-                                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                                        <ul class="navbar-nav">
-                                            <li><a href="/" class="active">{{'Home'|translate:lang}}</a></li>
-                                            <li><a href="/products" class="active">{{'Products'|translate:lang}}</a></li>
-                                            {% for category in categories %}
-                                                <li><a href="/products?category={{category.slug}}">{{category.name}}</a></li>
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
-                                    </nav>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     </div>
                 </div>
             </div>

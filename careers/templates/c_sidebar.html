@@ -25,17 +25,23 @@
                         <span class="icon-holder">
                             <i class="anticon anticon-user"></i>
                         </span>
-                        <span class="title">{{'Manage Users'|translate:lang}}</span>
+                        <span class="title">{{'Company'|translate:lang}}</span>
                         <span class="arrow">
                             <i class="arrow-icon"></i>
                         </span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li class="{% if section_active == 'users' %} {{'active'}} {% endif %}">
-                            <a href="{% url 'users_list' %}">{{'List Users'|translate:lang}}</a>
+                        <li class="{% if section_active == 'all_companies' %} {{'active'}} {% endif %}">
+                            <a href="{% url 'all_companies' %}">{{'All Companies'|translate:lang}}</a>
                         </li>
-                        <li class="{% if section_active == 'users_wishlisted_products' %} {{'active'}} {% endif %}">
-                            <a href="{% url 'users_wishlisted_products' %}">{{'List User Wishlisted Products'|translate:lang}}</a>
+                        <li class="{% if section_active == 'accepted_companies' %} {{'active'}} {% endif %}">
+                            <a href="{% url 'accepted_companies' %}">{{'Accepted'|translate:lang}}</a>
+                        </li>
+                        <li class="{% if section_active == 'rejected_companies' %} {{'active'}} {% endif %}">
+                            <a href="{% url 'rejected_companies' %}">{{'Rejected'|translate:lang}}</a>
+                        </li>
+                        <li class="{% if section_active == 'pending_companies' %} {{'active'}} {% endif %}">
+                            <a href="{% url 'pending_companies' %}">{{'Pending'|translate:lang}}</a>
                         </li>
                     </ul>
                 </li>
@@ -45,17 +51,18 @@
                     <span class="icon-holder">
                         <i class="anticon anticon-ordered-list"></i>
                     </span>
-                    <span class="title">{{'Manage Orders'|translate:lang}}</span>
+                    <span class="title">{{'View Applicant'|translate:lang}}</span>
                     <span class="arrow">
                         <i class="arrow-icon"></i>
                     </span>
                 </a>
                 <ul class="dropdown-menu">
-                    <li class="{% if section_active == 'orders' %} {{'active'}} {% endif %}">
-                        <a href="{% url 'orders_list' %}">{{'List Orders'|translate:lang}}</a>
+                    <li class="{% if section_active == 'view_applicants' %} {{'active'}} {% endif %}">
+                        <a href="{% url 'view_applicants' %}">{{'All Applicant'|translate:lang}}</a>
                     </li>
                 </ul>
             </li>
+            <!--
             <li class="nav-item dropdown">
                 <a class="dropdown-toggle" href="javascript:void(0);">
                     <span class="icon-holder">
@@ -89,7 +96,7 @@
                 <li class="nav-item dropdown">
                     <a class="dropdown-toggle" href="javascript:void(0);">
                         <span class="icon-holder">
-                            <i class="anticon"></i>
+                            <i class="anticon anticon-setting"></i>
                         </span>
                         <span class="title">{{'Careers'|translate:lang}}</span>
                         <span class="arrow">
@@ -98,7 +105,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li class="{% if section_active == 'option_types' %} {{'active'}} {% endif %}">
-                            <a href="{% url 'all_companies' %}">{{'Goto Career'|translate:lang}}</a>
+                            <a href="{% url 'all_companies' %}">{{'All Comapany'|translate:lang}}</a>
                         </li>
                     </ul>
                 </li>
@@ -128,6 +135,7 @@
 
                 </li>
             {% endif %}
+        -->
         </ul>
 
     </div>

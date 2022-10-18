@@ -16,20 +16,17 @@ Including another URLconf
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
-from django.conf import settings
-from django.conf.urls.static import static
-from django.contrib import admin
 from django.urls import include, path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
 from chat.consumer import ChatConsumer
 # from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
-
 # from conversa_dj.users.api.views import CustomObtainAuthTokenView
 
 
 urlpatterns = [
     
+    path('admin/', include('admin_accounts.urls')),
     path('', include('frontend.urls')),
     path("", include("config.api_router")),
     path('', include('marketing.urls')),
@@ -41,7 +38,6 @@ urlpatterns = [
     path('api/v1/', include('order_tracking.urls')),
     path('api/v1/', include('notifications.urls')),
     path('api/v1/', include('chat.urls')),
-    path('admin/', include('admin_accounts.urls')),
     path('dashboards/', include('admin_dashboard.urls')),
     path('careers/', include('careers.urls')),
     

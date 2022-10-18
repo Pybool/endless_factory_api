@@ -17,7 +17,19 @@
                     <li class="{% if section_active == 'dashboards' %} {{'active'}} {% endif %}">
                         <a href="{% url 'dashboard_home' %}">{{'Home'|translate:lang}}</a>
                     </li>
+                    {% if request.user.is_admin %}
+                    <li class="{% if section_active == 'add_job' %} {{'active'}} {% endif %}">
+                        <a href="{% url 'add_job' %}?uid={{request.session.company_in_edit}}">{{'Add jobs'|translate:lang}}</a>
+                    </li>
+                    <li class="{% if section_active == 'job_list' %} {{'active'}} {% endif %}">
+                        <a href="{% url 'job_list' %}">{{'Job List'|translate:lang}}</a>
+                    </li>
+                    <li class="{% if section_active == 'all_applicants' %} {{'active'}} {% endif %}">
+                        <a href="{% url 'all_applicants' %}">{{'All Applicant'|translate:lang}}</a>
+                    </li>
+                    {% endif %}
                 </ul>
+                <!--
             </li>
             {% if request.user.is_admin %}
                 <li class="nav-item dropdown">
@@ -128,6 +140,7 @@
 
                 </li>
             {% endif %}
+        -->
         </ul>
 
     </div>

@@ -1,11 +1,9 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
-
 from orders.models import Cart
 from .forms import CreatUserForm
 from django.contrib import messages
 from django.utils.crypto import get_random_string
-
 from products.models import Category
 from accounts.models import User
 
@@ -15,7 +13,7 @@ def loginPage(request):
     if request.user.is_authenticated:
         messages.success(request, 'User already logged in.')
 
-        return redirect('/')
+        return redirect('/dashboards/home')
     else:
         if request.method == 'POST':
             email = request.POST.get('email')
@@ -25,7 +23,7 @@ def loginPage(request):
             if user is not None:
                 login(request, user)
                 messages.success(request, 'Logged in Successfully.')
-                return redirect('/')
+                return redirect('/dashboards/home')
             else:
                 messages.error(request, 'Email or Password is incorrect.')
         context = {'categories': product_categories,'lang': get_user_locale(request)}
@@ -35,7 +33,7 @@ def forgot_password(request):
     if request.user.is_authenticated:
         messages.success(request, 'User already logged in.')
 
-        return redirect('/')
+        return redirect('/dashboards/home')
     else:
         if request.method == 'POST':
             email = request.POST.get('email')
@@ -85,7 +83,7 @@ def validate_otp(request, token):
     user_with_token =  User.objects.filter(reset_password_token = token).first()
     if request.user.is_authenticated:
         messages.success(request, 'User already logged in.')
-        return redirect('/')
+        return redirect('user_profile')
     elif user_with_token is None:
         messages.error(request, 'Invalid reset password token')
         return redirect('login')
@@ -103,9 +101,9 @@ def validate_otp(request, token):
     return render(request, 'accounts/validate_otp.html', context)
 
 def logoutUser(request):
-    logout(request)
     messages.success(request, 'Logged out successfully.')
-    return redirect('login')
+    logout(request)  
+    return redirect('register')
 
 
 def registerPage(request):
@@ -124,7 +122,7 @@ def registerPage(request):
                 user_object.save()
 
                 messages.success(request, 'You have registered successfully!')
-                return redirect('/')
+                return redirect('/dashboards/home')
         context = {'form': form, 'categories': product_categories, 'lang': get_user_locale(request)}
         return render(request, 'accounts/register.html', context)
 

@@ -132,7 +132,7 @@ class Product(models.Model):
   condition_option = models.CharField(max_length=100, choices=PRODUCT_CONDITION, default='New')
   delivery_option = models.CharField(max_length=100, choices=DELIVERY_OPTION_CHOICES, default='Both')
   pricing_option = models.CharField(max_length=200, choices=PRICE_OPTION_CHOICES, default='Fixed Price')
-  product_type = models.CharField(max_length=200,default='')
+  product_type = models.CharField(max_length=200, default='')
   eco_friendly = models.BooleanField(default=False)
   duration = models.IntegerField(default=30)
 

@@ -5,6 +5,10 @@ from accounts.models import User, Address, CreditCard
 
 
 class CategoryForm(forms.ModelForm):
+
+  class Meta:
+    model = Category
+    fields = ('name', "parent", "description")
  
   def CATEGORY_CHOICES():
     
@@ -38,7 +42,7 @@ class OptionTypeForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
   class Meta:
     model = Product
-    fields = ('title', 'description', 'is_active', 'model_number', 'min_order_quantity', 'max_order_quantity', 'delivery_option', 'search_tags', 'category', 'option_type', 'approved', 'featured')
+    fields = ('title', 'description', 'is_active', 'model_number', 'min_order_quantity', 'max_order_quantity', 'delivery_option', 'initial_stock', 'current_stock', 'search_tags', 'category', 'option_type', 'approved', 'featured')
 
 class VariantForm(forms.ModelForm):
   class Meta:
