@@ -31,6 +31,11 @@ PRODUCT_CONDITION = (
   ('Refurbished', 'Refurbished'),
 )
 
+FILTER_TYPES = (
+  ('Brand','Brand'),
+  ('Size','Size')
+)
+
 # Create your models here
 class Category(models.Model):
   
@@ -38,11 +43,11 @@ class Category(models.Model):
     categories_tuple = []
     categories = Category.objects.all().values_list('name')#SubcategoryChoices(Category)
     for category in list(categories):
-        print(category[0],category)
+        #print(category[0],category)
         name = category[0]
         padded_cat = category + (name,)
         categories_tuple.append(padded_cat)
-    print(tuple(categories_tuple))
+    #print(tuple(categories_tuple))
     
     return tuple(categories_tuple)
   
@@ -74,7 +79,14 @@ class Category(models.Model):
   def __str__(self):
     return self.name
 
+class Filters(models.Model):
+  name = models.CharField(max_length=150, null=False, error_messages={'required':'Name can not be blank'})
+  filter_type = models.CharField(max_length=100,null=False,choices=FILTER_TYPES, editable=True)
+  filter_variants = models.JSONField(null=False)
   
+  def __str__(self) -> str:
+    return super().filter_variants
+ 
 
 class Tag(models.Model):
   name = models.CharField(max_length=50,unique=True, null=False, error_messages={'required':'Name can not be blank'})
@@ -132,7 +144,7 @@ class Product(models.Model):
   condition_option = models.CharField(max_length=100, choices=PRODUCT_CONDITION, default='New')
   delivery_option = models.CharField(max_length=100, choices=DELIVERY_OPTION_CHOICES, default='Both')
   pricing_option = models.CharField(max_length=200, choices=PRICE_OPTION_CHOICES, default='Fixed Price')
-  product_type = models.CharField(max_length=200,default='')
+  product_type = models.CharField(max_length=200, default='')
   eco_friendly = models.BooleanField(default=False)
   duration = models.IntegerField(default=30)
 

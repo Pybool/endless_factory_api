@@ -9,7 +9,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <h5>{{'Recent Orders'|translate:lang}}</h5>
                         <div>
-                            <a href="/careers/dashboards/orders/list" class="btn btn-sm btn-default">{{'View All'|translate:lang}}</a>
+                            <a href="{% url 'orders_list' %}" class="btn btn-sm btn-default">{{'View All'|translate:lang}}</a>
                         </div>
                     </div>
                     
@@ -41,14 +41,14 @@
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td><a href="{% url 'product' line_item.variant.product.slug %}">{{line_item.variant.product.name}}</a></td>
+                                            <td><a href="{% url 'product' line_item.variant.product.slug %}">{{ line_item.variant.product.name }}</a></td>
                                             <td>{{ line_item.created_at }}</td>
                                             <td>${{ line_item.item_total }}</td>
                                             <td>
                                                 <div class="d-flex align-items-center">
                                                     <span class="badge badge-success badge-dot m-r-10"></span>
                                                     <span>
-                                                        {% if line_item.order_status=='Dispatched' %} 
+                                                        {% if line_item.order_status == 'Dispatched' %} 
                                                             Dispatched 
                                                         {% else %}
                                                             line_item.order_status

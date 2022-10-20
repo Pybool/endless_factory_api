@@ -39,15 +39,25 @@ class ChatConsumer(JsonWebsocketConsumer):
         self.user = self.scope["user"]
         log.info(f"URL PARAMS {self.scope}")
         if not self.user.is_authenticated:
+            log.info("Rejecting anonymous user")
             return
 
         self.accept()
-        self.conversation_name = (f"{json.loads(self.scope['url_route']['kwargs']['metadata'])['chat_id']}").replace("-","")
-        self.sender = (f"{json.loads(self.scope['url_route']['kwargs']['metadata'])['sender']}")
-        self.recepient = (f"{json.loads(self.scope['url_route']['kwargs']['metadata'])['recepient']}")
-        self.chatters = [self.sender,self.recepient]
-        self.chatters.sort()
-        log.info(f"Chatters {self.chatters}")
+        try:
+            log.info(f"Chatters {0}")
+            self.conversation_name = (f"{json.loads(self.scope['url_route']['kwargs']['metadata'])['chat_id']}").replace("-","")
+            log.info(f"Chatters {1}")
+            self.sender = (f"{json.loads(self.scope['url_route']['kwargs']['metadata'])['sender']}")
+            log.info(f"Chatters {2}")
+            self.recepient = (f"{json.loads(self.scope['url_route']['kwargs']['metadata'])['recepient']}")
+            log.info(f"Chatters {3}")
+            self.chatters = [self.sender,self.recepient]
+            log.info(f"Chatters {4}")
+            self.chatters.sort()
+            log.info(f"Chatters {5}")
+            log.info(f"Chatters {self.chatters}")
+        except Exception as e:
+            log.info(f"Connection error {str(e)}")
         
         try:
             self.message_id = (f"{json.loads(self.scope['url_route']['kwargs']['metadata'])['message_id']}")

@@ -1,5 +1,4 @@
 from django.urls import path
-
 from admin_dashboard import views
 
 urlpatterns = [
@@ -7,6 +6,7 @@ urlpatterns = [
     path('dashboards/orders', views.orders, name='dashboard_orders'),
     
     path('home', views.home, name='dashboard_home'),
+    path('orders', views.orders, name='dashboard_orders'),    
     path('users/profile', views.profile, name='user_profile'),
     
     # Categories

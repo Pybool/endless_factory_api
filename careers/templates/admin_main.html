@@ -1,0 +1,95 @@
+{% load static %}
+{% load translate %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <!-- Favicon -->
+    <link rel="shortcut icon" href="{% static 'images/logo/only-logo.png' %}">
+
+    <!-- career -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css">
+
+    <title>{% block title %}{% endblock %}</title>
+    <!-- page css -->
+
+    <!-- Core css -->
+    <link href="{% static 'css/app.min.css' %}" rel="stylesheet">
+</head>
+<body>
+ <div class="app">
+        <div class="layout">
+            <!-- Header START -->
+            {%  include 'dashboard/_header.html'%}
+            <!-- Header END -->
+
+            <!-- Side Nav START -->
+            {%  include 'c_sidebar.html'%}
+            <!-- Side Nav END -->
+
+            <!-- Page Container START -->
+            <div class="page-container">
+                {% for message in messages %}
+                    <script>alert("{{message}}");</script>
+                {% endfor %}
+                <!-- Content Wrapper START -->
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+                crossorigin="anonymous"></script>
+
+                <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+                <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+                <script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+                <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+                
+                {% block body %}
+
+                {% endblock %}
+                <!-- Content Wrapper END -->
+
+                <!-- Footer START -->
+                {%  include 'dashboard/_footer.html'%}
+                <!-- Footer END -->
+
+            </div>
+          
+            <!-- Quick View END -->
+        </div>
+    </div>
+
+   
+    <!-- Core Vendors JS -->
+    <script src="{% static 'js/vendors.min.js' %}"></script>
+
+    <!-- page js -->
+    <script src="{% static 'vendors/chartjs/Chart.min.js' %}"></script>
+    <script src="{% static 'js/pages/dashboard-e-commerce.js' %}"></script>
+
+    <!-- Core JS -->
+    <script src="{% static 'js/app.min.js'%}"></script>
+
+</body>
+{% block js %}
+<script>
+  $(document).ready(function () {
+    $('#example').DataTable({
+      dom: 'Bfrtip',
+      buttons: [
+        'copyHtml5',
+        'excelHtml5',
+        'csvHtml5',
+        'pdfHtml5'
+      ]
+    });
+  });
+</script>
+{% endblock %}
+</html>

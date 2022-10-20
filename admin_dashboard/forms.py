@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ChoiceField
-from products.models import Category, Tag, Product, Variant, Attachment, OptionType, OptionValue
+from products.models import Category, Filters, Tag, Product, Variant, Attachment, OptionType, OptionValue
 from accounts.models import User, Address, CreditCard
 
 
@@ -26,6 +26,11 @@ class TagForm(forms.ModelForm):
   class Meta:
     model = Tag
     fields = ('name',)
+    
+class FiltersForm(forms.ModelForm):
+  class Meta:
+    model = Filters
+    fields = ('name','filter_type','filter_variants')
 
 class OptionValueForm(forms.ModelForm):
   class Meta:
@@ -40,7 +45,7 @@ class OptionTypeForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
   class Meta:
     model = Product
-    fields = ('title', 'description', 'is_active', 'model_number', 'min_order_quantity', 'max_order_quantity', 'delivery_option', 'search_tags', 'category', 'option_type', 'approved', 'featured')
+    fields = ('title', 'description', 'is_active', 'model_number', 'min_order_quantity', 'max_order_quantity', 'delivery_option', 'initial_stock', 'current_stock', 'search_tags', 'category', 'option_type', 'approved', 'featured')
 
 class VariantForm(forms.ModelForm):
   class Meta:

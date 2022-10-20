@@ -1,5 +1,4 @@
 from django.urls import path
-
 from careers import views_api
 from . import views
 

@@ -30,7 +30,6 @@ class NewCampaignView(APIView):
         instance = CampaignSerializer(data=data)
         if instance.is_valid(raise_exception=True):
             campaign = instance.create(data)
-            print(dir(campaign))
             return Response({
                             "status":True,
                             "message":"Marketing campaign created successfully",
@@ -103,15 +102,16 @@ class CampaignFeederView(APIView):
             random_ads_ids = random.sample(range(max(flatten_ids)+1), min(flatten_ids)) if ads_count < 11 else random.sample(range(max(flatten_ids)+1), 10)
             if 0 in random_ads_ids:
                 random_ads_ids.remove(0)
-            random_ads = Campaign.objects.filter(id__in=random_ads_ids, is_active=True,is_schedule=True).values()
-            return Response({"status":True,"ads":random_ads})    
+            random_ads = Campaign.objects.filter(id__in=random_ads_ids, is_active=True,is_schedule=True)
+            serializer = AdsSerializer(random_ads,many=True)
+            return Response({"status":True,"ads":serializer.data})
+        
         except Exception as e: 
             return Response({"status":str(e)})  
-
-
+        
+        
 class CampaignAdsClick(APIView):
-    authentication_classes = [JWTAuthenticationMiddleWare]
-    @allowed_users()
+    
     def get(self,request):
         id = request.GET.get('id')
         try:

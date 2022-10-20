@@ -803,7 +803,7 @@ class NDARegisterPurchaseView(APIView):
                 return Response({'status':True,"message":f"This payment has been registered successfully and you have {nda_user.nda_count} NDA points"})
             return Response({'status':False,"message":"This payment could not be registered successfully"})
         except Exception as e:
-            return Response({'status':False,"message":parsed})
+            return Response({'status':False,"message":str(e)})
                
 class NDAView(APIView):
     

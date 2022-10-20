@@ -4,6 +4,7 @@ from accounts.models import User
 from django.contrib.auth import authenticate, login, logout
 from datetime import date
 from django.shortcuts import get_object_or_404
+from admin_dashboard.views import get_user_locale
 
 def index(request):
     return render(request, "index.html")
@@ -90,6 +91,7 @@ def job_apply(request, myid):
     return render(request, "job_apply.html", {'job':job})
 
 def all_applicants(request):
+    context = {'section_active': 'all_applicants', 'lang': get_user_locale(request)}
     if request.user.user_type != 'Admin':
         company = Company.objects.get(user=request.user)
         
@@ -100,10 +102,10 @@ def all_applicants(request):
             uid = request.session['company_in_edit']
         company = get_object_or_404(Company,id=int(uid))
     
-    print("company ", company)
-    applications = Applications.objects.filter(company_id=company.id)
-    print("applications ",applications)
-    return render(request, "all_applicants.html", {'applications':applications})
+    #print("company ", company)
+    context["applications"] = Applications.objects.filter(company_id=company.id)
+    #print("applications ",applications)
+    return render(request, "all_applicants.html", context)
 
 def signup(request):
     if request.method=="POST":   
@@ -151,13 +153,14 @@ def create_company(request):
         company.save()
         
 def admin_create_company(request):
+    context = {'lang': get_user_locale(request)}
     if not request.user.is_authenticated:
-        return redirect("/admin_login")
+        return redirect("/login")
     if request.method == "POST":
         create_company(request)
-        companies = Company.objects.all()
-        return render(request, "all_companies.html", {'companies':companies})
-    return render(request, "admin_create_company.html")
+        context["companies"] = Company.objects.all()
+        return render(request, "all_companies.html", context)
+    return render(request, "admin_create_company.html", context)
 
 def company_signup(request):
     create_company(request)
@@ -188,6 +191,7 @@ def company_login(request):
     return render(request, "company_login.html")
 
 def company_homepage(request):
+    context = {'section_active': 'company_homepage', 'lang': get_user_locale(request)}
     if not request.user.is_authenticated:
         return redirect("/company_login")
     
@@ -199,7 +203,7 @@ def company_homepage(request):
             uid = request.GET.get('uid')
         else:
             uid = request.session['company_in_edit']
-        company = get_object_or_404(Company,id=int(uid))
+        company = get_object_or_404(Company, id=int(uid))
         
     if request.method=="POST":   
         email = request.POST['email']
@@ -222,8 +226,8 @@ def company_homepage(request):
             company.save()
         except:
             pass
-        alert = True
-        return render(request, "company_homepage.html", {'alert':alert})
+        context["alert"] = True
+        return render(request, "company_homepage.html", context)
     try:
         del request.session.company_in_edit
     except:
@@ -234,9 +238,11 @@ def company_homepage(request):
         uid = request.session['company_in_edit']
             
     request.session['company_in_edit'] = int(uid)
-    return render(request, "company_homepage.html", {'company':company})
+    context["company"] = company
+    return render(request, "company_homepage.html", context)
 
 def add_job(request):
+    context = {'section_active': 'add_job', 'lang': get_user_locale(request)}
     if not request.user.is_authenticated:
         return redirect("/company_login")
 
@@ -244,7 +250,7 @@ def add_job(request):
         company = Company.objects.get(user=request.user)
                 
     elif request.user.user_type == 'Admin':
-        company = get_object_or_404(Company,id=int(request.GET.get('uid')))
+        company = get_object_or_404(Company, id=int(request.GET.get('uid')))
         
     if request.method == "POST":
         title = request.POST['job_title']
@@ -259,21 +265,22 @@ def add_job(request):
         
         job = Job.objects.create(company=company, title=title,start_date=start_date,currency=currency, end_date=end_date, salary=salary, image=company.image, experience=experience, location=location, skills=skills, description=description, creation_date=date.today())
         job.save()
-        alert = True
-        return render(request, "add_job.html", {'alert':alert})
-    return render(request, "add_job.html")
+        context["alert"] = True
+        return render(request, "add_job.html", context)
+    return render(request, "add_job.html", context)
 
 def job_list(request):
+    context = {'section_active': 'job_list', 'lang': get_user_locale(request)}
     if not request.user.is_authenticated:
         return redirect("/company_login")
     if request.user.user_type != 'Admin':
         company = Company.objects.get(user=request.user)
                 
     elif request.user.user_type == 'Admin':
-        company = get_object_or_404(Company,id=int(request.session['company_in_edit']))
+        company = get_object_or_404(Company, id=int(request.session['company_in_edit']))
         
-    jobs = Job.objects.filter(company=company)
-    return render(request, "job_list.html", {'jobs':jobs})
+    context["jobs"] = Job.objects.filter(company=company)
+    return render(request, "job_list.html", context)
 
 def edit_job(request, myid):
     if not request.user.is_authenticated:
@@ -338,10 +345,11 @@ def admin_login(request):
     return render(request, "admin_login.html")
 
 def view_applicants(request):
+    context = {'section_active': 'view_applicants', 'lang': get_user_locale(request)}
     if not request.user.is_authenticated:
-        return redirect("/admin_login")
-    applicants = Applicant.objects.all()
-    return render(request, "view_applicants.html", {'applicants':applicants})
+        return redirect("login")
+    context["applicants"] = Applicant.objects.all()
+    return render(request, "view_applicants.html", context)
 
 def delete_applicant(request, myid):
     if not request.user.is_authenticated:
@@ -351,44 +359,50 @@ def delete_applicant(request, myid):
     return redirect("/view_applicants")
 
 def pending_companies(request):
+    context = {'section_active': 'pending_companies', 'lang': get_user_locale(request)}
     if not request.user.is_authenticated:
-        return redirect("/admin_login")
-    companies = Company.objects.filter(status="pending")
-    return render(request, "pending_companies.html", {'companies':companies})
+        return redirect("/login")
+    context["companies"] = Company.objects.filter(status="pending")
+    return render(request, "pending_companies.html", context)
 
 def change_status(request, myid):
+    context = {'lang': get_user_locale(request)}
     if not request.user.is_authenticated:
-        return redirect("/admin_login")
+        return redirect("login")
     company = Company.objects.get(id=myid)
     if request.method == "POST":
         status = request.POST['status']
         company.status=status
         company.save()
-        alert = True
-        return render(request, "change_status.html", {'alert':alert})
-    return render(request, "change_status.html", {'company':company})
+        context["alert"] = True
+        return render(request, "change_status.html", context)
+    context["company"] = company
+    return render(request, "change_status.html", context)
 
 def accepted_companies(request):
+    context = {'section_active': 'accepted_companies', 'lang': get_user_locale(request)}
     if not request.user.is_authenticated:
-        return redirect("/admin_login")
-    companies = Company.objects.filter(status="Accepted")
-    return render(request, "accepted_companies.html", {'companies':companies})
+        return redirect("/login")
+    context["companies"] =  Company.objects.filter(status="Accepted")
+    return render(request, "accepted_companies.html", context)
 
 def rejected_companies(request):
+    context = {'section_active': 'rejected_companies', 'lang': get_user_locale(request)}
     if not request.user.is_authenticated:
-        return redirect("/admin_login")
-    companies = Company.objects.filter(status="Rejected")
-    return render(request, "rejected_companies.html", {'companies':companies})
+        return redirect("/login")
+    context["companies"] =  Company.objects.filter(status="Rejected")
+    return render(request, "rejected_companies.html", context)
 
 def all_companies(request):
+    context = {'section_active': 'all_companies', 'lang': get_user_locale(request)}
     if not request.user.is_authenticated:
-        return redirect("/admin_login")
-    companies = Company.objects.all()
-    return render(request, "all_companies.html", {'companies':companies})
+        return redirect("login")
+    context["companies"] = Company.objects.all()
+    return render(request, "all_companies.html", context)
 
 def delete_company(request, myid):
     if not request.user.is_authenticated:
-        return redirect("/admin_login")
+        return redirect("/login")
     company = User.objects.filter(id=myid)
     company.delete()
     return redirect("/all_companies")
